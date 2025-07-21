@@ -8,7 +8,7 @@ from __future__ import annotations
 from fastapi import FastAPI, HTTPException, Depends, Request, status
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse, HTMLResponse, FileResponse
+from fastapi.responses import JSONResponse, HTMLResponse, FileResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 from sqlalchemy import func
@@ -19,6 +19,9 @@ import os
 from pathlib import Path
 from datetime import datetime
 from typing import Optional
+from fastapi.exception_handlers import RequestValidationError
+from fastapi.exceptions import RequestValidationError as FastAPIRequestValidationError
+from starlette.exceptions import HTTPException as StarletteHTTPException
 
 # Importações locais - usando imports absolutos
 from app.config import get_settings
@@ -26,6 +29,7 @@ from app.database import get_db, create_database, check_database_health_async, e
 from app.models import User, Project, FileUpload, Video
 from app.auth import get_current_user_optional, auth_manager
 from app.schemas import HealthCheck, SystemStats
+from quick_server import get_dashboard_context
 
 def create_directories():
     """Cria diretórios necessários para a aplicação"""
@@ -190,13 +194,16 @@ settings = get_settings()
 # Criar diretórios necessários
 create_directories()
 
-# Configurar templates
+# Configurar templates (melhor prática: sempre procurar na raiz e em app/templates)
 templates_path = Path(__file__).parent / "templates"
 if templates_path.exists():
     templates = Jinja2Templates(directory=str(templates_path))
 else:
-    # Fallback para templates básicos
-    templates = Jinja2Templates(directory="templates")
+    fallback_templates = Path.cwd() / "templates"
+    if fallback_templates.exists():
+        templates = Jinja2Templates(directory=str(fallback_templates))
+    else:
+        templates = Jinja2Templates(directory="templates")
 
 # Criar aplicação FastAPI
 app = FastAPI(
@@ -492,13 +499,18 @@ async def shutdown_event():
 
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request):
-    """Página inicial da aplicação"""
+    """Página inicial: redireciona para login se não autenticado, senão dashboard"""
+    token = request.cookies.get("access_token") or request.headers.get("Authorization")
+    if not token:
+        return RedirectResponse(url="/login")
+    # Aqui pode-se adicionar lógica para validar o token se necessário
     return templates.TemplateResponse("index.html", {"request": request})
 
 @app.get("/dashboard", response_class=HTMLResponse)
 async def dashboard(request: Request):
     """Dashboard principal da aplicação"""
-    return templates.TemplateResponse("dashboard.html", {"request": request})
+    context = get_dashboard_context(request)
+    return templates.TemplateResponse("dashboard.html", context)
 
 @app.get("/login", response_class=HTMLResponse)
 async def login_page(request: Request):
@@ -518,7 +530,8 @@ async def favicon():
 @app.get("/dashboard.html", response_class=HTMLResponse)
 async def dashboard_html(request: Request):
     """Dashboard (com extensão .html)"""
-    return templates.TemplateResponse("dashboard.html", {"request": request})
+    context = get_dashboard_context(request)
+    return templates.TemplateResponse("dashboard.html", context)
 
 @app.get("/files.html", response_class=HTMLResponse)
 async def files_html(request: Request):
@@ -534,6 +547,11 @@ async def admin_html(request: Request):
 async def audios_html(request: Request):
     """Página de áudios (com extensão .html)"""
     return templates.TemplateResponse("audios.html", {"request": request})
+
+@app.exception_handler(404)
+async def not_found_handler(request: Request, exc):
+    """Retorna página 404 customizada"""
+    return templates.TemplateResponse("404.html", {"request": request}, status_code=404)
 
 # ============================================================================
 # API HEALTH CHECK E STATUS

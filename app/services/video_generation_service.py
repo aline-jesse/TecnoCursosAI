@@ -14,11 +14,13 @@ import logging
 from dataclasses import dataclass
 
 try:
-    from moviepy.editor import *
-    from moviepy.config import check_moviepy
-    MOVIEPY_AVAILABLE = True
+    from moviepy.editor import VideoFileClip, ColorClip, TextClip
 except ImportError:
-    MOVIEPY_AVAILABLE = False
+    VideoFileClip = None
+    ColorClip = None
+    TextClip = None
+    import logging
+    logging.warning('MoviePy não disponível - funcionalidades de vídeo avançado desativadas.')
 
 from PIL import Image, ImageDraw, ImageFont
 import numpy as np
@@ -27,6 +29,13 @@ import numpy as np
 from ..models import Scene, Asset, Audio
 from ..database import get_db
 from sqlalchemy.orm import Session
+
+try:
+    from moviepy.editor import VideoFileClip
+except ImportError:
+    VideoFileClip = None
+    import logging
+    logging.warning('MoviePy não disponível - funcionalidades de vídeo avançado desativadas.')
 
 @dataclass
 class VideoConfig:
@@ -84,10 +93,10 @@ class VideoGenerationService:
     def _check_dependencies(self):
         """Verificar dependências necessárias"""
         status = {
-            "moviepy": MOVIEPY_AVAILABLE,
+            "moviepy": VideoFileClip is not None,
         }
         
-        if not MOVIEPY_AVAILABLE:
+        if not VideoFileClip:
             logger.warning("⚠️ MoviePy não disponível - funcionalidade limitada")
         else:
             logger.info("✅ MoviePy disponível")
@@ -115,7 +124,7 @@ class VideoGenerationService:
         Returns:
             Dict com informações do vídeo gerado
         """
-        if not MOVIEPY_AVAILABLE:
+        if not VideoFileClip:
             raise Exception("MoviePy não disponível")
         
         logger.info(f"🎬 Iniciando geração de vídeo: projeto {project_id}")
@@ -487,16 +496,9 @@ class VideoGenerationService:
             logger.error(f"❌ Erro ao criar clipe do asset: {e}")
             return None
     
-    def _create_text_clip(self, scene_data: SceneVideoData) -> Optional[TextClip]:
-        """
-        Criar clipe de texto para a cena
-        
-        Args:
-            scene_data: Dados da cena
-        
-        Returns:
-            Clipe de texto ou None
-        """
+    def _create_text_clip(self, scene_data: SceneVideoData) -> Optional[Any]:
+        if TextClip is None:
+            return None
         try:
             # Configurações de texto baseadas no estilo
             text_configs = {

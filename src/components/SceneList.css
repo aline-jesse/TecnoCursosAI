@@ -1,553 +1,111 @@
-/* SceneList.css - Estilos específicos para a lista de cenas */
-
+/* src/components/SceneList.css */
 .scene-list {
-  position: relative;
-  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  height: 100%;
+  width: 250px;
+  padding: 10px;
+  background-color: #f0f2f5;
+  border-left: 1px solid #d9d9d9;
   display: flex;
   flex-direction: column;
+  height: 100%;
 }
 
-.scene-list-header {
-  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-  padding: 16px;
-  border-bottom: 1px solid #e2e8f0;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-}
-
-.scene-list-header h3 {
-  margin: 0;
-  font-size: 18px;
-  font-weight: 600;
-  color: #1f2937;
-}
-
-/* Header actions - botões de templates e adicionar */
-.header-actions {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-}
-
-.template-btn {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 12px;
-  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 2px 4px rgba(139, 92, 246, 0.2);
-}
-
-.template-btn:hover:not(:disabled) {
-  background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
-}
-
-.template-btn:disabled {
-  background: #d1d5db;
-  color: #9ca3af;
-  cursor: not-allowed;
-  transform: none;
-  box-shadow: none;
-}
-
-.add-scene-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2);
-}
-
-.add-scene-btn:hover {
-  background: linear-gradient(135deg, #059669 0%, #047857 100%);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
-}
-
-.scene-actions {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-}
-
-.scene-actions button {
-  padding: 6px 8px;
-  border-radius: 6px;
-  border: none;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 12px;
-  font-weight: 500;
-}
-
-.scene-actions .btn-primary {
-  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-  color: white;
-}
-
-.scene-actions .btn-primary:hover {
-  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
-}
-
-.scene-actions .btn-secondary {
-  background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
-  color: white;
-}
-
-.scene-actions .btn-secondary:hover {
-  background: linear-gradient(135deg, #4b5563 0%, #374151 100%);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(107, 114, 128, 0.3);
-}
-
-.scene-actions .btn-danger {
-  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-  color: white;
-}
-
-.scene-actions .btn-danger:hover:not(:disabled) {
-  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(239, 68, 68, 0.3);
-}
-
-.scene-actions .btn-danger:disabled {
-  background: #d1d5db;
-  color: #9ca3af;
-  cursor: not-allowed;
-  transform: none;
-  box-shadow: none;
-}
-
-/* Formulário de criação de cena */
-.create-scene-form {
-  padding: 16px;
-  background: #ffffff;
-  border-bottom: 1px solid #e2e8f0;
-  animation: slideDown 0.3s ease-out;
-}
-
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.create-scene-form input {
-  width: 100%;
-  padding: 8px 12px;
-  border: 2px solid #e2e8f0;
-  border-radius: 6px;
-  font-size: 14px;
-  transition: border-color 0.2s ease;
-  margin-bottom: 8px;
-}
-
-.create-scene-form input:focus {
-  outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-}
-
-.create-scene-actions {
-  display: flex;
-  gap: 8px;
-}
-
-.create-scene-actions button {
-  padding: 6px 12px;
-  border-radius: 6px;
-  border: none;
-  cursor: pointer;
-  font-size: 12px;
-  font-weight: 500;
-  transition: all 0.2s ease;
-}
-
-/* Conteúdo da lista */
-.scene-list-content {
-  flex: 1;
-  overflow-y: auto;
-  padding: 8px;
+.scene-list h2 {
+  font-size: 16px;
+  margin-bottom: 10px;
+  color: #333;
+  text-align: center;
 }
 
 .scenes-container {
-  min-height: 100%;
+  flex-grow: 1;
+  overflow-y: auto;
 }
 
-.scenes-container.dragging-over {
-  background: rgba(59, 130, 246, 0.05);
-  border-radius: 8px;
-}
-
-/* Estados vazios e de carregamento */
-.empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 40px 20px;
-  text-align: center;
-  color: #6b7280;
-}
-
-.empty-state h4 {
-  margin: 16px 0 8px 0;
-  font-size: 16px;
-  font-weight: 500;
-  color: #374151;
-}
-
-.empty-state p {
-  margin: 0;
-  font-size: 14px;
-  color: #9ca3af;
-}
-
-.loading-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 40px 20px;
-  text-align: center;
-  color: #6b7280;
-}
-
-.loading-spinner {
-  width: 24px;
-  height: 24px;
-  border: 2px solid #e2e8f0;
-  border-top: 2px solid #3b82f6;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin-bottom: 12px;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-.error-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 40px 20px;
-  text-align: center;
-  color: #ef4444;
-}
-
-.error-message {
-  margin-bottom: 16px;
-  font-size: 14px;
-  color: #dc2626;
-}
-
-/* Item de cena */
 .scene-item {
+  position: relative;
   display: flex;
   align-items: center;
-  padding: 12px;
+  padding: 8px;
   margin-bottom: 8px;
-  background: #ffffff;
-  border: 2px solid #e2e8f0;
-  border-radius: 8px;
-  cursor: grab;
-  transition: all 0.2s ease;
-  position: relative;
-  min-height: 80px;
+  background-color: #ffffff;
+  border-radius: 4px;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: border-color 0.2s, background-color 0.2s;
 }
 
 .scene-item:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  border-color: #cbd5e1;
+  background-color: #e6f7ff;
 }
 
 .scene-item.active {
-  border-color: #3b82f6;
-  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+  border-color: #1890ff;
+  background-color: #f0f8ff;
 }
 
-.scene-item.dragging {
-  opacity: 0.8;
-  transform: rotate(2deg) scale(0.98);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-  z-index: 1000;
-}
-
-.scene-item:active {
-  cursor: grabbing;
-}
-
-/* Número da cena */
-.scene-number {
-  margin-right: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 24px;
-}
-
-.scene-number span {
-  background: linear-gradient(135deg, #e5e7eb 0%, #d1d5db 100%);
-  color: #374151;
-  font-weight: 600;
+.scene-index {
   font-size: 12px;
-  padding: 4px 8px;
-  border-radius: 12px;
-  min-width: 20px;
-  text-align: center;
+  font-weight: bold;
+  color: #999;
+  margin-right: 8px;
 }
 
-.scene-item.active .scene-number span {
-  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-  color: white;
-}
-
-/* Miniatura da cena */
 .scene-thumbnail {
-  width: 60px;
+  width: 70px;
   height: 40px;
-  border-radius: 6px;
-  overflow: hidden;
-  background: #f8fafc;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-right: 12px;
-  flex-shrink: 0;
-}
-
-.scene-thumbnail img {
-  width: 100%;
-  height: 100%;
   object-fit: cover;
-  transition: transform 0.2s ease;
+  border-radius: 4px;
+  margin-right: 10px;
 }
 
-.scene-item:hover .scene-thumbnail img {
-  transform: scale(1.05);
-}
-
-.scene-thumbnail-text {
-  flex-direction: column;
-  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
-  border: 1px solid #f59e0b;
-}
-
-.scene-thumbnail-placeholder {
-  flex-direction: column;
-  background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
-  border: 1px solid #d1d5db;
-}
-
-/* Informações da cena */
-.scene-info {
-  flex: 1;
-  min-width: 0;
-}
-
-.scene-title {
-  margin: 0 0 4px 0;
+.scene-name {
+  flex-grow: 1;
   font-size: 14px;
-  font-weight: 600;
-  color: #1f2937;
+  color: #555;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.scene-duration {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  margin-bottom: 4px;
-  font-size: 12px;
-  color: #6b7280;
-}
-
-.scene-duration svg {
-  color: #9ca3af;
-}
-
-.scene-elements {
-  font-size: 11px;
-  color: #9ca3af;
-}
-
-.elements-count {
-  background: #f3f4f6;
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-weight: 500;
-}
-
-/* Indicador de cena ativa */
-.scene-active-indicator {
+.delete-scene-btn {
   position: absolute;
-  top: 8px;
-  right: 8px;
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  color: white;
-  padding: 4px;
-  border-radius: 50%;
+  top: -5px;
+  right: -5px;
   width: 20px;
   height: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-  0%, 100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.8;
-    transform: scale(1.1);
-  }
-}
-
-/* Responsividade */
-@media (max-width: 768px) {
-  .scene-list {
-    width: 100%;
-    max-width: 320px;
-  }
-
-  .scene-item {
-    padding: 8px;
-    margin-bottom: 6px;
-    min-height: 70px;
-  }
-
-  .scene-thumbnail {
-    width: 50px;
-    height: 35px;
-    margin-right: 8px;
-  }
-
-  .scene-title {
-    font-size: 13px;
-  }
-
-  .scene-duration {
-    font-size: 11px;
-  }
-
-  .scene-actions {
-    gap: 4px;
-  }
-
-  .scene-actions button {
-    padding: 4px 6px;
-    font-size: 11px;
-  }
-}
-
-/* Animações de entrada */
-.scene-item {
-  animation: slideInRight 0.3s ease-out;
-}
-
-@keyframes slideInRight {
-  from {
-    opacity: 0;
-    transform: translateX(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-/* Estados especiais */
-.scene-item.current-scene {
-  border-color: #10b981;
-  background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
-}
-
-.scene-item.current-scene .scene-number span {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  background-color: #ff4d4f;
   color: white;
-}
-
-/* Scrollbar personalizada */
-.scene-list-content::-webkit-scrollbar {
-  width: 6px;
-}
-
-.scene-list-content::-webkit-scrollbar-track {
-  background: #f1f5f9;
-  border-radius: 3px;
-}
-
-.scene-list-content::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 3px;
-}
-
-.scene-list-content::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
-}
-
-.control-btn.preview {
-  background-color: #4A90E2;
-  color: white;
-  border-radius: 50%;
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   border: none;
+  border-radius: 50%;
   cursor: pointer;
-  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  line-height: 1;
+  opacity: 0;
+  transition: opacity 0.2s, transform 0.2s;
+  transform: scale(0.8);
 }
 
-.control-btn.preview:hover {
-  background-color: #357ABD;
-  transform: scale(1.05);
+.scene-item:hover .delete-scene-btn {
+  opacity: 1;
+  transform: scale(1);
 }
 
-.control-btn.preview .material-icons {
-  font-size: 18px;
+.add-scene-btn {
+  margin-top: 10px;
+  padding: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  background-color: #1890ff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
 }
+
+.add-scene-btn:hover {
+  background-color: #40a9ff;
+} 

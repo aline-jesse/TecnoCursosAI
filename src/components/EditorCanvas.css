@@ -77,6 +77,21 @@
   color: white;
 }
 
+.control-btn.preview-btn {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  border-color: #065f46;
+  color: white;
+  gap: 4px;
+  padding: 6px 12px;
+  font-weight: 600;
+}
+
+.control-btn.preview-btn:hover {
+  background: linear-gradient(135deg, #047857 0%, #065f46 100%);
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
+}
+
 .zoom-level {
   color: #e5e7eb;
   font-size: 12px;

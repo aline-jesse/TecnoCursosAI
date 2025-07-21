@@ -293,6 +293,40 @@ class DashboardService:
 # Instância do serviço de dashboard
 dashboard_service = DashboardService()
 
+async def get_dashboard_context(request):
+    system_info = await dashboard_service.get_system_info()
+    component_status = await dashboard_service.get_component_status()
+    system_metrics = await dashboard_service.get_system_metrics()
+    quick_actions = await dashboard_service.get_quick_actions()
+    total_components = len(component_status)
+    online_components = len([c for c in component_status if c["status"] == "online"])
+    warning_components = len([c for c in component_status if c["status"] == "warning"])
+    error_components = len([c for c in component_status if c["status"] == "error"])
+    if error_components > 0:
+        overall_status = "error"
+        status_message = f"{error_components} componente(s) com erro"
+    elif warning_components > 0:
+        overall_status = "warning"
+        status_message = f"{warning_components} componente(s) com aviso"
+    else:
+        overall_status = "online"
+        status_message = "Todos os sistemas operacionais"
+    return {
+        "request": request,
+        "system_info": system_info,
+        "component_status": component_status,
+        "system_metrics": system_metrics,
+        "quick_actions": quick_actions,
+        "overall_status": overall_status,
+        "status_message": status_message,
+        "stats": {
+            "total": total_components,
+            "online": online_components,
+            "warning": warning_components,
+            "error": error_components
+        }
+    }
+
 @router.get("/", response_class=HTMLResponse, summary="Dashboard Principal")
 async def dashboard_home(request: Request):
     """
@@ -326,45 +360,8 @@ async def dashboard_home(request: Request):
             }
         )
         
-        # Coleta todos os dados necessários para o dashboard
-        system_info = await dashboard_service.get_system_info()
-        component_status = await dashboard_service.get_component_status()
-        system_metrics = await dashboard_service.get_system_metrics()
-        quick_actions = await dashboard_service.get_quick_actions()
-        
-        # Calcula estatísticas gerais
-        total_components = len(component_status)
-        online_components = len([c for c in component_status if c["status"] == "online"])
-        warning_components = len([c for c in component_status if c["status"] == "warning"])
-        error_components = len([c for c in component_status if c["status"] == "error"])
-        
-        # Status geral do sistema
-        if error_components > 0:
-            overall_status = "error"
-            status_message = f"{error_components} componente(s) com erro"
-        elif warning_components > 0:
-            overall_status = "warning"
-            status_message = f"{warning_components} componente(s) com aviso"
-        else:
-            overall_status = "online"
-            status_message = "Todos os sistemas operacionais"
-        
-        # Renderiza o template com todos os dados
-        return templates.TemplateResponse("dashboard.html", {
-            "request": request,
-            "system_info": system_info,
-            "component_status": component_status,
-            "system_metrics": system_metrics,
-            "quick_actions": quick_actions,
-            "overall_status": overall_status,
-            "status_message": status_message,
-            "stats": {
-                "total": total_components,
-                "online": online_components,
-                "warning": warning_components,
-                "error": error_components
-            }
-        })
+        context = await get_dashboard_context(request)
+        return templates.TemplateResponse("dashboard.html", context)
         
     except Exception as e:
         # Em caso de erro, loga e renderiza página de erro

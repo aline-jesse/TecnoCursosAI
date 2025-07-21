@@ -1,13 +1,29 @@
-/**
+/*
  * Dashboard CSS - TecnoCursosAI
  * Estilos modernos para dashboard de monitoramento
- * 
+ *
  * Inclui:
  * - Design system com variáveis CSS
  * - Gradientes e animações
  * - Cards responsivos
  * - Status indicators
  * - Grid layouts modernos
+ *
+ * =============================
+ * VARIÁVEIS PRINCIPAIS (customize aqui)
+ * =============================
+ * --primary-color: Cor principal do sistema
+ * --secondary-color: Cor secundária
+ * --accent-color: Cor de destaque
+ * --success-color: Cor para status OK
+ * --warning-color: Cor para status de aviso
+ * --error-color: Cor para status de erro
+ * --font-family: Fonte principal
+ * --gradient-bg: Gradiente de fundo do dashboard
+ * --radius, --shadow, --spacing-*: Espaçamentos, bordas e sombras
+ *
+ * Para customizar o tema, altere as variáveis abaixo em :root
+ * Exemplo: para mudar o gradiente de fundo, altere --gradient-bg
  */
 
 /* ===== VARIÁVEIS CSS ===== */

@@ -73,7 +73,16 @@ try:
     from moviepy.video.fx import resize, fadein, fadeout
     MOVIEPY_AVAILABLE = True
 except ImportError:
-    print("⚠️ MoviePy não disponível - instale: pip install moviepy")
+    VideoFileClip = None
+    AudioFileClip = None
+    ImageClip = None
+    ColorClip = None
+    TextClip = None
+    CompositeVideoClip = None
+    concatenate_videoclips = None
+    CompositeAudioClip = None
+    import logging
+    logging.warning('MoviePy não disponível - funcionalidades de vídeo avançado desativadas.')
     MOVIEPY_AVAILABLE = False
 
 # Configurar router
@@ -174,7 +183,7 @@ QUALITY_CONFIGS = {
 # FUNÇÕES AUXILIARES
 # ===============================================================
 
-def create_text_clip(text: str, duration: float, resolution: tuple, style: Dict = None) -> TextClip:
+def create_text_clip(text: str, duration: float, resolution: tuple, style: Dict = None) -> Optional[Any]:
     """Cria clip de texto com MoviePy"""
     try:
         # Configurações padrão
@@ -209,7 +218,9 @@ def create_text_clip(text: str, duration: float, resolution: tuple, style: Dict 
         # Fallback: clip simples
         return TextClip(text, fontsize=36, color='white').set_position('center').set_duration(duration)
 
-def create_image_clip(image_path: str, duration: float, resolution: tuple) -> ImageClip:
+def create_image_clip(image_path: str, duration: float, resolution: tuple) -> Optional[Any]:
+    if ImageClip is None:
+        return None
     """Cria clip de imagem com MoviePy"""
     try:
         # Verificar se arquivo existe

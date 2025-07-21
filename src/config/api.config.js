@@ -14,7 +14,7 @@
 
 // Configuração de endpoint do backend
 const API_BASE_URL =
-  process.env.REACT_APP_API_BASE_URL || 'http://localhost:8000/api/v1';
+  process.env.REACT_APP_API_BASE_URL || 'http://localhost:8001/api/v1';
 
 export const config = {
   // URL base para todas as requisições

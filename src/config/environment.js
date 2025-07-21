@@ -5,9 +5,9 @@
 // Configurações padrão para desenvolvimento
 const defaultConfig = {
   // API Backend
-  API_URL: 'http://localhost:8000',
-  API_BASE_URL: 'http://localhost:8000/api',
-  WS_URL: 'ws://localhost:8000/ws',
+  API_URL: 'http://localhost:8001',
+  API_BASE_URL: 'http://localhost:8001/api',
+  WS_URL: 'ws://localhost:8001/ws',
 
   // Upload Configuration
   MAX_FILE_SIZE: 50000000, // 50MB

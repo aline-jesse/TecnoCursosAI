@@ -23,6 +23,8 @@ import {
   ArrowsPointingOutIcon
 } from '@heroicons/react/24/outline'
 import { useEditorStore } from '../store/editorStore'
+import VideoPreviewModal from './VideoPreviewModal'
+import { usePreviewIntegration } from '../hooks/usePreviewIntegration'
 import './EditorCanvas.css'
 
 // Declaração de tipos para Fabric.js
@@ -128,7 +130,8 @@ const CanvasControls = React.memo(({
   showGrid,
   onToggleGrid,
   showRulers,
-  onToggleRulers
+  onToggleRulers,
+  onOpenPreview
 }: any) => {
   return (
     <div className="canvas-controls">
@@ -165,6 +168,15 @@ const CanvasControls = React.memo(({
           title="Mostrar/Ocultar Réguas"
         >
           <Cog6ToothIcon className="w-4 h-4" />
+        </button>
+        
+        <button
+          className="control-btn preview-btn"
+          onClick={onOpenPreview}
+          title="Preview da Cena"
+        >
+          <EyeIcon className="w-4 h-4" />
+          Preview
         </button>
       </div>
       
@@ -217,12 +229,89 @@ const EditorCanvas: React.FC<EditorCanvasProps> = ({
     updateObject,
     selectObject,
     clearCanvas,
-    exportCanvas
+    exportCanvas,
+    scenes,
+    updateScene
   } = useEditorStore()
 
-  // Custom hooks para gerenciar estado
+  // Estados do componente
+  const [selectedElementIds, setSelectedElementIds] = useState<string[]>([])
+  const [isAddingElement, setIsAddingElement] = useState(false)
+  const [draggedElementType, setDraggedElementType] = useState<string | null>(null)
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false)
+
+  // Estados do canvas e controles
   const canvasState = useCanvasState(selectedScene)
-  const { elements, addElement, removeElement, updateElement } = useSceneElements(selectedScene)
+  const sceneElements = useSceneElements(selectedScene)
+
+  // Função para abrir o preview
+  const handleOpenPreview = useCallback(() => {
+    setIsPreviewOpen(true);
+  }, []);
+
+  // Função para fechar o preview
+  const handleClosePreview = useCallback(() => {
+    setIsPreviewOpen(false);
+  }, []);
+
+  // Integração com preview - precisa estar após declaração das funções
+  const {
+    isPreviewOpen: previewOpen,
+    previewScenes,
+    initialSceneIndex,
+    openScenePreview,
+    closePreview,
+    createSaveHandler,
+    createExportHandler,
+    createNarrationHandler
+  } = usePreviewIntegration({
+    onExport: (config) => {
+      // TODO: implementar exportação real
+      console.log('Exportar vídeo:', config);
+      return Promise.resolve();
+    },
+    onSave: (scenes) => {
+      // TODO: implementar salvamento real
+      console.log('Salvar cenas:', scenes);
+      return Promise.resolve();
+    },
+    onRegenerateNarration: (sceneId, text) => {
+      // TODO: implementar regeneração real
+      console.log('Regenerar narração:', sceneId, text);
+      return Promise.resolve('Nova narração gerada');
+    }
+  });
+
+  // Remover duplicidade do estado e uso do modal
+  // Substituir o bloco duplicado de renderização do modal de preview
+  // Remover este bloco:
+  // {isPreviewOpen && (
+  //   <VideoPreviewModal
+  //     isOpen={isPreviewOpen}
+  //     scenes={previewScenes}
+  //     initialSceneIndex={initialSceneIndex}
+  //     onClose={closePreview}
+  //     onSave={createSaveHandler((sceneId: string, updates: any) => {
+  //       if (updateScene) {
+  //         updateScene(sceneId, updates);
+  //       }
+  //     })}
+  //     onExport={createExportHandler()}
+  //     onRegenerateNarration={createNarrationHandler()}
+  //   />
+  // )}
+  // Manter apenas:
+  {isPreviewOpen && (
+    <VideoPreviewModal
+      isOpen={isPreviewOpen}
+      scenes={selectedScene ? [selectedScene] : []}
+      initialSceneIndex={0}
+      onClose={handleClosePreview}
+      onExport={createExportHandler()}
+      onSave={createSaveHandler(updateScene)}
+      onRegenerateNarration={createNarrationHandler()}
+    />
+  )}
 
   // Inicializar canvas Fabric.js
   const initializeCanvas = useCallback(() => {
@@ -480,6 +569,11 @@ const EditorCanvas: React.FC<EditorCanvasProps> = ({
           onToggleGrid={canvasState.setShowGrid}
           showRulers={canvasState.showRulers}
           onToggleRulers={canvasState.setShowRulers}
+          onOpenPreview={() => {
+            if (selectedScene && scenes) {
+              openScenePreview(selectedScene, scenes);
+            }
+          }}
         />
       </div>
 
@@ -525,6 +619,19 @@ const EditorCanvas: React.FC<EditorCanvasProps> = ({
         <span>Tamanho: {canvasWidth} x {canvasHeight}</span>
         <span>Zoom: {Math.round(zoom * 100)}%</span>
       </div>
+
+      {/* Modal de Preview */}
+      {isPreviewOpen && (
+        <VideoPreviewModal
+          isOpen={isPreviewOpen}
+          scenes={selectedScene ? [selectedScene] : []}
+          initialSceneIndex={0}
+          onClose={handleClosePreview}
+          onExport={createExportHandler()}
+          onSave={createSaveHandler(updateScene)}
+          onRegenerateNarration={createNarrationHandler()}
+        />
+      )}
     </div>
   )
 }

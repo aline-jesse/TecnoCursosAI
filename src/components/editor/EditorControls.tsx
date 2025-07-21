@@ -1,335 +1,395 @@
 import React, { useState } from 'react'
-import { useEditorStore } from '../../store/editorStore'
-import './EditorControls.css'
+import {
+  PlusIcon,
+  PhotoIcon,
+  DocumentTextIcon,
+  SpeakerWaveIcon,
+  UserIcon,
+  Cog6ToothIcon,
+  EyeIcon,
+  EyeSlashIcon,
+  TrashIcon
+} from '@heroicons/react/24/outline'
 
-export const EditorControls: React.FC = () => {
-  const {
-    currentTool,
-    setCurrentTool,
-    selectedObject,
-    updateObject,
-    undo,
-    redo,
-    clearCanvas,
-    exportCanvas,
-    canvasWidth,
-    canvasHeight,
-    setCanvasSize,
-    backgroundColor,
-    setBackgroundColor,
-    zoom,
-    setZoom
-  } = useEditorStore()
+interface EditorControlsProps {
+  onAddElement?: (type: string) => void
+  onToggleLayer?: (layerId: string) => void
+  onDeleteSelected?: () => void
+}
 
-  const [showProperties, setShowProperties] = useState(false)
-  const [showCanvasSettings, setShowCanvasSettings] = useState(false)
+export const EditorControls: React.FC<EditorControlsProps> = ({
+  onAddElement,
+  onToggleLayer,
+  onDeleteSelected
+}) => {
+  const [activeTab, setActiveTab] = useState<'elements' | 'layers' | 'settings'>('elements')
 
-  const tools = [
-    { id: 'select', label: 'Selecionar', icon: '👆' },
-    { id: 'text', label: 'Texto', icon: '📝' },
-    { id: 'image', label: 'Imagem', icon: '🖼️' },
-    { id: 'shape', label: 'Forma', icon: '⬜' },
-    { id: 'draw', label: 'Desenhar', icon: '✏️' },
-    { id: 'eraser', label: 'Apagar', icon: '🧽' }
-  ] as const
-
-  const canvasSizes = [
-    { name: 'HD (1280x720)', width: 1280, height: 720 },
-    { name: 'Full HD (1920x1080)', width: 1920, height: 1080 },
-    { name: '4K (3840x2160)', width: 3840, height: 2160 },
-    { name: 'Instagram (1080x1080)', width: 1080, height: 1080 },
-    { name: 'Facebook (1200x630)', width: 1200, height: 630 },
-    { name: 'Twitter (1200x675)', width: 1200, height: 675 }
+  const elementTypes = [
+    { id: 'text', label: 'Texto', icon: DocumentTextIcon, color: '#3b82f6' },
+    { id: 'image', label: 'Imagem', icon: PhotoIcon, color: '#10b981' },
+    { id: 'audio', label: 'Áudio', icon: SpeakerWaveIcon, color: '#f59e0b' },
+    { id: 'avatar', label: 'Avatar', icon: UserIcon, color: '#8b5cf6' }
   ]
 
-  const colors = [
-    '#000000', '#ffffff', '#ff0000', '#00ff00', '#0000ff',
-    '#ffff00', '#ff00ff', '#00ffff', '#ffa500', '#800080',
-    '#008000', '#800000', '#000080', '#808080', '#c0c0c0'
+  const mockLayers = [
+    { id: 'layer-1', name: 'Fundo', visible: true, locked: false },
+    { id: 'layer-2', name: 'Texto Principal', visible: true, locked: false },
+    { id: 'layer-3', name: 'Avatar', visible: false, locked: true }
   ]
 
-  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0]
-    if (file) {
-      const reader = new FileReader()
-      reader.onload = (e) => {
-        const url = e.target?.result as string
-        // Aqui você pode adicionar a imagem ao canvas
-        console.log('Imagem carregada:', url)
-      }
-      reader.readAsDataURL(file)
+  const handleAddElement = (elementType: string) => {
+    if (onAddElement) {
+      onAddElement(elementType)
     }
   }
 
-  const handleExport = () => {
-    const dataURL = exportCanvas()
-    if (dataURL) {
-      const link = document.createElement('a')
-      link.download = `canvas-export-${Date.now()}.png`
-      link.href = dataURL
-      link.click()
-    }
-  }
+  const TabButton = ({ 
+    tab, 
+    label, 
+    isActive 
+  }: { 
+    tab: typeof activeTab, 
+    label: string, 
+    isActive: boolean 
+  }) => (
+    <button
+      onClick={() => setActiveTab(tab)}
+      className={`tab-button ${isActive ? 'active' : ''}`}
+      style={{
+        padding: '0.5rem 1rem',
+        border: 'none',
+        background: isActive ? '#3b82f6' : 'transparent',
+        color: isActive ? 'white' : '#64748b',
+        borderRadius: '0.375rem',
+        cursor: 'pointer',
+        fontSize: '0.875rem',
+        fontWeight: '500',
+        transition: 'all 0.2s ease'
+      }}
+    >
+      {label}
+    </button>
+  )
 
   return (
-    <div className="editor-controls">
-      {/* Barra de ferramentas principal */}
-      <div className="controls-section">
-        <h3>🛠️ Ferramentas</h3>
-        <div className="tools-grid">
-          {tools.map((tool) => (
-            <button
-              key={tool.id}
-              className={`tool-button ${currentTool === tool.id ? 'active' : ''}`}
-              onClick={() => setCurrentTool(tool.id)}
-              data-tool={tool.id}
-            >
-              <span className="tool-icon">{tool.icon}</span>
-              <span className="tool-label">{tool.label}</span>
-            </button>
-          ))}
+    <div className="editor-controls" style={{
+      width: '100%',
+      maxWidth: '320px',
+      background: 'white',
+      borderRadius: '0.5rem',
+      boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+      overflow: 'hidden'
+    }}>
+      {/* Header com tabs */}
+      <div className="controls-header" style={{
+        padding: '1rem',
+        borderBottom: '1px solid #e2e8f0',
+        background: '#f8fafc'
+      }}>
+        <h3 style={{
+          margin: '0 0 0.75rem 0',
+          fontSize: '1rem',
+          fontWeight: '600',
+          color: '#1e293b'
+        }}>
+          🎛️ Controles do Editor
+        </h3>
+        
+        <div className="tab-buttons" style={{
+          display: 'flex',
+          gap: '0.25rem',
+          background: '#e2e8f0',
+          padding: '0.25rem',
+          borderRadius: '0.375rem'
+        }}>
+          <TabButton tab="elements" label="Elementos" isActive={activeTab === 'elements'} />
+          <TabButton tab="layers" label="Camadas" isActive={activeTab === 'layers'} />
+          <TabButton tab="settings" label="Config" isActive={activeTab === 'settings'} />
         </div>
       </div>
 
-      {/* Controles de ação */}
-      <div className="controls-section">
-        <h3>⚡ Ações</h3>
-        <div className="action-buttons">
-          <button onClick={undo} className="action-button">
-            ↩️ Desfazer
-          </button>
-          <button onClick={redo} className="action-button">
-            ↪️ Refazer
-          </button>
-          <button onClick={clearCanvas} className="action-button danger">
-            🗑️ Limpar
-          </button>
-          <button onClick={handleExport} className="action-button primary">
-            💾 Exportar
-          </button>
-        </div>
-      </div>
-
-      {/* Configurações do canvas */}
-      <div className="controls-section">
-        <h3>⚙️ Configurações</h3>
-        <div className="settings-grid">
-          <button
-            onClick={() => setShowCanvasSettings(!showCanvasSettings)}
-            className="settings-toggle"
-          >
-            📐 Tamanho do Canvas
-          </button>
-          
-          {showCanvasSettings && (
-            <div className="settings-panel">
-              <div className="size-presets">
-                {canvasSizes.map((size) => (
+      {/* Conteúdo dos tabs */}
+      <div className="controls-content" style={{
+        padding: '1rem',
+        maxHeight: '400px',
+        overflowY: 'auto'
+      }}>
+        {/* Tab: Elementos */}
+        {activeTab === 'elements' && (
+          <div className="elements-tab">
+            <h4 style={{
+              margin: '0 0 0.75rem 0',
+              fontSize: '0.875rem',
+              fontWeight: '600',
+              color: '#374151'
+            }}>
+              Adicionar Elementos
+            </h4>
+            
+            <div className="element-grid" style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(2, 1fr)',
+              gap: '0.5rem'
+            }}>
+              {elementTypes.map((element) => {
+                const IconComponent = element.icon
+                return (
                   <button
-                    key={size.name}
-                    onClick={() => setCanvasSize(size.width, size.height)}
-                    className={`size-preset ${
-                      canvasWidth === size.width && canvasHeight === size.height ? 'active' : ''
-                    }`}
+                    key={element.id}
+                    onClick={() => handleAddElement(element.id)}
+                    className="element-button"
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      padding: '0.75rem',
+                      border: `2px solid ${element.color}20`,
+                      borderRadius: '0.5rem',
+                      background: `${element.color}10`,
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease',
+                      fontSize: '0.75rem',
+                      fontWeight: '500',
+                      color: element.color
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = 'translateY(-2px)'
+                      e.currentTarget.style.boxShadow = `0 4px 12px ${element.color}30`
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = 'translateY(0)'
+                      e.currentTarget.style.boxShadow = 'none'
+                    }}
                   >
-                    {size.name}
+                    <IconComponent 
+                      style={{ 
+                        width: '1.5rem', 
+                        height: '1.5rem', 
+                        marginBottom: '0.25rem' 
+                      }} 
+                    />
+                    {element.label}
                   </button>
-                ))}
-              </div>
-              
-              <div className="custom-size">
-                <label>
-                  Largura:
-                  <input
-                    type="number"
-                    value={canvasWidth}
-                    onChange={(e) => setCanvasSize(Number(e.target.value), canvasHeight)}
-                    min="100"
-                    max="4000"
-                  />
+                )
+              })}
+            </div>
+
+            <div style={{ marginTop: '1rem' }}>
+              <button
+                onClick={onDeleteSelected}
+                style={{
+                  width: '100%',
+                  padding: '0.75rem',
+                  background: '#ef4444',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '0.375rem',
+                  cursor: 'pointer',
+                  fontSize: '0.875rem',
+                  fontWeight: '500',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '0.5rem',
+                  transition: 'all 0.2s ease'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = '#dc2626'
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = '#ef4444'
+                }}
+              >
+                <TrashIcon style={{ width: '1rem', height: '1rem' }} />
+                Excluir Selecionado
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Tab: Camadas */}
+        {activeTab === 'layers' && (
+          <div className="layers-tab">
+            <h4 style={{
+              margin: '0 0 0.75rem 0',
+              fontSize: '0.875rem',
+              fontWeight: '600',
+              color: '#374151'
+            }}>
+              Gerenciar Camadas
+            </h4>
+            
+            <div className="layers-list" style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '0.5rem'
+            }}>
+              {mockLayers.map((layer) => (
+                <div
+                  key={layer.id}
+                  className="layer-item"
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    padding: '0.5rem',
+                    background: '#f8fafc',
+                    borderRadius: '0.375rem',
+                    border: '1px solid #e2e8f0'
+                  }}
+                >
+                  <span style={{
+                    fontSize: '0.875rem',
+                    color: '#374151',
+                    fontWeight: '500'
+                  }}>
+                    {layer.name}
+                  </span>
+                  
+                  <div style={{ display: 'flex', gap: '0.25rem' }}>
+                    <button
+                      onClick={() => onToggleLayer && onToggleLayer(layer.id)}
+                      style={{
+                        padding: '0.25rem',
+                        background: 'transparent',
+                        border: 'none',
+                        cursor: 'pointer',
+                        color: layer.visible ? '#10b981' : '#64748b',
+                        transition: 'color 0.2s ease'
+                      }}
+                      title={layer.visible ? 'Ocultar camada' : 'Mostrar camada'}
+                    >
+                      {layer.visible ? (
+                        <EyeIcon style={{ width: '1rem', height: '1rem' }} />
+                      ) : (
+                        <EyeSlashIcon style={{ width: '1rem', height: '1rem' }} />
+                      )}
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Tab: Configurações */}
+        {activeTab === 'settings' && (
+          <div className="settings-tab">
+            <h4 style={{
+              margin: '0 0 0.75rem 0',
+              fontSize: '0.875rem',
+              fontWeight: '600',
+              color: '#374151'
+            }}>
+              Configurações
+            </h4>
+            
+            <div className="settings-list" style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '0.75rem'
+            }}>
+              {/* Canvas Size */}
+              <div className="setting-group">
+                <label style={{
+                  fontSize: '0.75rem',
+                  fontWeight: '500',
+                  color: '#64748b',
+                  marginBottom: '0.25rem',
+                  display: 'block'
+                }}>
+                  Tamanho do Canvas
                 </label>
-                <label>
-                  Altura:
+                <select style={{
+                  width: '100%',
+                  padding: '0.5rem',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '0.375rem',
+                  fontSize: '0.875rem',
+                  background: 'white'
+                }}>
+                  <option>1920x1080 (Full HD)</option>
+                  <option>1280x720 (HD)</option>
+                  <option>800x600 (4:3)</option>
+                  <option>1080x1080 (Quadrado)</option>
+                </select>
+              </div>
+
+              {/* Background Color */}
+              <div className="setting-group">
+                <label style={{
+                  fontSize: '0.75rem',
+                  fontWeight: '500',
+                  color: '#64748b',
+                  marginBottom: '0.25rem',
+                  display: 'block'
+                }}>
+                  Cor de Fundo
+                </label>
+                <input
+                  type="color"
+                  defaultValue="#ffffff"
+                  style={{
+                    width: '100%',
+                    height: '2.5rem',
+                    border: '1px solid #d1d5db',
+                    borderRadius: '0.375rem',
+                    cursor: 'pointer'
+                  }}
+                />
+              </div>
+
+              {/* Snap to Grid */}
+              <div className="setting-group">
+                <label style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                  fontSize: '0.875rem',
+                  color: '#374151',
+                  cursor: 'pointer'
+                }}>
                   <input
-                    type="number"
-                    value={canvasHeight}
-                    onChange={(e) => setCanvasSize(canvasWidth, Number(e.target.value))}
-                    min="100"
-                    max="4000"
+                    type="checkbox"
+                    defaultChecked
+                    style={{
+                      width: '1rem',
+                      height: '1rem',
+                      cursor: 'pointer'
+                    }}
                   />
+                  Snap to Grid
+                </label>
+              </div>
+
+              {/* Show Rulers */}
+              <div className="setting-group">
+                <label style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                  fontSize: '0.875rem',
+                  color: '#374151',
+                  cursor: 'pointer'
+                }}>
+                  <input
+                    type="checkbox"
+                    defaultChecked
+                    style={{
+                      width: '1rem',
+                      height: '1rem',
+                      cursor: 'pointer'
+                    }}
+                  />
+                  Mostrar Réguas
                 </label>
               </div>
             </div>
-          )}
-
-          <div className="background-color">
-            <label>Cor de Fundo:</label>
-            <div className="color-picker">
-              <input
-                type="color"
-                value={backgroundColor}
-                onChange={(e) => setBackgroundColor(e.target.value)}
-                className="color-input"
-              />
-              <div className="color-presets">
-                {colors.map((color) => (
-                  <button
-                    key={color}
-                    onClick={() => setBackgroundColor(color)}
-                    className="color-preset"
-                    style={{ backgroundColor: color }}
-                    title={color}
-                  />
-                ))}
-              </div>
-            </div>
           </div>
-
-          <div className="zoom-control">
-            <label>Zoom: {Math.round(zoom * 100)}%</label>
-            <input
-              type="range"
-              min="0.1"
-              max="3"
-              step="0.1"
-              value={zoom}
-              onChange={(e) => setZoom(Number(e.target.value))}
-              className="zoom-slider"
-            />
-            <div className="zoom-buttons">
-              <button onClick={() => setZoom(zoom * 0.9)}>🔍-</button>
-              <button onClick={() => setZoom(1)}>100%</button>
-              <button onClick={() => setZoom(zoom * 1.1)}>🔍+</button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Propriedades do objeto selecionado */}
-      {selectedObject && (
-        <div className="controls-section">
-          <h3>📋 Propriedades</h3>
-          <div className="properties-panel">
-            <div className="property-group">
-              <label>Posição X:</label>
-              <input
-                type="number"
-                value={selectedObject.properties.left}
-                onChange={(e) => updateObject(selectedObject.id, { left: Number(e.target.value) })}
-              />
-            </div>
-            
-            <div className="property-group">
-              <label>Posição Y:</label>
-              <input
-                type="number"
-                value={selectedObject.properties.top}
-                onChange={(e) => updateObject(selectedObject.id, { top: Number(e.target.value) })}
-              />
-            </div>
-            
-            <div className="property-group">
-              <label>Largura:</label>
-              <input
-                type="number"
-                value={selectedObject.properties.width}
-                onChange={(e) => updateObject(selectedObject.id, { width: Number(e.target.value) })}
-              />
-            </div>
-            
-            <div className="property-group">
-              <label>Altura:</label>
-              <input
-                type="number"
-                value={selectedObject.properties.height}
-                onChange={(e) => updateObject(selectedObject.id, { height: Number(e.target.value) })}
-              />
-            </div>
-            
-            <div className="property-group">
-              <label>Rotação:</label>
-              <input
-                type="number"
-                value={selectedObject.properties.angle}
-                onChange={(e) => updateObject(selectedObject.id, { angle: Number(e.target.value) })}
-                min="0"
-                max="360"
-              />
-            </div>
-
-            {selectedObject.type === 'text' && (
-              <>
-                <div className="property-group">
-                  <label>Texto:</label>
-                  <input
-                    type="text"
-                    value={selectedObject.properties.text || ''}
-                    onChange={(e) => updateObject(selectedObject.id, { text: e.target.value })}
-                  />
-                </div>
-                
-                <div className="property-group">
-                  <label>Tamanho da Fonte:</label>
-                  <input
-                    type="number"
-                    value={selectedObject.properties.fontSize || 20}
-                    onChange={(e) => updateObject(selectedObject.id, { fontSize: Number(e.target.value) })}
-                    min="8"
-                    max="200"
-                  />
-                </div>
-                
-                <div className="property-group">
-                  <label>Cor do Texto:</label>
-                  <input
-                    type="color"
-                    value={selectedObject.properties.fill || '#000000'}
-                    onChange={(e) => updateObject(selectedObject.id, { fill: e.target.value })}
-                  />
-                </div>
-              </>
-            )}
-
-            {selectedObject.type === 'shape' && (
-              <>
-                <div className="property-group">
-                  <label>Cor de Preenchimento:</label>
-                  <input
-                    type="color"
-                    value={selectedObject.properties.fill || '#ff0000'}
-                    onChange={(e) => updateObject(selectedObject.id, { fill: e.target.value })}
-                  />
-                </div>
-                
-                <div className="property-group">
-                  <label>Cor da Borda:</label>
-                  <input
-                    type="color"
-                    value={selectedObject.properties.stroke || '#000000'}
-                    onChange={(e) => updateObject(selectedObject.id, { stroke: e.target.value })}
-                  />
-                </div>
-              </>
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* Upload de arquivos */}
-      <div className="controls-section">
-        <h3>📁 Arquivos</h3>
-        <div className="file-upload">
-          <label className="upload-button">
-            📤 Carregar Imagem
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleFileUpload}
-              style={{ display: 'none' }}
-            />
-          </label>
-        </div>
+        )}
       </div>
     </div>
   )
-} 
+}
+
+export default EditorControls 

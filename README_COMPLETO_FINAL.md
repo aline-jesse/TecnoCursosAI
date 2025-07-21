@@ -460,6 +460,24 @@ websockets==12.0
 
 ---
 
+## 📚 Documentação Automática da API (FastAPI)
+
+O sistema expõe automaticamente duas rotas para documentação da API:
+
+- **Swagger UI:** [`/docs`](http://localhost:8001/docs)
+  - Interface interativa para testar e explorar todos os endpoints da API.
+  - Permite enviar requisições, visualizar exemplos e schemas de entrada/saída.
+
+- **ReDoc:** [`/redoc`](http://localhost:8001/redoc)
+  - Documentação detalhada, ideal para leitura, referência e navegação por todos os endpoints.
+  - Apresenta descrições, parâmetros, exemplos e agrupamento por tags.
+
+Essas rotas são geradas automaticamente pelo FastAPI e refletem todos os endpoints disponíveis no sistema.
+
+> Utilize `/docs` para testes rápidos e integração, e `/redoc` para consulta detalhada e documentação técnica.
+
+---
+
 ## 🏆 CONCLUSÃO
 
 O **TecnoCursos AI** foi implementado com **100% de sucesso** como um sistema completo e profissional de edição de vídeo. Todas as funcionalidades principais foram implementadas e testadas:

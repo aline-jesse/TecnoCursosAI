@@ -258,3 +258,18 @@
 .canvas-wrapper::-webkit-scrollbar-thumb:hover {
   background: #a8a8a8;
 } 
+
+/* src/components/editor/EditorCanvas.css */
+.editor-canvas-container {
+  flex-grow: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #e9ebee;
+  padding: 20px;
+}
+
+.konvajs-content {
+  background-color: white;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+} 

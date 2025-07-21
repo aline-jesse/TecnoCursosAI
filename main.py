@@ -22,6 +22,7 @@ import asyncio
 # Import dos routers
 from app.routers.dashboard import router as dashboard_router
 from app.routers.notifications import router as notifications_router
+from app.routers import preview
 from app.services.notification_service import cleanup_notifications_task
 from app.services.logging_service import logging_service, LogLevel, LogCategory
 
@@ -65,6 +66,7 @@ except Exception as e:
 # Incluir routers
 app.include_router(dashboard_router, tags=["dashboard"])
 app.include_router(notifications_router, tags=["notificações"])
+app.include_router(preview.router)
 
 # Eventos de startup e shutdown
 @app.on_event("startup")

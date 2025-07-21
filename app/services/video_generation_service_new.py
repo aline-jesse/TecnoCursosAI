@@ -16,8 +16,10 @@ try:
     from moviepy.editor import *
     from moviepy.config import check_moviepy
     MOVIEPY_AVAILABLE = True
+    VideoClipType = VideoClip
 except ImportError:
     MOVIEPY_AVAILABLE = False
+    VideoClipType = Any  # Fallback para quando MoviePy não estiver disponível
 
 from PIL import Image, ImageDraw, ImageFont
 import numpy as np
@@ -135,7 +137,7 @@ class VideoGenerationService:
                 "details": "Verifique os logs para mais informações"
             }
     
-    async def _create_scene_clip(self, scene: Dict[str, Any], settings: Dict[str, Any]) -> Optional[VideoClip]:
+    async def _create_scene_clip(self, scene: Dict[str, Any], settings: Dict[str, Any]) -> Optional[VideoClipType]:
         """Criar clip de vídeo para uma cena específica"""
         try:
             duration = scene.get("duration", 3)
