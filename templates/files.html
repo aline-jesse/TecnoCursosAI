@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciar Arquivos - TecnoCursos AI</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <!-- Favicon with multiple formats for better compatibility -->
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+    <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+    <link rel="apple-touch-icon" href="/static/favicon.svg">
+    <style>
+        .upload-area {
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        
+        .upload-area.dragover {
+            background: linear-gradient(135deg, #e8f5e8 0%, #f0fff0 100%);
+            border-color: var(--success-color);
+        }
+        
+        .file-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        .file-card {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 1.5rem;
+            transition: var(--transition);
+            border: 1px solid #eee;
+        }
+        
+        .file-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+        
+        .file-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+        
+        .file-icon {
+            font-size: 2rem;
+            margin-right: 0.5rem;
+        }
+        
+        .file-title {
+            font-weight: 600;
+            color: var(--dark-color);
+            margin: 0;
+            font-size: 1rem;
+            flex: 1;
+            word-break: break-word;
+        }
+        
+        .file-status {
+            padding: 0.25rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+        
+        .status-uploaded {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+        
+        .status-processing {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+        
+        .status-processed {
+            background: #e8f5e8;
+            color: #2e7d32;
+        }
+        
+        .status-error {
+            background: #ffebee;
+            color: #c62828;
+        }
+        
+        .file-meta {
+            display: flex;
+            justify-content: space-between;
+            margin: 0.75rem 0;
+            font-size: 0.875rem;
+            color: var(--secondary-color);
+        }
+        
+        .file-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+            min-width: auto;
+        }
+        
+        .progress-container {
+            margin: 1rem 0;
+        }
+        
+        .filters {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .stats-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            color: var(--secondary-color);
+            font-size: 0.875rem;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--secondary-color);
+        }
+        
+        .empty-state img {
+            max-width: 200px;
+            opacity: 0.5;
+            margin-bottom: 2rem;
+        }
+        
+        @media (max-width: 768px) {
+            .file-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .filters {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .filter-group {
+                justify-content: space-between;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <nav class="nav">
+                <a href="/" class="logo">TecnoCursos AI</a>
+                <ul class="nav-links">
+                    <li><a href="/dashboard.html">Dashboard</a></li>
+                    <li><a href="/projects.html">Projetos</a></li>
+                    <li><a href="/files.html" class="active">Arquivos</a></li>
+                    <li><a href="/profile.html">Perfil</a></li>
+                    <li><a href="#" data-logout>Sair</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container">
+        <!-- Page Header -->
+        <div class="card fade-in">
+            <div class="card-header">
+                <h1 class="card-title">📁 Gerenciar Arquivos</h1>
+                <p class="card-subtitle">Faça upload e gerencie seus documentos PDF e apresentações PowerPoint</p>
+            </div>
+        </div>
+
+        <!-- Statistics Cards -->
+        <div class="stats-cards slide-up" data-auto-refresh="loadFileStats">
+            <div class="stat-card">
+                <div class="stat-number text-primary" id="total-files">-</div>
+                <div class="stat-label">Total de Arquivos</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number text-success" id="processed-files">-</div>
+                <div class="stat-label">Processados</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number text-warning" id="processing-files">-</div>
+                <div class="stat-label">Em Processamento</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number text-info" id="storage-used">-</div>
+                <div class="stat-label">Armazenamento</div>
+            </div>
+        </div>
+
+        <!-- Upload Area -->
+        <div class="card bounce-in">
+            <div class="card-header">
+                <h2 class="card-title">📤 Upload de Arquivos</h2>
+                <button class="btn btn-outline" onclick="document.getElementById('file-input').click()">
+                    Selecionar Arquivos
+                </button>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info" style="margin-bottom: 1rem;">
+                    <strong>💡 Dica:</strong> Não tem um projeto ainda? Não se preocupe! 
+                    O sistema criará automaticamente um projeto para você ao fazer o upload.
+                    <br>
+                    <small class="text-muted">
+                        Ou você pode <a href="#" onclick="showCreateProjectModal()" class="alert-link">criar um projeto manualmente</a> antes.
+                    </small>
+                </div>
+                
+                <div class="file-upload upload-area" id="upload-area">
+                    <div class="file-upload-icon">📄</div>
+                    <h3>Arraste e solte seus arquivos aqui</h3>
+                    <p>ou clique para selecionar arquivos</p>
+                    <p class="text-muted">Formatos suportados: PDF, PPTX, PPT (máximo 100MB)</p>
+                    <input type="file" id="file-input" multiple accept=".pdf,.pptx,.ppt" style="display: none;">
+                </div>
+                
+                <!-- Upload Progress -->
+                <div id="upload-progress" style="display: none;">
+                    <h4>Upload em andamento...</h4>
+                    <div class="progress">
+                        <div class="progress-bar" id="upload-progress-bar"></div>
+                    </div>
+                    <div id="upload-status"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filters and Search -->
+        <div class="card">
+            <div class="card-body">
+                <div class="filters">
+                    <div class="filter-group">
+                        <label>🔍 Pesquisar:</label>
+                        <input type="text" class="form-control" placeholder="Nome do arquivo..."
+                               data-search=".file-grid" style="width: 250px;">
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label>📋 Projeto:</label>
+                        <select class="form-control" id="project-filter" style="width: 200px;">
+                            <option value="">Todos os projetos</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label>🏷️ Status:</label>
+                        <select class="form-control" id="status-filter" style="width: 150px;">
+                            <option value="">Todos os status</option>
+                            <option value="uploaded">Enviado</option>
+                            <option value="processing">Processando</option>
+                            <option value="processed">Processado</option>
+                            <option value="error">Erro</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label>📅 Período:</label>
+                        <select class="form-control" id="date-filter" style="width: 150px;">
+                            <option value="">Todos</option>
+                            <option value="today">Hoje</option>
+                            <option value="week">Esta semana</option>
+                            <option value="month">Este mês</option>
+                        </select>
+                    </div>
+                    
+                    <button class="btn btn-secondary btn-sm" onclick="clearFilters()">
+                        🔄 Limpar Filtros
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Files Grid -->
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">📋 Meus Arquivos</h2>
+                <div>
+                    <button class="btn btn-secondary btn-sm" onclick="loadFiles()">🔄 Atualizar</button>
+                    <button class="btn btn-primary btn-sm" onclick="bulkProcess()">⚡ Processar Selecionados</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="files-container">
+                    <div class="spinner"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- File Preview Modal -->
+    <div id="preview-modal" class="modal">
+        <div class="modal-content" style="max-width: 800px;">
+            <div class="modal-header">
+                <h3 id="preview-title">Visualizar Arquivo</h3>
+                <button class="close" onclick="closeModal(this)">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="preview-content"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal(this)">Fechar</button>
+                <button class="btn btn-primary" id="download-btn">Download</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/static/js/app.js"></script>
+    <script>
+        let selectedFiles = new Set();
+        let allFiles = [];
+        let allProjects = [];
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (!requireAuth()) return;
+
+            // Setup file upload
+            initFileUpload(document.getElementById('upload-area'), handleFileSelect);
+            
+            // Setup filters
+            setupFilters();
+            
+            // Load data
+            await Promise.all([
+                loadFiles(),
+                loadProjects(),
+                loadFileStats()
+            ]);
+        });
+
+        async function loadFiles() {
+            try {
+                const container = document.getElementById('files-container');
+                showSpinner(container);
+                
+                const files = await api.request('/files/');
+                allFiles = files;
+                displayFiles(files);
+                
+            } catch (error) {
+                document.getElementById('files-container').innerHTML = 
+                    '<div class="alert alert-danger">Erro ao carregar arquivos: ' + error.message + '</div>';
+            }
+        }
+
+        function displayFiles(files) {
+            const container = document.getElementById('files-container');
+            
+            if (files.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div style="font-size: 4rem; margin-bottom: 1rem;">📄</div>
+                        <h3>Nenhum arquivo encontrado</h3>
+                        <p>Faça upload do seu primeiro arquivo para começar!</p>
+                        <button class="btn btn-primary mt-2" onclick="document.getElementById('file-input').click()">
+                            📤 Upload Arquivo
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = `
+                <div class="file-grid">
+                    ${files.map(file => createFileCard(file)).join('')}
+                </div>
+            `;
+        }
+
+        function createFileCard(file) {
+            const statusClass = `status-${file.status}`;
+            const statusText = {
+                'uploaded': 'Enviado',
+                'processing': 'Processando',
+                'processed': 'Processado',
+                'error': 'Erro'
+            }[file.status] || file.status;
+
+            return `
+                <div class="file-card" data-file-id="${file.id}">
+                    <div class="file-header">
+                        <div style="display: flex; align-items: center; flex: 1;">
+                            <span class="file-icon">${getFileIcon(file.filename)}</span>
+                            <h3 class="file-title" title="${file.filename}">${file.filename}</h3>
+                        </div>
+                        <span class="file-status ${statusClass}">${statusText}</span>
+                    </div>
+                    
+                    <div class="file-meta">
+                        <span>📊 ${file.project?.title || 'Sem projeto'}</span>
+                        <span>💾 ${formatFileSize(file.file_size)}</span>
+                    </div>
+                    
+                    <div class="file-meta">
+                        <span>📅 ${formatDate(file.created_at)}</span>
+                        <span>👤 ${file.user?.full_name || 'Usuário'}</span>
+                    </div>
+                    
+                    ${file.status === 'processing' ? `
+                        <div class="progress-container">
+                            <div class="progress">
+                                <div class="progress-bar" style="width: ${file.processing_progress || 0}%">
+                                    ${file.processing_progress || 0}%
+                                </div>
+                            </div>
+                        </div>
+                    ` : ''}
+                    
+                    ${file.error_message ? `
+                        <div class="alert alert-danger mt-2">
+                            <small>⚠️ ${file.error_message}</small>
+                        </div>
+                    ` : ''}
+                    
+                    <div class="file-actions">
+                        <button class="btn btn-outline btn-sm" onclick="previewFile('${file.id}')">
+                            👁️ Visualizar
+                        </button>
+                        
+                        ${file.status === 'processed' && file.video_id ? `
+                            <button class="btn btn-success btn-sm" onclick="viewVideo('${file.video_id}')">
+                                🎬 Vídeo
+                            </button>
+                        ` : ''}
+                        
+                        ${file.status === 'uploaded' || file.status === 'error' ? `
+                            <button class="btn btn-warning btn-sm" onclick="processFile('${file.id}')">
+                                ⚡ Processar
+                            </button>
+                        ` : ''}
+                        
+                        <button class="btn btn-secondary btn-sm" onclick="downloadFile('${file.id}')">
+                            ⬇️ Download
+                        </button>
+                        
+                        <button class="btn btn-danger btn-sm" onclick="deleteFile('${file.id}')">
+                            🗑️ Excluir
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        async function loadProjects() {
+            try {
+                const projects = await api.getProjects();
+                allProjects = projects;
+                
+                const projectFilter = document.getElementById('project-filter');
+                projectFilter.innerHTML = '<option value="">Todos os projetos</option>' +
+                    projects.map(p => `<option value="${p.id}">${p.title}</option>`).join('');
+                
+            } catch (error) {
+                console.error('Erro ao carregar projetos:', error);
+            }
+        }
+
+        async function loadFileStats() {
+            try {
+                const stats = await api.request('/files/stats');
+                
+                document.getElementById('total-files').textContent = stats.total || 0;
+                document.getElementById('processed-files').textContent = stats.processed || 0;
+                document.getElementById('processing-files').textContent = stats.processing || 0;
+                document.getElementById('storage-used').textContent = formatFileSize(stats.storage_used || 0);
+                
+            } catch (error) {
+                console.error('Erro ao carregar estatísticas:', error);
+            }
+        }
+
+        // Função melhorada para lidar com upload inteligente
+        async function handleFileSelect(files) {
+            const validFiles = [];
+            const errors = [];
+
+            // Validar arquivos
+            for (const file of files) {
+                if (file.size > 100 * 1024 * 1024) {
+                    errors.push(`${file.name}: Arquivo muito grande (máx 100MB)`);
+                    continue;
+                }
+
+                const ext = file.name.toLowerCase().split('.').pop();
+                if (!['pdf', 'pptx', 'ppt', 'docx'].includes(ext)) {
+                    errors.push(`${file.name}: Formato não suportado`);
+                    continue;
+                }
+
+                validFiles.push(file);
+            }
+
+            if (errors.length > 0) {
+                showNotification('Alguns arquivos não puderam ser processados:\n' + errors.join('\n'), 'warning');
+            }
+
+            if (validFiles.length === 0) return;
+
+            // Verificar projetos disponíveis primeiro
+            try {
+                const projectsInfo = await api.checkProjects();
+                
+                if (projectsInfo.has_projects) {
+                    // Usuário tem projetos - mostrar modal de seleção
+                    showProjectSelectionModal(validFiles, projectsInfo);
+                } else {
+                    // Usuário não tem projetos - mostrar modal simplificado com criação automática
+                    showAutoCreateProjectModal(validFiles, projectsInfo);
+                }
+            } catch (error) {
+                console.error('Erro ao verificar projetos:', error);
+                // Fallback: mostrar modal de criação automática
+                showAutoCreateProjectModal(validFiles, { 
+                    can_auto_create: true, 
+                    message: "Sistema criará um projeto automaticamente para você" 
+                });
+            }
+        }
+
+        function showProjectSelectionModal(files, projectsInfo) {
+            const modalContent = `
+                <form id="upload-form">
+                    <div class="alert alert-info">
+                        <strong>📋 ${projectsInfo.message}</strong>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Selecione um projeto para os arquivos:</label>
+                        <select class="form-control" name="project_id" required>
+                            <option value="">Selecione um projeto...</option>
+                            ${projectsInfo.projects.map(p => `<option value="${p.id}">${p.name}</option>`).join('')}
+                        </select>
+                        <small class="text-muted">Ou deixe em branco para criar automaticamente um novo projeto</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Arquivos selecionados:</label>
+                        <ul style="list-style: none; padding: 0;">
+                            ${files.map(f => `
+                                <li style="padding: 0.5rem; background: #f8f9fa; margin: 0.25rem 0; border-radius: 4px;">
+                                    ${getFileIcon(f.name)} ${f.name} (${formatFileSize(f.size)})
+                                </li>
+                            `).join('')}
+                        </ul>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" name="auto_process" checked>
+                            Processar automaticamente após upload
+                        </label>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" name="auto_create_project" checked>
+                            Permitir criação automática de projeto se necessário
+                        </label>
+                    </div>
+                </form>
+            `;
+
+            showModal('Upload de Arquivos', modalContent, [
+                {
+                    text: 'Cancelar',
+                    type: 'secondary',
+                    onclick: 'closeModal(this)'
+                },
+                {
+                    text: 'Fazer Upload',
+                    type: 'primary',
+                    onclick: `uploadFiles(${JSON.stringify(files.map(f => f.name))})`
+                }
+            ]);
+
+            // Store files for upload
+            window.pendingFiles = files;
+        }
+        
+        function showAutoCreateProjectModal(files, projectsInfo) {
+            const modalContent = `
+                <form id="upload-form">
+                    <div class="alert alert-success">
+                        <strong>✨ Primeiro Upload!</strong><br>
+                        ${projectsInfo.message}
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Nome do projeto (opcional):</label>
+                        <input type="text" class="form-control" name="project_name" 
+                               placeholder="Deixe em branco para nome automático">
+                        <small class="text-muted">Se não preenchido, será criado como "Meus Cursos - seu_usuario"</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Arquivos selecionados:</label>
+                        <ul style="list-style: none; padding: 0;">
+                            ${files.map(f => `
+                                <li style="padding: 0.5rem; background: #f8f9fa; margin: 0.25rem 0; border-radius: 4px;">
+                                    ${getFileIcon(f.name)} ${f.name} (${formatFileSize(f.size)})
+                                </li>
+                            `).join('')}
+                        </ul>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" name="auto_process" checked>
+                            Processar automaticamente após upload (recomendado)
+                        </label>
+                    </div>
+                    
+                    <input type="hidden" name="auto_create_project" value="true">
+                </form>
+            `;
+
+            showModal('🚀 Upload Inteligente - Criação Automática', modalContent, [
+                {
+                    text: 'Cancelar',
+                    type: 'secondary',
+                    onclick: 'closeModal(this)'
+                },
+                {
+                    text: '🎯 Iniciar Upload',
+                    type: 'primary',
+                    onclick: `uploadFiles(${JSON.stringify(files.map(f => f.name))})`
+                }
+            ]);
+
+            // Store files for upload
+            window.pendingFiles = files;
+        }
+
+        async function uploadFiles(fileNames) {
+            const form = document.getElementById('upload-form');
+
+            const formData = new FormData(form);
+            const projectId = formData.get('project_id') || null;
+            const autoProcess = formData.get('auto_process');
+            const autoCreateProject = formData.get('auto_create_project') === 'true';
+            const projectName = formData.get('project_name');
+
+            closeModal(form);
+
+            // Show upload progress
+            const progressContainer = document.getElementById('upload-progress');
+            const progressBar = document.getElementById('upload-progress-bar');
+            const statusDiv = document.getElementById('upload-status');
+            
+            progressContainer.style.display = 'block';
+            
+            try {
+                let uploadedCount = 0;
+                const totalFiles = window.pendingFiles.length;
+
+                for (let file of window.pendingFiles) {
+                    statusDiv.textContent = `Enviando ${file.name}...`;
+                    
+                    try {
+                        const uploadOptions = {
+                            autoCreateProject: autoCreateProject,
+                            description: `Upload automático de ${file.name}`
+                        };
+                        
+                        await api.uploadFile(file, projectId, uploadOptions);
+                        uploadedCount++;
+                        
+                        const progress = (uploadedCount / totalFiles) * 100;
+                        updateProgress(progressContainer, progress);
+                        
+                        showNotification(`✅ ${file.name} enviado com sucesso!`, 'success');
+                        
+                    } catch (error) {
+                        showNotification(`❌ Erro ao enviar ${file.name}: ${error.message}`, 'danger');
+                    }
+                }
+
+                statusDiv.textContent = `Upload concluído! ${uploadedCount}/${totalFiles} arquivos enviados.`;
+                
+                // Reload files
+                await loadFiles();
+                await loadFileStats();
+                
+                // Hide progress after delay
+                setTimeout(() => {
+                    progressContainer.style.display = 'none';
+                }, 3000);
+
+            } catch (error) {
+                showNotification('Erro durante o upload: ' + error.message, 'danger');
+                progressContainer.style.display = 'none';
+            }
+
+            // Clear pending files
+            window.pendingFiles = null;
+        }
+
+        function setupFilters() {
+            const filters = ['project-filter', 'status-filter', 'date-filter'];
+            
+            filters.forEach(filterId => {
+                document.getElementById(filterId).addEventListener('change', applyFilters);
+            });
+        }
+
+        function applyFilters() {
+            const projectFilter = document.getElementById('project-filter').value;
+            const statusFilter = document.getElementById('status-filter').value;
+            const dateFilter = document.getElementById('date-filter').value;
+            
+            let filteredFiles = [...allFiles];
+            
+            if (projectFilter) {
+                filteredFiles = filteredFiles.filter(f => f.project_id === projectFilter);
+            }
+            
+            if (statusFilter) {
+                filteredFiles = filteredFiles.filter(f => f.status === statusFilter);
+            }
+            
+            if (dateFilter) {
+                const now = new Date();
+                const filterDate = new Date();
+                
+                switch (dateFilter) {
+                    case 'today':
+                        filterDate.setHours(0, 0, 0, 0);
+                        break;
+                    case 'week':
+                        filterDate.setDate(now.getDate() - 7);
+                        break;
+                    case 'month':
+                        filterDate.setMonth(now.getMonth() - 1);
+                        break;
+                }
+                
+                filteredFiles = filteredFiles.filter(f => 
+                    new Date(f.created_at) >= filterDate
+                );
+            }
+            
+            displayFiles(filteredFiles);
+        }
+
+        function clearFilters() {
+            document.getElementById('project-filter').value = '';
+            document.getElementById('status-filter').value = '';
+            document.getElementById('date-filter').value = '';
+            document.querySelector('[data-search]').value = '';
+            
+            displayFiles(allFiles);
+        }
+
+        async function previewFile(fileId) {
+            try {
+                const file = allFiles.find(f => f.id === fileId);
+                if (!file) return;
+
+                const modal = document.getElementById('preview-modal');
+                const title = document.getElementById('preview-title');
+                const content = document.getElementById('preview-content');
+                const downloadBtn = document.getElementById('download-btn');
+
+                title.textContent = file.filename;
+                
+                // Set download button
+                downloadBtn.onclick = () => downloadFile(fileId);
+
+                // Show preview based on file type
+                const ext = file.filename.split('.').pop().toLowerCase();
+                
+                if (ext === 'pdf') {
+                    content.innerHTML = `
+                        <div style="text-align: center;">
+                            <iframe src="/api/v1/files/${fileId}/preview" 
+                                    style="width: 100%; height: 500px; border: none;">
+                            </iframe>
+                        </div>
+                    `;
+                } else {
+                    content.innerHTML = `
+                        <div style="text-align: center; padding: 2rem;">
+                            <div style="font-size: 4rem; margin-bottom: 1rem;">${getFileIcon(file.filename)}</div>
+                            <h3>${file.filename}</h3>
+                            <p>Tamanho: ${formatFileSize(file.file_size)}</p>
+                            <p>Criado em: ${formatDate(file.created_at)}</p>
+                            ${file.status === 'processed' ? 
+                                '<p class="text-success">✅ Arquivo processado com sucesso!</p>' : 
+                                '<p class="text-warning">⏳ Aguardando processamento...</p>'
+                            }
+                        </div>
+                    `;
+                }
+
+                modal.classList.add('show');
+
+            } catch (error) {
+                showNotification('Erro ao visualizar arquivo: ' + error.message, 'danger');
+            }
+        }
+
+        async function processFile(fileId) {
+            if (!confirm('Deseja processar este arquivo? O processamento pode levar alguns minutos.')) {
+                return;
+            }
+
+            try {
+                await api.request(`/files/${fileId}/process`, { method: 'POST' });
+                showNotification('Processamento iniciado! Você será notificado quando concluído.', 'info');
+                
+                // Reload files to show updated status
+                setTimeout(loadFiles, 1000);
+                
+            } catch (error) {
+                showNotification('Erro ao iniciar processamento: ' + error.message, 'danger');
+            }
+        }
+
+        async function downloadFile(fileId) {
+            try {
+                const response = await fetch(`/api/v1/files/${fileId}/download`, {
+                    headers: {
+                        'Authorization': `Bearer ${api.token}`
+                    }
+                });
+
+                if (!response.ok) throw new Error('Erro no download');
+
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                
+                // Get filename from response headers or use default
+                const contentDisposition = response.headers.get('content-disposition');
+                let filename = 'download';
+                if (contentDisposition) {
+                    const filenameMatch = contentDisposition.match(/filename="(.+)"/);
+                    if (filenameMatch) filename = filenameMatch[1];
+                }
+
+                a.style.display = 'none';
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+
+                showNotification('Download iniciado!', 'success');
+
+            } catch (error) {
+                showNotification('Erro no download: ' + error.message, 'danger');
+            }
+        }
+
+        async function deleteFile(fileId) {
+            const file = allFiles.find(f => f.id === fileId);
+            if (!file) return;
+
+            if (!confirm(`Tem certeza que deseja excluir "${file.filename}"? Esta ação não pode ser desfeita.`)) {
+                return;
+            }
+
+            try {
+                await api.deleteFile(fileId);
+                showNotification('Arquivo excluído com sucesso!', 'success');
+                
+                // Remove from UI
+                allFiles = allFiles.filter(f => f.id !== fileId);
+                applyFilters();
+                loadFileStats();
+
+            } catch (error) {
+                showNotification('Erro ao excluir arquivo: ' + error.message, 'danger');
+            }
+        }
+
+        function viewVideo(videoId) {
+            // Redirect to video viewer or open in new tab
+            window.open(`/videos/${videoId}`, '_blank');
+        }
+
+        function bulkProcess() {
+            const selectedFiles = document.querySelectorAll('.file-card input[type="checkbox"]:checked');
+            if (selectedFiles.length === 0) {
+                showNotification('Selecione pelo menos um arquivo para processar.', 'warning');
+                return;
+            }
+
+            // Implementation for bulk processing
+            showNotification('Funcionalidade em desenvolvimento!', 'info');
+        }
+
+        // Função para mostrar modal de criação manual de projeto  
+        function showCreateProjectModal() {
+            const modalContent = `
+                <form id="create-project-form">
+                    <div class="alert alert-info">
+                        <strong>📋 Criar Projeto Manualmente</strong><br>
+                        Crie um projeto personalizado antes de fazer upload
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Nome do projeto *:</label>
+                        <input type="text" class="form-control" name="project_name" required
+                               placeholder="Ex: Curso de Python Básico">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Descrição:</label>
+                        <textarea class="form-control" name="project_description" rows="3"
+                                  placeholder="Descreva brevemente o que será este projeto..."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Categoria:</label>
+                        <select class="form-control" name="category">
+                            <option value="geral">Geral</option>
+                            <option value="tecnologia">Tecnologia</option>
+                            <option value="educacao">Educação</option>
+                            <option value="negocios">Negócios</option>
+                            <option value="outros">Outros</option>
+                        </select>
+                    </div>
+                </form>
+            `;
+
+            showModal('➕ Criar Novo Projeto', modalContent, [
+                {
+                    text: 'Cancelar',
+                    type: 'secondary',
+                    onclick: 'closeModal(this)'
+                },
+                {
+                    text: '✨ Criar Projeto',
+                    type: 'primary',
+                    onclick: 'createManualProject()'
+                }
+            ]);
+        }
+        
+        async function createManualProject() {
+            const form = document.getElementById('create-project-form');
+            const formData = new FormData(form);
+            
+            try {
+                const projectData = {
+                    name: formData.get('project_name'),
+                    description: formData.get('project_description') || 'Projeto criado manualmente',
+                    category: formData.get('category') || 'geral'
+                };
+                
+                const project = await api.createQuickProject(projectData.name, projectData.description);
+                
+                showNotification(`✅ Projeto "${project.name}" criado com sucesso!`, 'success');
+                closeModal(form);
+                
+                // Recarregar lista de projetos
+                await loadProjects();
+                
+            } catch (error) {
+                showNotification('❌ Erro ao criar projeto: ' + error.message, 'danger');
+            }
+        }
+
+        // Global functions for auto-refresh
+        window.loadFiles = loadFiles;
+        window.loadFileStats = loadFileStats;
+    </script>
+</body>
+</html> 

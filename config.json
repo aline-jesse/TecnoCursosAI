@@ -1,0 +1,74 @@
+{
+  "production": {
+    "host": "0.0.0.0",
+    "port": 8000,
+    "workers": 4,
+    "log_level": "info",
+    "reload": false,
+    "access_log": true,
+    "timeout": 60,
+    "max_requests": 1000,
+    "max_requests_jitter": 100
+  },
+  "development": {
+    "host": "127.0.0.1",
+    "port": 8001,
+    "workers": 1,
+    "log_level": "debug",
+    "reload": true,
+    "access_log": true,
+    "timeout": 30,
+    "max_requests": 100,
+    "max_requests_jitter": 10
+  },
+  "database": {
+    "url": "sqlite:///./tecnocursos.db",
+    "pool_size": 20,
+    "max_overflow": 30,
+    "pool_pre_ping": true
+  },
+  "security": {
+    "secret_key": "your-secret-key-change-in-production",
+    "algorithm": "HS256",
+    "access_token_expire_minutes": 30,
+    "cors_origins": [
+      "*"
+    ],
+    "rate_limit": {
+      "requests_per_minute": 60,
+      "burst": 100
+    }
+  },
+  "storage": {
+    "upload_dir": "./uploads",
+    "max_file_size": 104857600,
+    "allowed_extensions": [
+      ".pdf",
+      ".pptx",
+      ".jpg",
+      ".png",
+      ".mp4",
+      ".mp3",
+      ".wav"
+    ],
+    "temp_dir": "./temp"
+  },
+  "ai_services": {
+    "openai_api_key": "",
+    "d_id_api_key": "",
+    "azure_speech_key": "",
+    "azure_speech_region": ""
+  },
+  "monitoring": {
+    "enabled": true,
+    "metrics_port": 9090,
+    "health_check_interval": 30,
+    "log_retention_days": 30
+  },
+  "background_processing": {
+    "enabled": true,
+    "worker_count": 4,
+    "queue_size": 100,
+    "task_timeout": 300
+  }
+}

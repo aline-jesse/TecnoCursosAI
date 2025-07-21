@@ -1,0 +1,163 @@
+# Padrões de Desenvolvimento Frontend - React
+
+## Estrutura de Arquivos
+- **Componentes**: `/src/components/` - Componentes React reutilizáveis
+- **Páginas**: `/src/pages/` - Páginas da aplicação
+- **Hooks**: `/src/hooks/` - Custom hooks
+- **Serviços**: `/src/services/` - Serviços de API e utilitários
+- **Store**: `/src/store/` - Gerenciamento de estado (Zustand)
+- **Tipos**: `/src/types/` - Definições TypeScript
+
+## Convenções de Código
+
+### Imports
+```typescript
+// React e hooks
+import React, { useState, useEffect, useCallback } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
+
+// Componentes
+import { Button, Input, Modal } from '@/components/ui'
+import { useAuth } from '@/hooks/useAuth'
+import { apiService } from '@/services/apiService'
+
+// Tipos
+import type { User, Project } from '@/types'
+```
+
+### Componentes Funcionais
+```typescript
+interface ComponentProps {
+  title: string
+  onSave?: (data: any) => void
+  disabled?: boolean
+}
+
+export const ComponentName: React.FC<ComponentProps> = ({
+  title,
+  onSave,
+  disabled = false
+}) => {
+  const [state, setState] = useState<string>('')
+  const { user } = useAuth()
+  
+  const handleSubmit = useCallback(async () => {
+    try {
+      // Lógica do componente
+    } catch (error) {
+      console.error('Erro:', error)
+    }
+  }, [])
+  
+  return (
+    <div className="p-4 bg-white rounded-lg shadow">
+      <h2 className="text-xl font-semibold mb-4">{title}</h2>
+      {/* JSX do componente */}
+    </div>
+  )
+}
+```
+
+### Custom Hooks
+```typescript
+export const useCustomHook = (param: string) => {
+  const [data, setData] = useState<any>(null)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  
+  const fetchData = useCallback(async () => {
+    setLoading(true)
+    try {
+      const result = await apiService.get(`/api/endpoint/${param}`)
+      setData(result)
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setLoading(false)
+    }
+  }, [param])
+  
+  useEffect(() => {
+    fetchData()
+  }, [fetchData])
+  
+  return { data, loading, error, refetch: fetchData }
+}
+```
+
+### Store Zustand
+```typescript
+interface StoreState {
+  user: User | null
+  projects: Project[]
+  loading: boolean
+  setUser: (user: User | null) => void
+  addProject: (project: Project) => void
+  setLoading: (loading: boolean) => void
+}
+
+export const useStore = create<StoreState>((set) => ({
+  user: null,
+  projects: [],
+  loading: false,
+  
+  setUser: (user) => set({ user }),
+  addProject: (project) => set((state) => ({
+    projects: [...state.projects, project]
+  })),
+  setLoading: (loading) => set({ loading })
+}))
+```
+
+## Estilização
+- **TailwindCSS**: Classes utilitárias para estilização
+- **Componentes**: Reutilizáveis e responsivos
+- **Design System**: Consistência visual
+- **Dark Mode**: Suporte a temas
+
+## Tratamento de Erros
+```typescript
+// Error Boundary
+class ErrorBoundary extends React.Component {
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    console.error('Erro capturado:', error, errorInfo)
+  }
+  
+  render() {
+    if (this.state.hasError) {
+      return <div>Algo deu errado.</div>
+    }
+    return this.props.children
+  }
+}
+
+// Try-catch em funções assíncronas
+const handleAsyncOperation = async () => {
+  try {
+    setLoading(true)
+    const result = await apiService.post('/api/endpoint', data)
+    setData(result)
+  } catch (error) {
+    setError(error.message)
+  } finally {
+    setLoading(false)
+  }
+}
+```
+
+## Performance
+- **React.memo()**: Para componentes que não mudam frequentemente
+- **useCallback()**: Para funções passadas como props
+- **useMemo()**: Para cálculos custosos
+- **Lazy Loading**: Para componentes grandes
+- **Code Splitting**: Para reduzir bundle size
+
+## Testes
+- **Jest**: Framework de testes
+- **React Testing Library**: Para testes de componentes
+- **MSW**: Para mock de APIs
+- **Cobertura**: Mínimo 80% de cobertura
+description:
+globs:
+alwaysApply: false
+---

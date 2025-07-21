@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bem-vindo ao {{ app_name }}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8f9fa;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 40px 30px;
+        }
+        
+        .welcome-message {
+            font-size: 18px;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .features {
+            margin: 30px 0;
+        }
+        
+        .feature {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .feature-icon {
+            font-size: 24px;
+            margin-right: 15px;
+            width: 40px;
+            text-align: center;
+        }
+        
+        .feature-content h3 {
+            color: #2c3e50;
+            margin-bottom: 5px;
+            font-size: 16px;
+        }
+        
+        .feature-content p {
+            color: #6c757d;
+            font-size: 14px;
+        }
+        
+        .cta-section {
+            text-align: center;
+            margin: 40px 0;
+            padding: 30px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 12px;
+        }
+        
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 16px;
+            transition: transform 0.2s ease;
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-2px);
+        }
+        
+        .tips {
+            background: #e3f2fd;
+            border: 1px solid #bbdefb;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 30px 0;
+        }
+        
+        .tips h3 {
+            color: #1976d2;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+        
+        .tips ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .tips li {
+            margin-bottom: 10px;
+            padding-left: 25px;
+            position: relative;
+        }
+        
+        .tips li::before {
+            content: "💡";
+            position: absolute;
+            left: 0;
+        }
+        
+        .footer {
+            background: #2c3e50;
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .footer p {
+            margin-bottom: 10px;
+            opacity: 0.8;
+        }
+        
+        .social-links {
+            margin: 20px 0;
+        }
+        
+        .social-links a {
+            display: inline-block;
+            margin: 0 10px;
+            color: white;
+            text-decoration: none;
+            font-size: 18px;
+        }
+        
+        .divider {
+            height: 1px;
+            background: linear-gradient(to right, transparent, #ddd, transparent);
+            margin: 30px 0;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                margin: 0;
+            }
+            
+            .header, .content, .footer {
+                padding: 20px;
+            }
+            
+            .feature {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .feature-icon {
+                margin-right: 0;
+                margin-bottom: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🎉 Bem-vindo ao {{ app_name }}!</h1>
+            <p>Sua jornada de criação de conteúdo inteligente começa agora</p>
+        </div>
+        
+        <!-- Content -->
+        <div class="content">
+            <div class="welcome-message">
+                <p>Olá <strong>{{ user_name }}</strong>,</p>
+                <p>Estamos muito felizes em tê-lo conosco! Você agora faz parte de uma plataforma revolucionária que transforma seus arquivos em conteúdo educacional envolvente.</p>
+            </div>
+            
+            <div class="divider"></div>
+            
+            <!-- Features -->
+            <div class="features">
+                <h2 style="text-align: center; color: #2c3e50; margin-bottom: 30px;">O que você pode fazer:</h2>
+                
+                <div class="feature">
+                    <div class="feature-icon">📤</div>
+                    <div class="feature-content">
+                        <h3>Upload Inteligente</h3>
+                        <p>Envie seus PDFs e apresentações PowerPoint e deixe nossa IA fazer o resto</p>
+                    </div>
+                </div>
+                
+                <div class="feature">
+                    <div class="feature-icon">🎬</div>
+                    <div class="feature-content">
+                        <h3>Geração Automática de Vídeos</h3>
+                        <p>Transforme automaticamente seus documentos em vídeos educacionais profissionais</p>
+                    </div>
+                </div>
+                
+                <div class="feature">
+                    <div class="feature-icon">🗣️</div>
+                    <div class="feature-content">
+                        <h3>Narração Automática</h3>
+                        <p>Nossa IA gera narrações naturais e envolventes para seus conteúdos</p>
+                    </div>
+                </div>
+                
+                <div class="feature">
+                    <div class="feature-icon">📊</div>
+                    <div class="feature-content">
+                        <h3>Gerenciamento de Projetos</h3>
+                        <p>Organize seus cursos e acompanhe o progresso de cada projeto</p>
+                    </div>
+                </div>
+                
+                <div class="feature">
+                    <div class="feature-icon">☁️</div>
+                    <div class="feature-content">
+                        <h3>Armazenamento Seguro</h3>
+                        <p>Todos os seus arquivos ficam seguros em nossa infraestrutura na nuvem</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- CTA Section -->
+            <div class="cta-section">
+                <h3 style="color: #2c3e50; margin-bottom: 15px;">Pronto para começar?</h3>
+                <p style="color: #6c757d; margin-bottom: 25px;">Acesse seu dashboard e comece a criar conteúdo incrível agora mesmo!</p>
+                <a href="{{ dashboard_url }}" class="cta-button">Acessar Dashboard</a>
+            </div>
+            
+            <!-- Tips -->
+            <div class="tips">
+                <h3>Dicas para começar:</h3>
+                <ul>
+                    <li>Crie seu primeiro projeto no dashboard</li>
+                    <li>Faça upload de um PDF ou PPTX para testar</li>
+                    <li>Aguarde alguns minutos para o processamento</li>
+                    <li>Baixe ou compartilhe seu vídeo gerado</li>
+                    <li>Explore as estatísticas e métricas do seu projeto</li>
+                </ul>
+            </div>
+            
+            <div class="divider"></div>
+            
+            <!-- Support -->
+            <div style="text-align: center; color: #6c757d;">
+                <p>Precisa de ajuda? Nossa equipe está aqui para você!</p>
+                <p>📧 <a href="mailto:{{ support_email }}" style="color: #667eea;">{{ support_email }}</a></p>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <div class="footer">
+            <p>{{ app_name }} - Transformando conhecimento em experiências</p>
+            <div class="social-links">
+                <a href="#">📘 Facebook</a>
+                <a href="#">🐦 Twitter</a>
+                <a href="#">💼 LinkedIn</a>
+                <a href="#">📷 Instagram</a>
+            </div>
+            <p style="font-size: 12px; opacity: 0.6;">
+                Você está recebendo este email porque se cadastrou no {{ app_name }}.<br>
+                Se não deseja mais receber nossos emails, <a href="#" style="color: #aaa;">clique aqui para descadastrar</a>.
+            </p>
+        </div>
+    </div>
+</body>
+</html> 

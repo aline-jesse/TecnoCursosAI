@@ -1,0 +1,39 @@
+# TecnoCursosAI - Dependências Corrigidas e Funcionais
+# Core Framework
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+pydantic>=2.0,<3.0
+
+# Database
+sqlalchemy==2.0.23
+alembic==1.12.1
+
+# File Processing 
+python-multipart==0.0.6
+aiofiles==23.2.1
+
+# Document Processing
+PyPDF2==3.0.1
+python-pptx==0.6.23
+# PyMuPDF==1.23.8  # Skip - compilation issues on Windows
+
+# Video/Audio Processing
+moviepy==1.0.3
+pydub==0.25.1
+gtts==2.4.0
+Pillow==10.1.0
+
+# System Requirements
+requests>=2.25.0
+psutil>=5.8.0
+python-dotenv==1.0.0
+
+# Authentication
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+
+# Templates
+jinja2==3.1.2
+
+# Utils
+numpy==1.24.4

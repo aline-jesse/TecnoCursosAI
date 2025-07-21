@@ -1,0 +1,606 @@
+# Padrões de Segurança - TecnoCursos AI
+
+## Autenticação e Autorização
+
+### JWT Token Management
+```python
+# app/auth.py
+from datetime import datetime, timedelta
+from jose import JWTError, jwt
+from passlib.context import CryptContext
+from fastapi import HTTPException, status, Depends
+from fastapi.security import OAuth2PasswordBearer
+
+# Configurações de segurança
+SECRET_KEY = "your-secret-key-here"
+ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = 15
+REFRESH_TOKEN_EXPIRE_DAYS = 7
+
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/auth/login")
+
+def verify_password(plain_password: str, hashed_password: str) -> bool:
+    """Verifica senha usando bcrypt"""
+    return pwd_context.verify(plain_password, hashed_password)
+
+def get_password_hash(password: str) -> str:
+    """Gera hash da senha"""
+    return pwd_context.hash(password)
+
+def create_access_token(data: dict, expires_delta: timedelta = None):
+    """Cria token de acesso JWT"""
+    to_encode = data.copy()
+    if expires_delta:
+        expire = datetime.utcnow() + expires_delta
+    else:
+        expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    
+    to_encode.update({"exp": expire, "type": "access"})
+    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    return encoded_jwt
+
+def create_refresh_token(data: dict):
+    """Cria token de refresh JWT"""
+    to_encode = data.copy()
+    expire = datetime.utcnow() + timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS)
+    to_encode.update({"exp": expire, "type": "refresh"})
+    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    return encoded_jwt
+
+async def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+    """Valida token e retorna usuário atual"""
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Credenciais inválidas",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+    
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        email: str = payload.get("sub")
+        token_type: str = payload.get("type")
+        
+        if email is None or token_type != "access":
+            raise credentials_exception
+            
+    except JWTError:
+        raise credentials_exception
+    
+    user = get_user_by_email(db, email=email)
+    if user is None:
+        raise credentials_exception
+    
+    if not user.is_active:
+        raise HTTPException(status_code=400, detail="Usuário inativo")
+    
+    return user
+```
+
+### Rate Limiting
+```python
+# app/middleware/rate_limiting.py
+from fastapi import Request, HTTPException
+from fastapi.responses import JSONResponse
+import time
+from collections import defaultdict
+import asyncio
+
+class RateLimiter:
+    def __init__(self, requests_per_minute: int = 60):
+        self.requests_per_minute = requests_per_minute
+        self.requests = defaultdict(list)
+    
+    async def check_rate_limit(self, request: Request):
+        """Verifica rate limit baseado no IP"""
+        client_ip = request.client.host
+        current_time = time.time()
+        
+        # Limpar requisições antigas (mais de 1 minuto)
+        self.requests[client_ip] = [
+            req_time for req_time in self.requests[client_ip]
+            if current_time - req_time < 60
+        ]
+        
+        # Verificar se excedeu o limite
+        if len(self.requests[client_ip]) >= self.requests_per_minute:
+            raise HTTPException(
+                status_code=429,
+                detail="Rate limit excedido. Tente novamente em 1 minuto."
+            )
+        
+        # Adicionar requisição atual
+        self.requests[client_ip].append(current_time)
+
+rate_limiter = RateLimiter()
+
+@app.middleware("http")
+async def rate_limit_middleware(request: Request, call_next):
+    """Middleware para rate limiting"""
+    try:
+        await rate_limiter.check_rate_limit(request)
+        response = await call_next(request)
+        return response
+    except HTTPException as e:
+        return JSONResponse(
+            status_code=e.status_code,
+            content={"detail": e.detail}
+        )
+```
+
+## Validação de Dados
+
+### Input Validation
+```python
+# app/validators/security_validators.py
+from pydantic import BaseModel, validator, EmailStr
+import re
+from typing import Optional
+
+class UserRegistrationValidator(BaseModel):
+    email: EmailStr
+    username: str
+    password: str
+    
+    @validator('username')
+    def validate_username(cls, v):
+        if len(v) < 3:
+            raise ValueError('Username deve ter pelo menos 3 caracteres')
+        if not re.match(r'^[a-zA-Z0-9_]+$', v):
+            raise ValueError('Username deve conter apenas letras, números e underscore')
+        return v
+    
+    @validator('password')
+    def validate_password(cls, v):
+        if len(v) < 8:
+            raise ValueError('Senha deve ter pelo menos 8 caracteres')
+        if not re.search(r'[A-Z]', v):
+            raise ValueError('Senha deve conter pelo menos uma letra maiúscula')
+        if not re.search(r'[a-z]', v):
+            raise ValueError('Senha deve conter pelo menos uma letra minúscula')
+        if not re.search(r'\d', v):
+            raise ValueError('Senha deve conter pelo menos um número')
+        if not re.search(r'[!@#$%^&*(),.?":{}|<>]', v):
+            raise ValueError('Senha deve conter pelo menos um caractere especial')
+        return v
+
+class FileUploadValidator(BaseModel):
+    filename: str
+    content_type: str
+    file_size: int
+    
+    @validator('filename')
+    def validate_filename(cls, v):
+        # Prevenir path traversal
+        if '..' in v or '/' in v or '\\' in v:
+            raise ValueError('Nome de arquivo inválido')
+        
+        # Verificar extensão permitida
+        allowed_extensions = {'.pdf', '.pptx', '.docx', '.mp4', '.jpg', '.png'}
+        file_ext = '.' + v.split('.')[-1].lower()
+        if file_ext not in allowed_extensions:
+            raise ValueError('Tipo de arquivo não permitido')
+        
+        return v
+    
+    @validator('file_size')
+    def validate_file_size(cls, v):
+        max_size = 100 * 1024 * 1024  # 100MB
+        if v > max_size:
+            raise ValueError('Arquivo muito grande. Máximo 100MB')
+        return v
+    
+    @validator('content_type')
+    def validate_content_type(cls, v):
+        allowed_types = {
+            'application/pdf',
+            'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'video/mp4',
+            'image/jpeg',
+            'image/png'
+        }
+        if v not in allowed_types:
+            raise ValueError('Tipo de conteúdo não permitido')
+        return v
+```
+
+## Sanitização de Dados
+
+### SQL Injection Prevention
+```python
+# app/security/sql_injection.py
+from sqlalchemy.orm import Session
+from sqlalchemy import text
+import re
+
+def sanitize_sql_input(input_string: str) -> str:
+    """Sanitiza input para prevenir SQL injection"""
+    # Remover caracteres perigosos
+    dangerous_chars = ["'", '"', ';', '--', '/*', '*/', 'xp_', 'sp_']
+    sanitized = input_string
+    
+    for char in dangerous_chars:
+        sanitized = sanitized.replace(char, '')
+    
+    # Limitar tamanho
+    if len(sanitized) > 1000:
+        raise ValueError("Input muito longo")
+    
+    return sanitized
+
+def safe_query(db: Session, query: str, params: dict = None):
+    """Executa query de forma segura"""
+    try:
+        # Usar SQLAlchemy para queries parametrizadas
+        if params:
+            result = db.execute(text(query), params)
+        else:
+            result = db.execute(text(query))
+        return result
+    except Exception as e:
+        logger.error(f"Erro na query: {e}")
+        raise HTTPException(status_code=500, detail="Erro interno")
+
+# Exemplo de uso seguro
+def get_user_by_email_safe(db: Session, email: str):
+    """Busca usuário por email de forma segura"""
+    sanitized_email = sanitize_sql_input(email)
+    query = "SELECT * FROM users WHERE email = :email"
+    result = safe_query(db, query, {"email": sanitized_email})
+    return result.fetchone()
+```
+
+### XSS Prevention
+```python
+# app/security/xss_prevention.py
+import html
+import bleach
+from markupsafe import Markup
+
+def sanitize_html(input_string: str) -> str:
+    """Sanitiza HTML para prevenir XSS"""
+    # Lista de tags e atributos permitidos
+    allowed_tags = [
+        'p', 'br', 'strong', 'em', 'u', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+        'ul', 'ol', 'li', 'blockquote', 'code', 'pre'
+    ]
+    
+    allowed_attributes = {
+        'a': ['href', 'title'],
+        'img': ['src', 'alt', 'title'],
+        'p': ['class'],
+        'div': ['class']
+    }
+    
+    # Sanitizar HTML
+    clean_html = bleach.clean(
+        input_string,
+        tags=allowed_tags,
+        attributes=allowed_attributes,
+        strip=True
+    )
+    
+    return clean_html
+
+def escape_html(input_string: str) -> str:
+    """Escapa caracteres HTML"""
+    return html.escape(input_string)
+
+def safe_render_template(template_string: str, **kwargs):
+    """Renderiza template de forma segura"""
+    # Escapar todos os valores
+    safe_kwargs = {}
+    for key, value in kwargs.items():
+        if isinstance(value, str):
+            safe_kwargs[key] = Markup.escape(value)
+        else:
+            safe_kwargs[key] = value
+    
+    return template_string.format(**safe_kwargs)
+```
+
+## CORS e Headers de Segurança
+
+### CORS Configuration
+```python
+# app/middleware/cors.py
+from fastapi.middleware.cors import CORSMiddleware
+
+# Configuração CORS segura
+cors_config = {
+    "allow_origins": [
+        "https://tecnocursos.ai",
+        "https://www.tecnocursos.ai",
+        "http://localhost:3000",  # Apenas para desenvolvimento
+    ],
+    "allow_credentials": True,
+    "allow_methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    "allow_headers": [
+        "Authorization",
+        "Content-Type",
+        "X-Requested-With",
+        "Accept",
+        "Origin"
+    ],
+    "expose_headers": ["Content-Length", "X-Total-Count"],
+    "max_age": 3600,  # Cache preflight por 1 hora
+}
+
+app.add_middleware(
+    CORSMiddleware,
+    **cors_config
+)
+```
+
+### Security Headers
+```python
+# app/middleware/security_headers.py
+from fastapi import Request
+from fastapi.responses import Response
+
+@app.middleware("http")
+async def add_security_headers(request: Request, call_next):
+    """Adiciona headers de segurança"""
+    response = await call_next(request)
+    
+    # Headers de segurança
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["X-Frame-Options"] = "DENY"
+    response.headers["X-XSS-Protection"] = "1; mode=block"
+    response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+    response.headers["Content-Security-Policy"] = (
+        "default-src 'self'; "
+        "script-src 'self' 'unsafe-inline' 'unsafe-eval'; "
+        "style-src 'self' 'unsafe-inline'; "
+        "img-src 'self' data: https:; "
+        "font-src 'self' https:; "
+        "connect-src 'self' https:; "
+        "frame-ancestors 'none';"
+    )
+    response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+    
+    return response
+```
+
+## Logging de Segurança
+
+### Security Logging
+```python
+# app/security/security_logger.py
+import logging
+from datetime import datetime
+from fastapi import Request
+import json
+
+class SecurityLogger:
+    def __init__(self):
+        self.logger = logging.getLogger("security")
+        self.logger.setLevel(logging.INFO)
+        
+        # Handler para arquivo
+        handler = logging.FileHandler("logs/security.log")
+        formatter = logging.Formatter(
+            '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+        )
+        handler.setFormatter(formatter)
+        self.logger.addHandler(handler)
+    
+    def log_login_attempt(self, email: str, success: bool, ip: str):
+        """Log de tentativa de login"""
+        event = {
+            "event_type": "login_attempt",
+            "email": email,
+            "success": success,
+            "ip_address": ip,
+            "timestamp": datetime.utcnow().isoformat()
+        }
+        
+        if success:
+            self.logger.info(f"Login bem-sucedido: {json.dumps(event)}")
+        else:
+            self.logger.warning(f"Tentativa de login falhou: {json.dumps(event)}")
+    
+    def log_file_upload(self, user_id: int, filename: str, file_size: int, ip: str):
+        """Log de upload de arquivo"""
+        event = {
+            "event_type": "file_upload",
+            "user_id": user_id,
+            "filename": filename,
+            "file_size": file_size,
+            "ip_address": ip,
+            "timestamp": datetime.utcnow().isoformat()
+        }
+        self.logger.info(f"Upload de arquivo: {json.dumps(event)}")
+    
+    def log_security_violation(self, violation_type: str, details: dict, ip: str):
+        """Log de violação de segurança"""
+        event = {
+            "event_type": "security_violation",
+            "violation_type": violation_type,
+            "details": details,
+            "ip_address": ip,
+            "timestamp": datetime.utcnow().isoformat()
+        }
+        self.logger.error(f"Violacao de seguranca: {json.dumps(event)}")
+
+security_logger = SecurityLogger()
+```
+
+## Criptografia e Hashing
+
+### Password Hashing
+```python
+# app/security/password_utils.py
+from passlib.context import CryptContext
+import secrets
+import string
+
+# Configuração do contexto de criptografia
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+def generate_salt(length: int = 16) -> str:
+    """Gera salt aleatório"""
+    alphabet = string.ascii_letters + string.digits + string.punctuation
+    return ''.join(secrets.choice(alphabet) for _ in range(length))
+
+def hash_password(password: str) -> str:
+    """Gera hash seguro da senha"""
+    return pwd_context.hash(password)
+
+def verify_password(plain_password: str, hashed_password: str) -> bool:
+    """Verifica senha contra hash"""
+    return pwd_context.verify(plain_password, hashed_password)
+
+def generate_secure_token(length: int = 32) -> str:
+    """Gera token seguro"""
+    return secrets.token_urlsafe(length)
+
+def generate_api_key() -> str:
+    """Gera chave de API segura"""
+    return f"tc_{secrets.token_urlsafe(32)}"
+```
+
+## Auditoria e Compliance
+
+### Audit Trail
+```python
+# app/security/audit.py
+from sqlalchemy import Column, Integer, String, DateTime, Text, ForeignKey
+from sqlalchemy.orm import relationship
+from datetime import datetime
+
+class AuditLog(Base):
+    __tablename__ = "audit_logs"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=True)
+    action = Column(String(100), nullable=False)
+    resource_type = Column(String(50), nullable=False)
+    resource_id = Column(String(100), nullable=True)
+    details = Column(Text, nullable=True)
+    ip_address = Column(String(45), nullable=False)
+    user_agent = Column(String(500), nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    
+    user = relationship("User", back_populates="audit_logs")
+
+def log_audit_event(
+    db: Session,
+    user_id: int = None,
+    action: str = None,
+    resource_type: str = None,
+    resource_id: str = None,
+    details: dict = None,
+    ip_address: str = None,
+    user_agent: str = None
+):
+    """Registra evento de auditoria"""
+    audit_log = AuditLog(
+        user_id=user_id,
+        action=action,
+        resource_type=resource_type,
+        resource_id=resource_id,
+        details=json.dumps(details) if details else None,
+        ip_address=ip_address,
+        user_agent=user_agent
+    )
+    
+    db.add(audit_log)
+    db.commit()
+    db.refresh(audit_log)
+    
+    return audit_log
+```
+
+## Proteção contra Ataques Comuns
+
+### CSRF Protection
+```python
+# app/security/csrf.py
+from fastapi import Request, HTTPException
+import secrets
+
+class CSRFProtection:
+    def __init__(self):
+        self.tokens = {}
+    
+    def generate_token(self, user_id: int) -> str:
+        """Gera token CSRF para usuário"""
+        token = secrets.token_urlsafe(32)
+        self.tokens[user_id] = token
+        return token
+    
+    def validate_token(self, user_id: int, token: str) -> bool:
+        """Valida token CSRF"""
+        stored_token = self.tokens.get(user_id)
+        if stored_token and stored_token == token:
+            return True
+        return False
+
+csrf_protection = CSRFProtection()
+
+@app.middleware("http")
+async def csrf_middleware(request: Request, call_next):
+    """Middleware para proteção CSRF"""
+    if request.method in ["POST", "PUT", "DELETE", "PATCH"]:
+        # Verificar token CSRF para operações que modificam dados
+        token = request.headers.get("X-CSRF-Token")
+        user_id = get_current_user_id(request)
+        
+        if user_id and not csrf_protection.validate_token(user_id, token):
+            raise HTTPException(status_code=403, detail="Token CSRF inválido")
+    
+    response = await call_next(request)
+    return response
+```
+
+### Input Sanitization
+```python
+# app/security/input_sanitization.py
+import re
+from typing import Any, Dict, List
+
+def sanitize_string(input_string: str) -> str:
+    """Sanitiza string de entrada"""
+    if not input_string:
+        return ""
+    
+    # Remover caracteres de controle
+    sanitized = re.sub(r'[\x00-\x1f\x7f-\x9f]', '', input_string)
+    
+    # Remover scripts e tags HTML
+    sanitized = re.sub(r'<script.*?</script>', '', sanitized, flags=re.IGNORECASE)
+    sanitized = re.sub(r'<.*?>', '', sanitized)
+    
+    # Limitar tamanho
+    if len(sanitized) > 10000:
+        sanitized = sanitized[:10000]
+    
+    return sanitized.strip()
+
+def sanitize_dict(input_dict: Dict[str, Any]) -> Dict[str, Any]:
+    """Sanitiza dicionário de entrada"""
+    sanitized = {}
+    
+    for key, value in input_dict.items():
+        if isinstance(value, str):
+            sanitized[key] = sanitize_string(value)
+        elif isinstance(value, dict):
+            sanitized[key] = sanitize_dict(value)
+        elif isinstance(value, list):
+            sanitized[key] = [sanitize_string(str(item)) if isinstance(item, str) else item for item in value]
+        else:
+            sanitized[key] = value
+    
+    return sanitized
+
+def validate_email(email: str) -> bool:
+    """Valida formato de email"""
+    pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+    return bool(re.match(pattern, email))
+```
+description:
+globs:
+alwaysApply: false
+---

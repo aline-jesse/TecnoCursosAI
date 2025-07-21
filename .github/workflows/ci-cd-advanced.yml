@@ -1,0 +1,548 @@
+name: TecnoCursos AI - CI/CD Pipeline Avançado
+
+on:
+  push:
+    branches: [ main, develop, staging ]
+  pull_request:
+    branches: [ main, develop ]
+  release:
+    types: [ published ]
+  schedule:
+    - cron: '0 2 * * 1' # Weekly security scan
+
+env:
+  PYTHON_VERSION: '3.11'
+  NODE_VERSION: '18'
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+  COMPOSE_FILE: deploy/docker-compose.production.yml
+
+jobs:
+  # ============================================================================
+  # ANÁLISE DE CÓDIGO E QUALIDADE
+  # ============================================================================
+  code-quality:
+    name: 📊 Análise de Qualidade
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 📥 Checkout código
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    
+    - name: 🐍 Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+        cache: 'pip'
+    
+    - name: 📦 Instalar dependências
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install black flake8 isort bandit safety mypy pylint
+    
+    - name: 🎨 Verificar formatação (Black)
+      run: |
+        black --check --diff .
+        echo "✅ Formatação de código verificada"
+    
+    - name: 🔍 Linting (Flake8)
+      run: |
+        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+        echo "✅ Linting concluído"
+    
+    - name: 📋 Verificar imports (isort)
+      run: |
+        isort --check-only --diff .
+        echo "✅ Organização de imports verificada"
+    
+    - name: 🔒 Análise de segurança (Bandit)
+      run: |
+        bandit -r app/ -f json -o bandit-report.json
+        echo "✅ Análise de segurança concluída"
+    
+    - name: 🛡️ Verificar vulnerabilidades (Safety)
+      run: |
+        safety check --json --output safety-report.json
+        echo "✅ Verificação de vulnerabilidades concluída"
+    
+    - name: 🏷️ Type checking (MyPy)
+      run: |
+        mypy app/ --ignore-missing-imports --no-strict-optional
+        echo "✅ Type checking concluído"
+    
+    - name: 📈 Análise de complexidade (Pylint)
+      run: |
+        pylint app/ --output-format=json --reports=yes > pylint-report.json || true
+        echo "✅ Análise de complexidade concluída"
+    
+    - name: 📤 Upload artefatos de qualidade
+      uses: actions/upload-artifact@v3
+      with:
+        name: code-quality-reports
+        path: |
+          bandit-report.json
+          safety-report.json
+          pylint-report.json
+
+  # ============================================================================
+  # TESTES AUTOMATIZADOS AVANÇADOS
+  # ============================================================================
+  advanced-testing:
+    name: 🧪 Testes Avançados
+    runs-on: ubuntu-latest
+    needs: code-quality
+    
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: testpassword
+          MYSQL_DATABASE: tecnocursos_test
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+      
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd="redis-cli ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+    
+    strategy:
+      matrix:
+        test-type: [unit, integration, api, performance, security]
+    
+    steps:
+    - name: 📥 Checkout código
+      uses: actions/checkout@v4
+    
+    - name: 🐍 Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+        cache: 'pip'
+    
+    - name: 📦 Instalar dependências de teste
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install pytest pytest-cov pytest-xdist pytest-mock pytest-asyncio
+        pip install httpx locust faker factory-boy
+    
+    - name: ⚙️ Configurar ambiente de teste
+      run: |
+        cp .env.example .env.test
+        echo "DATABASE_URL=mysql+pymysql://root:testpassword@localhost:3306/tecnocursos_test" >> .env.test
+        echo "REDIS_HOST=localhost" >> .env.test
+        echo "ENVIRONMENT=test" >> .env.test
+    
+    - name: 🏗️ Executar migrações
+      run: |
+        export $(cat .env.test | xargs)
+        alembic upgrade head
+    
+    - name: 🧪 Executar testes unitários
+      if: matrix.test-type == 'unit'
+      run: |
+        pytest tests/unit/ -v --cov=app --cov-report=xml --cov-report=html
+        echo "✅ Testes unitários concluídos"
+    
+    - name: 🔗 Executar testes de integração
+      if: matrix.test-type == 'integration'
+      run: |
+        pytest tests/integration/ -v --maxfail=5
+        echo "✅ Testes de integração concluídos"
+    
+    - name: 🌐 Executar testes de API
+      if: matrix.test-type == 'api'
+      run: |
+        pytest tests/test_scenes_api.py -v --tb=short
+        echo "✅ Testes de API concluídos"
+    
+    - name: ⚡ Executar testes de performance
+      if: matrix.test-type == 'performance'
+      run: |
+        pytest tests/performance/ -v --benchmark-only
+        echo "✅ Testes de performance concluídos"
+    
+    - name: 🛡️ Executar testes de segurança
+      if: matrix.test-type == 'security'
+      run: |
+        pytest tests/security/ -v
+        echo "✅ Testes de segurança concluídos"
+    
+    - name: 📊 Upload coverage para Codecov
+      if: matrix.test-type == 'unit'
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./coverage.xml
+        flags: unittests
+        name: codecov-umbrella
+    
+    - name: 📤 Upload artefatos de teste
+      uses: actions/upload-artifact@v3
+      with:
+        name: test-results-${{ matrix.test-type }}
+        path: |
+          htmlcov/
+          .coverage
+          pytest-report.xml
+
+  # ============================================================================
+  # BUILD E CONTAINERIZAÇÃO
+  # ============================================================================
+  build-and-push:
+    name: 🏗️ Build & Push
+    runs-on: ubuntu-latest
+    needs: advanced-testing
+    if: github.event_name != 'pull_request'
+    
+    permissions:
+      contents: read
+      packages: write
+      security-events: write
+    
+    steps:
+    - name: 📥 Checkout código
+      uses: actions/checkout@v4
+    
+    - name: 🔧 Setup Docker Buildx
+      uses: docker/setup-buildx-action@v3
+    
+    - name: 🔑 Login no Container Registry
+      uses: docker/login-action@v3
+      with:
+        registry: ${{ env.REGISTRY }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: 🏷️ Extrair metadados
+      id: meta
+      uses: docker/metadata-action@v5
+      with:
+        images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+        tags: |
+          type=ref,event=branch
+          type=ref,event=pr
+          type=sha,prefix={{branch}}-
+          type=raw,value=latest,enable={{is_default_branch}}
+          type=semver,pattern={{version}}
+          type=semver,pattern={{major}}.{{minor}}
+    
+    - name: 🏗️ Build e Push imagem
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        push: true
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+        platforms: linux/amd64,linux/arm64
+        build-args: |
+          BUILDKIT_INLINE_CACHE=1
+    
+    - name: 🔍 Scan de segurança da imagem (Trivy)
+      uses: aquasecurity/trivy-action@master
+      with:
+        image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.version }}
+        format: 'sarif'
+        output: 'trivy-results.sarif'
+    
+    - name: 📤 Upload resultados Trivy
+      uses: github/codeql-action/upload-sarif@v2
+      with:
+        sarif_file: 'trivy-results.sarif'
+
+  # ============================================================================
+  # DEPLOYMENT PARA STAGING
+  # ============================================================================
+  deploy-staging:
+    name: 🚀 Deploy Staging
+    runs-on: ubuntu-latest
+    needs: build-and-push
+    if: github.ref == 'refs/heads/develop'
+    environment: staging
+    
+    steps:
+    - name: 📥 Checkout código
+      uses: actions/checkout@v4
+    
+    - name: ⚙️ Setup kubectl
+      uses: azure/setup-kubectl@v3
+      with:
+        version: 'latest'
+    
+    - name: 🔧 Configurar contexto Kubernetes
+      run: |
+        echo "${{ secrets.KUBE_CONFIG_STAGING }}" | base64 -d > kubeconfig
+        export KUBECONFIG=kubeconfig
+        kubectl config current-context
+    
+    - name: 🚀 Deploy para Staging
+      run: |
+        export KUBECONFIG=kubeconfig
+        envsubst < k8s/staging/deployment.yaml | kubectl apply -f -
+        envsubst < k8s/staging/service.yaml | kubectl apply -f -
+        envsubst < k8s/staging/ingress.yaml | kubectl apply -f -
+        echo "✅ Deploy para staging concluído"
+    
+    - name: ⏳ Aguardar rollout
+      run: |
+        export KUBECONFIG=kubeconfig
+        kubectl rollout status deployment/tecnocursos-staging -n staging --timeout=300s
+        echo "✅ Rollout concluído com sucesso"
+    
+    - name: 🔍 Smoke tests pós-deploy
+      run: |
+        python scripts/smoke_tests.py --environment=staging --timeout=60
+        echo "✅ Smoke tests passaram"
+    
+    - name: 📊 Verificar métricas
+      run: |
+        python scripts/check_metrics.py --environment=staging
+        echo "✅ Métricas verificadas"
+    
+    - name: 💬 Notificar Slack
+      uses: 8398a7/action-slack@v3
+      with:
+        status: ${{ job.status }}
+        channel: '#deployments'
+        text: '🚀 Deploy para Staging concluído com sucesso!'
+        webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+  # ============================================================================
+  # DEPLOYMENT PARA PRODUÇÃO
+  # ============================================================================
+  deploy-production:
+    name: 🎯 Deploy Produção
+    runs-on: ubuntu-latest
+    needs: build-and-push
+    if: github.ref == 'refs/heads/main' || github.event_name == 'release'
+    environment: production
+    
+    steps:
+    - name: 📥 Checkout código
+      uses: actions/checkout@v4
+    
+    - name: ⚙️ Setup kubectl
+      uses: azure/setup-kubectl@v3
+      with:
+        version: 'latest'
+    
+    - name: 💾 Backup pré-deploy
+      run: |
+        python scripts/backup_production.py --automated
+        echo "✅ Backup realizado"
+    
+    - name: 🔧 Configurar contexto Kubernetes
+      run: |
+        echo "${{ secrets.KUBE_CONFIG_PRODUCTION }}" | base64 -d > kubeconfig
+        export KUBECONFIG=kubeconfig
+        kubectl config current-context
+    
+    - name: 🚀 Deploy Blue-Green para Produção
+      run: |
+        export KUBECONFIG=kubeconfig
+        python scripts/blue_green_deploy.py \
+          --image=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }} \
+          --environment=production \
+          --timeout=600
+        echo "✅ Deploy blue-green concluído"
+    
+    - name: 🔍 Health checks pós-deploy
+      run: |
+        python scripts/health_checks.py --environment=production --extensive
+        echo "✅ Health checks passaram"
+    
+    - name: 📈 Verificar métricas de performance
+      run: |
+        python scripts/performance_validation.py --environment=production
+        echo "✅ Performance validada"
+    
+    - name: 🧪 Testes de regressão
+      run: |
+        pytest tests/regression/ --environment=production
+        echo "✅ Testes de regressão passaram"
+    
+    - name: 💬 Notificar equipe
+      uses: 8398a7/action-slack@v3
+      with:
+        status: ${{ job.status }}
+        channel: '#production'
+        text: '🎉 Deploy para Produção concluído com sucesso!'
+        webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+  # ============================================================================
+  # TESTES DE CARGA PÓS-DEPLOY
+  # ============================================================================
+  load-testing:
+    name: ⚡ Testes de Carga
+    runs-on: ubuntu-latest
+    needs: [deploy-staging]
+    if: github.ref == 'refs/heads/develop'
+    
+    steps:
+    - name: 📥 Checkout código
+      uses: actions/checkout@v4
+    
+    - name: 🐍 Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+    
+    - name: 📦 Instalar Locust
+      run: |
+        pip install locust boto3 psutil
+    
+    - name: ⚡ Executar testes de carga
+      run: |
+        locust -f tests/load/locustfile.py \
+          --host=https://staging.tecnocursos.ai \
+          --users=100 \
+          --spawn-rate=10 \
+          --run-time=300s \
+          --html=load-test-report.html \
+          --csv=load-test-results \
+          --headless
+        echo "✅ Testes de carga concluídos"
+    
+    - name: 📊 Analisar resultados
+      run: |
+        python scripts/analyze_load_results.py \
+          --csv=load-test-results_stats.csv \
+          --threshold-p95=500 \
+          --threshold-error-rate=1.0
+        echo "✅ Análise de resultados concluída"
+    
+    - name: 📤 Upload relatórios
+      uses: actions/upload-artifact@v3
+      with:
+        name: load-test-reports
+        path: |
+          load-test-report.html
+          load-test-results*.csv
+
+  # ============================================================================
+  # MONITORAMENTO E ALERTAS
+  # ============================================================================
+  post-deploy-monitoring:
+    name: 📊 Monitoramento Pós-Deploy
+    runs-on: ubuntu-latest
+    needs: [deploy-production]
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: 📥 Checkout código
+      uses: actions/checkout@v4
+    
+    - name: 📊 Configurar alertas Grafana
+      run: |
+        python scripts/setup_grafana_alerts.py --environment=production
+        echo "✅ Alertas configurados"
+    
+    - name: 🔔 Configurar alertas PagerDuty
+      run: |
+        python scripts/setup_pagerduty_alerts.py --environment=production
+        echo "✅ PagerDuty configurado"
+    
+    - name: 📈 Verificar métricas baseline
+      run: |
+        python scripts/establish_metrics_baseline.py --environment=production
+        echo "✅ Baseline de métricas estabelecido"
+    
+    - name: 🎯 Configurar SLOs
+      run: |
+        python scripts/configure_slos.py \
+          --availability=99.9 \
+          --response-time-p95=200 \
+          --error-rate=0.1
+        echo "✅ SLOs configurados"
+
+  # ============================================================================
+  # SECURITY SCANNING CONTÍNUO
+  # ============================================================================
+  continuous-security:
+    name: 🔒 Security Scanning
+    runs-on: ubuntu-latest
+    if: github.event_name == 'schedule' || contains(github.event.head_commit.message, '[security-scan]')
+    
+    steps:
+    - name: 📥 Checkout código
+      uses: actions/checkout@v4
+    
+    - name: 🔍 OWASP ZAP Baseline Scan
+      uses: zaproxy/action-baseline@v0.7.0
+      with:
+        target: 'https://tecnocursos.ai'
+        rules_file_name: '.zap/rules.tsv'
+        cmd_options: '-a'
+    
+    - name: 🛡️ Snyk Security Scan
+      uses: snyk/actions/python@master
+      env:
+        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      with:
+        args: --severity-threshold=high
+    
+    - name: 🔐 CodeQL Analysis
+      uses: github/codeql-action/init@v2
+      with:
+        languages: python
+    
+    - name: 🔍 Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v2
+    
+    - name: 💬 Notificar issues de segurança
+      if: failure()
+      uses: 8398a7/action-slack@v3
+      with:
+        status: failure
+        channel: '#security'
+        text: '🚨 Issues de segurança detectados! Verifique imediatamente.'
+        webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+  # ============================================================================
+  # CLEANUP E MAINTENANCE
+  # ============================================================================
+  cleanup:
+    name: 🧹 Cleanup
+    runs-on: ubuntu-latest
+    needs: [deploy-production, load-testing, post-deploy-monitoring]
+    if: always()
+    
+    steps:
+    - name: 🗑️ Limpar artefatos antigos
+      run: |
+        echo "Limpando artefatos com mais de 30 dias..."
+        # Aqui seria implementada a lógica de cleanup
+    
+    - name: 📊 Gerar relatório de deployment
+      run: |
+        echo "Gerando relatório consolidado do deployment..."
+        # Implementar geração de relatório
+    
+    - name: 📤 Arquivar logs
+      run: |
+        echo "Arquivando logs do pipeline..."
+        # Implementar arquivamento
+    
+    - name: 💬 Notificar conclusão
+      uses: 8398a7/action-slack@v3
+      with:
+        status: ${{ job.status }}
+        channel: '#deployments'
+        text: '✅ Pipeline CI/CD concluído com sucesso!'
+        webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }} 

@@ -1,0 +1,35 @@
+{
+  "configs": [
+    {
+      "name": "sistema_diario",
+      "source_paths": [
+        "app/",
+        "templates/",
+        "static/"
+      ],
+      "backup_type": "incremental",
+      "compression": "tar.gz",
+      "encryption": true,
+      "retention_days": 30,
+      "schedule": "0 2 * * *"
+    },
+    {
+      "name": "uploads_semanal",
+      "source_paths": [
+        "uploads/",
+        "app/static/uploads/"
+      ],
+      "backup_type": "full",
+      "compression": "tar.gz",
+      "encryption": false,
+      "retention_days": 90,
+      "schedule": "0 3 * * 0"
+    }
+  ],
+  "global_settings": {
+    "backup_location": "C:\\xampp\\htdocs\\TecnoCursosAI\\backups",
+    "encryption_key": "enterprise_backup_2025",
+    "max_backup_size_gb": 50,
+    "verify_integrity": true
+  }
+}

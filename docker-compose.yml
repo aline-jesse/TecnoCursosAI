@@ -1,0 +1,171 @@
+# ===============================================================
+# DOCKER COMPOSE - TECNOCURSOSAI
+# Ambiente completo com aplicação, banco de dados e volumes
+# ===============================================================
+
+version: '3.8'
+
+services:
+  # ===== APLICAÇÃO FASTAPI =====
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: tecnocursosai-app
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      # Configurações da aplicação
+      - APP_ENV=production
+      - DEBUG=false
+      - HOST=0.0.0.0
+      - PORT=8000
+      - WORKERS=4
+      
+      # Banco de dados
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_NAME=tecnocursosai
+      - DB_USER=tecnocursosai_user
+      - DB_PASSWORD=tecnocursosai_password_2024
+      
+      # Segurança
+      - SECRET_KEY=sua-chave-secreta-super-segura-para-producao-2024
+      - ACCESS_TOKEN_EXPIRE_MINUTES=30
+      
+      # Upload
+      - MAX_FILE_SIZE_MB=100
+      - ALLOWED_EXTENSIONS=.pdf,.pptx
+      
+      # Logs
+      - LOG_LEVEL=info
+      - LOG_FORMAT=json
+      
+      # Migrações
+      - RUN_MIGRATIONS=true
+      
+    volumes:
+      # Volumes para persistência de dados
+      - uploads_data:/app/static/uploads
+      - videos_data:/app/static/videos
+      - thumbnails_data:/app/static/thumbnails
+      - logs_data:/app/logs
+      
+    depends_on:
+      mysql:
+        condition: service_healthy
+        
+    networks:
+      - tecnocursosai-network
+      
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # ===== BANCO DE DADOS MYSQL =====
+  mysql:
+    image: mysql:8.0
+    container_name: tecnocursosai-mysql
+    restart: unless-stopped
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=root_password_2024
+      - MYSQL_DATABASE=tecnocursosai
+      - MYSQL_USER=tecnocursosai_user
+      - MYSQL_PASSWORD=tecnocursosai_password_2024
+      - MYSQL_CHARSET=utf8mb4
+      - MYSQL_COLLATION=utf8mb4_unicode_ci
+      
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./mysql/init:/docker-entrypoint-initdb.d
+      
+    command: >
+      --default-authentication-plugin=mysql_native_password
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_unicode_ci
+      --innodb-buffer-pool-size=256M
+      --max-connections=200
+      
+    networks:
+      - tecnocursosai-network
+      
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot_password_2024"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+
+  # ===== PHPMYADMIN (OPCIONAL) =====
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: tecnocursosai-phpmyadmin
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    environment:
+      - PMA_HOST=mysql
+      - PMA_PORT=3306
+      - PMA_USER=root
+      - PMA_PASSWORD=root_password_2024
+      - MYSQL_ROOT_PASSWORD=root_password_2024
+      
+    depends_on:
+      mysql:
+        condition: service_healthy
+        
+    networks:
+      - tecnocursosai-network
+
+  # ===== NGINX (PROXY REVERSO) =====
+  nginx:
+    image: nginx:alpine
+    container_name: tecnocursosai-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+      - nginx_logs:/var/log/nginx
+      
+    depends_on:
+      - app
+      
+    networks:
+      - tecnocursosai-network
+
+# ===== VOLUMES PERSISTENTES =====
+volumes:
+  mysql_data:
+    driver: local
+    
+  uploads_data:
+    driver: local
+    
+  videos_data:
+    driver: local
+    
+  thumbnails_data:
+    driver: local
+    
+  logs_data:
+    driver: local
+    
+  nginx_logs:
+    driver: local
+
+# ===== REDE CUSTOMIZADA =====
+networks:
+  tecnocursosai-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16 

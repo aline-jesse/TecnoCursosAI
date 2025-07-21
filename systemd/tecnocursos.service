@@ -1,0 +1,67 @@
+[Unit]
+Description=TecnoCursosAI - Sistema de Upload e Processamento de Arquivos
+Documentation=https://github.com/tecnocursos/tecnocursosai
+After=network.target mysql.service
+Wants=mysql.service
+Requires=network.target
+
+[Service]
+Type=notify
+User=tecnocursos
+Group=tecnocursos
+WorkingDirectory=/opt/tecnocursos
+Environment=PATH=/opt/tecnocursos/venv/bin:/usr/local/bin:/usr/bin:/bin
+Environment=PYTHONPATH=/opt/tecnocursos
+Environment=PYTHONUNBUFFERED=1
+Environment=TECNOCURSOS_ENV=production
+
+# Comando para iniciar a aplicação
+ExecStart=/opt/tecnocursos/venv/bin/uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 4 --worker-class uvicorn.workers.UvicornWorker --log-config /opt/tecnocursos/logging.conf
+
+# Comando para recarregar (graceful restart)
+ExecReload=/bin/kill -HUP $MAINPID
+
+# Comando para parar
+KillMode=mixed
+KillSignal=SIGTERM
+TimeoutStopSec=30
+
+# Reiniciar automaticamente em caso de falha
+Restart=always
+RestartSec=10
+StartLimitInterval=60
+StartLimitBurst=3
+
+# Configurações de recursos
+LimitNOFILE=65536
+LimitNPROC=32768
+
+# Configurações de segurança
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+ReadWritePaths=/opt/tecnocursos/logs /opt/tecnocursos/app/static /tmp
+PrivateTmp=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+RestrictRealtime=yes
+RestrictNamespaces=yes
+
+# Configurações de rede
+IPAddressDeny=any
+IPAddressAllow=localhost
+IPAddressAllow=10.0.0.0/8
+IPAddressAllow=172.16.0.0/12
+IPAddressAllow=192.168.0.0/16
+
+# Logs
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=tecnocursos
+
+# Variáveis de ambiente adicionais
+EnvironmentFile=-/opt/tecnocursos/.env
+
+[Install]
+WantedBy=multi-user.target 

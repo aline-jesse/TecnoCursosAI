@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste de Console - TecnoCursos AI</title>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- React e Babel para produção -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f9fafb;
+            color: #1f2937;
+            padding: 2rem;
+        }
+        
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 2rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .status {
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .status.success {
+            background-color: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+        
+        .status.error {
+            background-color: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+        
+        .status.warning {
+            background-color: #fef3c7;
+            color: #92400e;
+            border: 1px solid #fde68a;
+        }
+        
+        .log {
+            background-color: #f3f4f6;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-family: monospace;
+            font-size: 0.875rem;
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🔍 Teste de Console - TecnoCursos AI</h1>
+        <p>Verificando carregamento de recursos e erros de JavaScript...</p>
+        
+        <div id="status-container"></div>
+        <div id="log-container" class="log"></div>
+    </div>
+
+    <script>
+        // Capturar logs do console
+        const originalConsole = {
+            log: console.log,
+            error: console.error,
+            warn: console.warn,
+            info: console.info
+        };
+        
+        const logContainer = document.getElementById('log-container');
+        const statusContainer = document.getElementById('status-container');
+        
+        function addLog(type, message) {
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.style.color = type === 'error' ? '#dc2626' : 
+                                 type === 'warn' ? '#d97706' : 
+                                 type === 'info' ? '#2563eb' : '#059669';
+            logEntry.textContent = `[${timestamp}] ${type.toUpperCase()}: ${message}`;
+            logContainer.appendChild(logEntry);
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+        
+        function addStatus(type, message) {
+            const status = document.createElement('div');
+            status.className = `status ${type}`;
+            status.textContent = message;
+            statusContainer.appendChild(status);
+        }
+        
+        // Sobrescrever console para capturar logs
+        console.log = function(...args) {
+            originalConsole.log.apply(console, args);
+            addLog('log', args.join(' '));
+        };
+        
+        console.error = function(...args) {
+            originalConsole.error.apply(console, args);
+            addLog('error', args.join(' '));
+        };
+        
+        console.warn = function(...args) {
+            originalConsole.warn.apply(console, args);
+            addLog('warn', args.join(' '));
+        };
+        
+        console.info = function(...args) {
+            originalConsole.info.apply(console, args);
+            addLog('info', args.join(' '));
+        };
+        
+        // Testar carregamento de recursos
+        function testResourceLoading() {
+            addStatus('info', '🔍 Iniciando testes de carregamento...');
+            
+            // Testar React
+            if (typeof React !== 'undefined') {
+                addStatus('success', '✅ React carregado com sucesso');
+                addLog('info', `React versão: ${React.version}`);
+            } else {
+                addStatus('error', '❌ React não foi carregado');
+            }
+            
+            // Testar ReactDOM
+            if (typeof ReactDOM !== 'undefined') {
+                addStatus('success', '✅ ReactDOM carregado com sucesso');
+                addLog('info', `ReactDOM versão: ${ReactDOM.version}`);
+            } else {
+                addStatus('error', '❌ ReactDOM não foi carregado');
+            }
+            
+            // Testar Babel
+            if (typeof Babel !== 'undefined') {
+                addStatus('success', '✅ Babel carregado com sucesso');
+            } else {
+                addStatus('error', '❌ Babel não foi carregado');
+            }
+            
+            // Testar Font Awesome
+            const fontAwesomeTest = document.createElement('i');
+            fontAwesomeTest.className = 'fas fa-check';
+            document.body.appendChild(fontAwesomeTest);
+            const computedStyle = window.getComputedStyle(fontAwesomeTest, '::before');
+            if (computedStyle.content !== 'none') {
+                addStatus('success', '✅ Font Awesome carregado com sucesso');
+            } else {
+                addStatus('warning', '⚠️ Font Awesome pode não estar carregado corretamente');
+            }
+            document.body.removeChild(fontAwesomeTest);
+            
+            // Testar rede
+            fetch('/api/health')
+                .then(response => {
+                    if (response.ok) {
+                        addStatus('success', '✅ Servidor respondendo corretamente');
+                    } else {
+                        addStatus('warning', `⚠️ Servidor retornou status ${response.status}`);
+                    }
+                })
+                .catch(error => {
+                    addStatus('error', `❌ Erro ao conectar com servidor: ${error.message}`);
+                });
+        }
+        
+        // Capturar erros de JavaScript
+        window.addEventListener('error', function(event) {
+            addLog('error', `JavaScript Error: ${event.message} at ${event.filename}:${event.lineno}`);
+        });
+        
+        // Capturar erros de recursos
+        window.addEventListener('error', function(event) {
+            if (event.target && event.target.tagName) {
+                addLog('error', `Resource Error: ${event.target.src || event.target.href} failed to load`);
+            }
+        }, true);
+        
+        // Iniciar testes quando a página carregar
+        window.addEventListener('load', function() {
+            addLog('info', 'Página carregada completamente');
+            testResourceLoading();
+            
+            // Testar React após um delay
+            setTimeout(() => {
+                if (typeof React !== 'undefined' && typeof ReactDOM !== 'undefined') {
+                    try {
+                        const testElement = React.createElement('div', null, 'Teste React');
+                        const container = document.createElement('div');
+                        document.body.appendChild(container);
+                        
+                        const root = ReactDOM.createRoot(container);
+                        root.render(testElement);
+                        
+                        addStatus('success', '✅ React renderização funcionando corretamente');
+                        document.body.removeChild(container);
+                    } catch (error) {
+                        addStatus('error', `❌ Erro na renderização React: ${error.message}`);
+                    }
+                }
+            }, 1000);
+        });
+        
+        // Log inicial
+        addLog('info', 'Script de teste iniciado');
+    </script>
+</body>
+</html> 

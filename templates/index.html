@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TecnoCursos AI - Dashboard</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <!-- Favicon with multiple formats for better compatibility -->
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+    <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+    <link rel="apple-touch-icon" href="/static/favicon.svg">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <nav class="nav">
+                <a href="/" class="logo">TecnoCursos AI</a>
+                <ul class="nav-links">
+                    <li><a href="/dashboard.html">Dashboard</a></li>
+                    <li><a href="/projects.html">Projetos</a></li>
+                    <li><a href="/files.html">Arquivos</a></li>
+                    <li><a href="/profile.html">Perfil</a></li>
+                    <li><a href="#" data-logout>Sair</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container">
+        <!-- Welcome Section -->
+        <div class="card fade-in">
+            <div class="card-header">
+                <h1 class="card-title">Bem-vindo, <span data-user-name>Usuário</span>!</h1>
+                <p class="card-subtitle">Gerencie seus cursos e conteúdos de forma inteligente</p>
+            </div>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="row" data-auto-refresh="loadStats">
+            <div class="col-3">
+                <div class="card text-center slide-up">
+                    <h3 id="total-projects" class="text-primary">-</h3>
+                    <p>Projetos</p>
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="card text-center slide-up">
+                    <h3 id="total-files" class="text-success">-</h3>
+                    <p>Arquivos</p>
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="card text-center slide-up">
+                    <h3 id="total-videos" class="text-info">-</h3>
+                    <p>Vídeos</p>
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="card text-center slide-up">
+                    <h3 id="storage-used" class="text-warning">-</h3>
+                    <p>Armazenamento</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="row">
+            <div class="col-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Ações Rápidas</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-6">
+                                <button class="btn btn-primary w-100 mb-2" onclick="createProject()">
+                                    ➕ Novo Projeto
+                                </button>
+                            </div>
+                            <div class="col-6">
+                                <button class="btn btn-success w-100 mb-2" onclick="uploadFile()">
+                                    📤 Upload Arquivo
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-6">
+                                <button class="btn btn-info w-100" onclick="window.location.href='/files.html'">
+                                    📁 Ver Arquivos
+                                </button>
+                            </div>
+                            <div class="col-6">
+                                <button class="btn btn-secondary w-100" onclick="window.location.href='/profile.html'">
+                                    👤 Meu Perfil
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Atividade Recente</h2>
+                    </div>
+                    <div class="card-body">
+                        <div id="recent-activity">
+                            <div class="spinner"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Projects Overview -->
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Meus Projetos</h2>
+                <button class="btn btn-primary" onclick="createProject()">Novo Projeto</button>
+            </div>
+            <div class="card-body">
+                <div id="projects-overview">
+                    <div class="spinner"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Files -->
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Arquivos Recentes</h2>
+                <a href="/files.html" class="btn btn-outline">Ver Todos</a>
+            </div>
+            <div class="card-body">
+                <div id="recent-files">
+                    <div class="spinner"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modals Container -->
+    <div id="modals-container"></div>
+
+    <!-- Scripts -->
+    <script src="/static/js/app.js"></script>
+    <script>
+        // Dashboard specific functions
+        async function loadStats() {
+            try {
+                const stats = await api.getStats();
+                
+                document.getElementById('total-projects').textContent = stats.projects.total || 0;
+                document.getElementById('total-files').textContent = stats.files.total || 0;
+                document.getElementById('total-videos').textContent = stats.videos.total || 0;
+                document.getElementById('storage-used').textContent = formatFileSize(stats.storage.used || 0);
+            } catch (error) {
+                console.error('Erro ao carregar estatísticas:', error);
+            }
+        }
+
+        async function loadRecentActivity() {
+            try {
+                const activity = await api.request('/stats/activity');
+                const container = document.getElementById('recent-activity');
+                
+                if (activity.length === 0) {
+                    container.innerHTML = '<p class="text-center text-muted">Nenhuma atividade recente</p>';
+                    return;
+                }
+
+                container.innerHTML = activity.map(item => `
+                    <div class="activity-item mb-2 p-2" style="border-left: 3px solid var(--primary-color);">
+                        <div class="d-flex justify-content-between">
+                            <span>${item.description}</span>
+                            <small class="text-muted">${formatDate(item.created_at)}</small>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                document.getElementById('recent-activity').innerHTML = 
+                    '<p class="text-center text-muted">Erro ao carregar atividades</p>';
+            }
+        }
+
+        async function loadProjectsOverview() {
+            try {
+                const projects = await api.getProjects();
+                const container = document.getElementById('projects-overview');
+                
+                if (projects.length === 0) {
+                    container.innerHTML = `
+                        <div class="text-center p-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 10px;">
+                            <div style="font-size: 3rem; margin-bottom: 1rem;">🚀</div>
+                            <h3>Bem-vindo ao TecnoCursos AI!</h3>
+                            <p style="margin: 1rem 0; opacity: 0.9;">
+                                Para começar a usar o sistema, você pode:<br>
+                                <strong>1.</strong> Criar um projeto manualmente, ou<br>
+                                <strong>2.</strong> Fazer upload diretamente - criaremos um projeto automaticamente!
+                            </p>
+                            <div style="margin-top: 2rem;">
+                                <button class="btn btn-light" onclick="createProject()" style="margin-right: 1rem;">
+                                    📋 Criar Projeto
+                                </button>
+                                <button class="btn btn-outline" onclick="window.location.href='/files.html'" 
+                                        style="border-color: white; color: white;">
+                                    📤 Fazer Upload Direto
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = `
+                    <div class="row">
+                        ${projects.slice(0, 4).map(project => `
+                            <div class="col-6 mb-3">
+                                <div class="card h-100" style="cursor: pointer;" 
+                                     onclick="window.location.href='/projects.html?id=${project.id}'">
+                                    <div class="card-body">
+                                        <h4 class="card-title">${project.title}</h4>
+                                        <p class="card-text text-muted">${project.description || 'Sem descrição'}</p>
+                                        <div class="d-flex justify-content-between mt-2">
+                                            <small class="text-muted">${project.files_count || 0} arquivos</small>
+                                            <span class="badge badge-${project.status === 'active' ? 'success' : 'secondary'}">
+                                                ${project.status}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    ${projects.length > 4 ? `
+                        <div class="text-center mt-3">
+                            <a href="/projects.html" class="btn btn-outline">Ver todos os ${projects.length} projetos</a>
+                        </div>
+                    ` : ''}
+                `;
+            } catch (error) {
+                document.getElementById('projects-overview').innerHTML = 
+                    '<p class="text-center text-muted">Erro ao carregar projetos</p>';
+            }
+        }
+
+        async function loadRecentFiles() {
+            try {
+                const files = await api.request('/files/recent');
+                const container = document.getElementById('recent-files');
+                
+                if (files.length === 0) {
+                    container.innerHTML = '<p class="text-center text-muted">Nenhum arquivo encontrado</p>';
+                    return;
+                }
+
+                container.innerHTML = `
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Arquivo</th>
+                                    <th>Projeto</th>
+                                    <th>Tamanho</th>
+                                    <th>Status</th>
+                                    <th>Data</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${files.slice(0, 5).map(file => `
+                                    <tr>
+                                        <td>
+                                            <span class="me-2">${getFileIcon(file.filename)}</span>
+                                            ${file.filename}
+                                        </td>
+                                        <td>${file.project?.title || 'N/A'}</td>
+                                        <td>${formatFileSize(file.file_size)}</td>
+                                        <td>
+                                            <span class="badge badge-${file.status === 'processed' ? 'success' : 
+                                                file.status === 'processing' ? 'warning' : 'secondary'}">
+                                                ${file.status}
+                                            </span>
+                                        </td>
+                                        <td>${formatDate(file.created_at)}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            } catch (error) {
+                document.getElementById('recent-files').innerHTML = 
+                    '<p class="text-center text-muted">Erro ao carregar arquivos</p>';
+            }
+        }
+
+        function createProject() {
+            const modalContent = `
+                <form id="create-project-form">
+                    <div class="form-group">
+                        <label class="form-label">Título do Projeto</label>
+                        <input type="text" class="form-control" name="title" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Descrição</label>
+                        <textarea class="form-control" name="description" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Status</label>
+                        <select class="form-control" name="status">
+                            <option value="active">Ativo</option>
+                            <option value="archived">Arquivado</option>
+                        </select>
+                    </div>
+                </form>
+            `;
+
+            showModal('Novo Projeto', modalContent, [
+                {
+                    text: 'Cancelar',
+                    type: 'secondary',
+                    onclick: 'closeModal(this)'
+                },
+                {
+                    text: 'Criar',
+                    type: 'primary',
+                    onclick: 'submitCreateProject()'
+                }
+            ]);
+        }
+
+        async function submitCreateProject() {
+            const form = document.getElementById('create-project-form');
+            if (!validateForm(form)) return;
+
+            const formData = new FormData(form);
+            const projectData = Object.fromEntries(formData);
+
+            try {
+                await api.createProject(projectData);
+                showNotification('Projeto criado com sucesso!', 'success');
+                closeModal(form);
+                loadProjectsOverview();
+                loadStats();
+            } catch (error) {
+                showNotification('Erro ao criar projeto: ' + error.message, 'danger');
+            }
+        }
+
+        function uploadFile() {
+            // Redirecionar para página de arquivos com informação sobre criação automática
+            const hasProjects = projects && projects.length > 0;
+            if (!hasProjects) {
+                showNotification('🚀 Redirecionando para upload - um projeto será criado automaticamente!', 'info');
+            }
+            window.location.href = '/files.html';
+        }
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Verificar se a função requireAuth existe antes de chamá-la
+            if (typeof requireAuth === 'function') {
+                if (!requireAuth()) return;
+            } else {
+                // Fallback: verificar se há token no localStorage
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    window.location.href = '/login.html';
+                    return;
+                }
+            }
+
+            // Load all dashboard data
+            await Promise.all([
+                loadStats(),
+                loadRecentActivity(),
+                loadProjectsOverview(),
+                loadRecentFiles()
+            ]);
+        });
+
+        // Global functions for auto-refresh
+        window.loadStats = loadStats;
+        window.loadRecentActivity = loadRecentActivity;
+        window.loadProjectsOverview = loadProjectsOverview;
+        window.loadRecentFiles = loadRecentFiles;
+    </script>
+</body>
+</html> 

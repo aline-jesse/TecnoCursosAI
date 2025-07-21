@@ -1,0 +1,376 @@
+name: TecnoCursos AI - CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  release:
+    types: [ published ]
+
+env:
+  PYTHON_VERSION: '3.11'
+  NODE_VERSION: '18'
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  # Testes e Qualidade do Código
+  test:
+    runs-on: ubuntu-latest
+    
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: testpassword
+          MYSQL_DATABASE: tecnocursos_test
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+      
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd="redis-cli ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+    
+    steps:
+    - name: Checkout código
+      uses: actions/checkout@v4
+    
+    - name: Configurar Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+        cache: 'pip'
+    
+    - name: Instalar dependências do sistema
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y ffmpeg libsm6 libxext6 libfontconfig1 libxrender1
+    
+    - name: Instalar dependências Python
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install pytest-cov pytest-xdist pytest-mock
+    
+    - name: Verificar formatação de código (Black)
+      run: |
+        pip install black
+        black --check .
+    
+    - name: Análise de código (Flake8)
+      run: |
+        pip install flake8
+        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+    
+    - name: Verificar importações (isort)
+      run: |
+        pip install isort
+        isort --check-only .
+    
+    - name: Análise de segurança (Bandit)
+      run: |
+        pip install bandit
+        bandit -r . -f json -o bandit-report.json || true
+    
+    - name: Configurar variáveis de ambiente para testes
+      run: |
+        echo "DATABASE_URL=mysql+pymysql://root:testpassword@localhost:3306/tecnocursos_test" >> $GITHUB_ENV
+        echo "REDIS_HOST=localhost" >> $GITHUB_ENV
+        echo "REDIS_PORT=6379" >> $GITHUB_ENV
+        echo "SECRET_KEY=test-secret-key-for-github-actions" >> $GITHUB_ENV
+        echo "ENVIRONMENT=test" >> $GITHUB_ENV
+    
+    - name: Executar migrações de teste
+      run: |
+        alembic upgrade head
+    
+    - name: Executar testes com cobertura
+      run: |
+        pytest --cov=. --cov-report=xml --cov-report=html --cov-fail-under=80 -v
+    
+    - name: Upload de cobertura para Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./coverage.xml
+        flags: unittests
+        name: codecov-umbrella
+    
+    - name: Testes de integração
+      run: |
+        python -m pytest tests/integration/ -v
+    
+    - name: Testes de performance básicos
+      run: |
+        pip install locust
+        python scripts/performance_test.py --test-mode
+    
+    - name: Upload de artefatos de teste
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: test-results
+        path: |
+          htmlcov/
+          bandit-report.json
+          pytest-report.xml
+
+  # Análise de Vulnerabilidades
+  security:
+    runs-on: ubuntu-latest
+    needs: test
+    
+    steps:
+    - name: Checkout código
+      uses: actions/checkout@v4
+    
+    - name: Executar análise de vulnerabilidades Trivy
+      uses: aquasecurity/trivy-action@master
+      with:
+        scan-type: 'fs'
+        scan-ref: '.'
+        format: 'sarif'
+        output: 'trivy-results.sarif'
+    
+    - name: Upload de resultados Trivy
+      uses: github/codeql-action/upload-sarif@v2
+      with:
+        sarif_file: 'trivy-results.sarif'
+    
+    - name: Análise de dependências
+      run: |
+        pip install safety
+        safety check --json --output safety-report.json || true
+    
+    - name: Upload de relatórios de segurança
+      uses: actions/upload-artifact@v3
+      with:
+        name: security-reports
+        path: |
+          trivy-results.sarif
+          safety-report.json
+
+  # Build e Push da Imagem Docker
+  build:
+    runs-on: ubuntu-latest
+    needs: [test, security]
+    if: github.event_name != 'pull_request'
+    
+    permissions:
+      contents: read
+      packages: write
+    
+    steps:
+    - name: Checkout código
+      uses: actions/checkout@v4
+    
+    - name: Configurar Docker Buildx
+      uses: docker/setup-buildx-action@v3
+    
+    - name: Login no Container Registry
+      uses: docker/login-action@v3
+      with:
+        registry: ${{ env.REGISTRY }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: Extrair metadados
+      id: meta
+      uses: docker/metadata-action@v5
+      with:
+        images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+        tags: |
+          type=ref,event=branch
+          type=ref,event=pr
+          type=sha,prefix={{branch}}-
+          type=raw,value=latest,enable={{is_default_branch}}
+          type=semver,pattern={{version}}
+          type=semver,pattern={{major}}.{{minor}}
+    
+    - name: Build e Push da imagem Docker
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        push: true
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+        platforms: linux/amd64,linux/arm64
+
+  # Deploy para Staging
+  deploy-staging:
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/develop'
+    environment: staging
+    
+    steps:
+    - name: Checkout código
+      uses: actions/checkout@v4
+    
+    - name: Configurar kubectl
+      uses: azure/setup-kubectl@v3
+      with:
+        version: 'latest'
+    
+    - name: Deploy para Staging
+      run: |
+        echo "Deploying to staging environment..."
+        # Aqui você adicionaria os comandos específicos do seu ambiente
+        # kubectl apply -f k8s/staging/
+        # ou scripts de deploy específicos
+    
+    - name: Executar testes de smoke
+      run: |
+        python scripts/smoke_tests.py --environment=staging
+    
+    - name: Notificar Slack (Staging)
+      uses: 8398a7/action-slack@v3
+      with:
+        status: ${{ job.status }}
+        channel: '#deployments'
+        text: 'Deploy para Staging concluído! 🚀'
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+  # Deploy para Produção
+  deploy-production:
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/main' || github.event_name == 'release'
+    environment: production
+    
+    steps:
+    - name: Checkout código
+      uses: actions/checkout@v4
+    
+    - name: Configurar kubectl
+      uses: azure/setup-kubectl@v3
+      with:
+        version: 'latest'
+    
+    - name: Deploy para Produção
+      run: |
+        echo "Deploying to production environment..."
+        # kubectl apply -f k8s/production/
+        # Scripts de deploy com blue-green ou canary
+    
+    - name: Executar testes de healthcheck
+      run: |
+        python scripts/health_check.py --environment=production
+    
+    - name: Executar testes de regressão
+      run: |
+        python scripts/regression_tests.py --environment=production
+    
+    - name: Notificar Slack (Produção)
+      uses: 8398a7/action-slack@v3
+      with:
+        status: ${{ job.status }}
+        channel: '#production'
+        text: 'Deploy para Produção concluído! 🎉'
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+  # Testes de Performance
+  performance:
+    runs-on: ubuntu-latest
+    needs: deploy-staging
+    if: github.ref == 'refs/heads/develop'
+    
+    steps:
+    - name: Checkout código
+      uses: actions/checkout@v4
+    
+    - name: Configurar Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+    
+    - name: Instalar dependências de performance
+      run: |
+        pip install locust requests
+    
+    - name: Executar testes de carga
+      run: |
+        python scripts/load_test.py --environment=staging --duration=300
+    
+    - name: Executar testes de stress
+      run: |
+        python scripts/stress_test.py --environment=staging --duration=180
+    
+    - name: Upload de relatórios de performance
+      uses: actions/upload-artifact@v3
+      with:
+        name: performance-reports
+        path: |
+          performance-report.html
+          load-test-results.json
+
+  # Backup e Monitoramento
+  monitoring:
+    runs-on: ubuntu-latest
+    needs: deploy-production
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: Verificar métricas de aplicação
+      run: |
+        # Verificar métricas via API ou ferramentas de monitoramento
+        echo "Checking application metrics..."
+    
+    - name: Verificar logs de erro
+      run: |
+        # Analisar logs para detectar erros
+        echo "Analyzing error logs..."
+    
+    - name: Executar backup de segurança
+      run: |
+        # Trigger backup automatizado
+        echo "Running security backup..."
+    
+    - name: Verificar alertas de monitoramento
+      run: |
+        # Verificar se há alertas ativos
+        echo "Checking monitoring alerts..."
+
+  # Cleanup
+  cleanup:
+    runs-on: ubuntu-latest
+    needs: [deploy-production, performance, monitoring]
+    if: always()
+    
+    steps:
+    - name: Limpar artefatos antigos
+      run: |
+        echo "Cleaning up old artifacts and images..."
+    
+    - name: Otimizar imagens Docker
+      run: |
+        echo "Optimizing Docker images..."
+    
+    - name: Gerar relatório de deploy
+      run: |
+        echo "Generating deployment report..."
+    
+    - name: Notificar conclusão do pipeline
+      uses: 8398a7/action-slack@v3
+      with:
+        status: ${{ job.status }}
+        channel: '#ci-cd'
+        text: 'Pipeline CI/CD concluído! ✅'
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} 

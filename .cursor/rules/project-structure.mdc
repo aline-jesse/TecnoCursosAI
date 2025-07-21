@@ -1,0 +1,44 @@
+# Estrutura do Projeto TecnoCursos AI
+
+## Visão Geral
+O TecnoCursos AI é um sistema SaaS completo para geração de vídeos educacionais com IA, combinando backend FastAPI e frontend React.
+
+## Arquitetura Principal
+
+### Backend (FastAPI)
+- **Ponto de entrada**: [app/main.py](mdc:app/main.py) - Aplicação principal FastAPI
+- **Configuração**: [app/config.py](mdc:app/config.py) - Configurações do sistema
+- **Banco de dados**: [app/database.py](mdc:app/database.py) - Configuração SQLAlchemy
+- **Modelos**: [app/models.py](mdc:app/models.py) - Modelos SQLAlchemy (User, Project, FileUpload, Video)
+- **Autenticação**: [app/auth.py](mdc:app/auth.py) - Sistema JWT e autenticação
+- **Schemas**: [app/schemas.py](mdc:app/schemas.py) - Schemas Pydantic para validação
+
+### Frontend (React)
+- **Ponto de entrada**: [src/index.js](mdc:src/index.js) - Aplicação React principal
+- **Componente principal**: [src/App.jsx](mdc:src/App.jsx) - Componente raiz
+- **Serviços API**: [src/services/apiService.ts](mdc:src/services/apiService.ts) - Cliente HTTP
+- **Store**: [src/store/editorStore.ts](mdc:src/store/editorStore.ts) - Gerenciamento de estado (Zustand)
+
+### Configuração
+- **Dependências**: [package.json](mdc:package.json) - Dependências Node.js/React
+- **Configuração Tailwind**: [tailwind.config.js](mdc:tailwind.config.js) - Estilização CSS
+- **ESLint**: [.eslintrc.js](mdc:.eslintrc.js) - Linting JavaScript/TypeScript
+
+## Diretórios Principais
+- `/app/` - Backend FastAPI completo
+- `/src/` - Frontend React
+- `/static/` - Arquivos estáticos
+- `/uploads/` - Uploads de usuários
+- `/cache/` - Cache do sistema
+- `/logs/` - Logs da aplicação
+
+## Padrões de Desenvolvimento
+- **Backend**: FastAPI com SQLAlchemy, JWT, Pydantic
+- **Frontend**: React 18+ com TypeScript, TailwindCSS, Zustand
+- **Autenticação**: JWT tokens (access + refresh)
+- **Banco**: SQLite para desenvolvimento, PostgreSQL para produção
+- **Deploy**: Docker + Docker Compose
+description:
+globs:
+alwaysApply: false
+---

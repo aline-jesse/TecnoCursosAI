@@ -1,0 +1,75 @@
+# ===============================================================
+# TECNOCURSOSAI DEVELOPMENT - DEPENDÊNCIAS ESSENCIAIS
+# Sistema FastAPI + IA + Development Ready
+# ===============================================================
+
+# === FRAMEWORK PRINCIPAL ===
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+
+# === BANCO DE DADOS (SQLite para dev) ===
+sqlalchemy==2.0.23
+alembic==1.12.1
+
+# === VALIDAÇÃO E SERIALIZAÇÃO ===
+pydantic==2.5.0
+pydantic-settings==2.1.0
+email-validator==2.1.0
+
+# === WEBSOCKETS E TEMPO REAL ===
+websockets==12.0
+python-socketio==5.10.0
+
+# === UPLOAD E MANIPULAÇÃO DE ARQUIVOS ===
+python-multipart==0.0.6
+aiofiles==23.2.1
+
+# === PROCESSAMENTO DE DOCUMENTOS ===
+PyPDF2==3.0.1
+python-pptx==0.6.23
+PyMuPDF==1.23.8
+python-docx==1.1.0
+
+# === PROCESSAMENTO DE VÍDEO E ÁUDIO ===
+moviepy==1.0.3
+opencv-python-headless==4.8.1.78
+pydub==0.25.1
+gtts==2.4.0
+
+# === TTS PREMIUM ===
+transformers==4.35.2
+scipy==1.11.4
+librosa==0.10.1
+soundfile==0.12.1
+
+# === PROCESSAMENTO DE IMAGENS ===
+Pillow==10.1.0
+numpy==1.24.4
+
+# === IA ===
+openai==1.3.7
+
+# === AUTENTICAÇÃO E SEGURANÇA ===
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+bcrypt==4.0.1
+
+# === EMAILS E TEMPLATES ===
+jinja2==3.1.2
+
+# === CLIENTES HTTP ===
+httpx==0.25.2
+requests==2.31.0
+
+# === PROCESSAMENTO DE DADOS ===
+pandas==2.1.3
+
+# === SISTEMA E MONITORAMENTO ===
+psutil==5.9.6
+
+# === ESSENCIAIS ===
+python-dotenv==1.0.0
+
+# === DESENVOLVIMENTO ===
+pytest==7.4.3
+pytest-asyncio==0.21.1 

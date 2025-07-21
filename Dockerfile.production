@@ -1,0 +1,260 @@
+# ===============================================================
+# DOCKERFILE DE PRODUÇÃO - TECNOCURSOS AI ENTERPRISE
+# ===============================================================
+# Multi-stage build otimizado para produção com:
+# - Security hardening
+# - Cache inteligente  
+# - Performance otimizada
+# - Monitoramento integrado
+# ===============================================================
+
+# === STAGE 1: DEPENDENCIES INSTALLER ===
+FROM python:3.11-slim-bullseye AS dependencies
+
+# Metadados
+LABEL maintainer="TecnoCursos AI Team <dev@tecnocursos.ai>"
+LABEL version="2.0.0"
+LABEL description="TecnoCursos AI Enterprise Production Image"
+
+# Argumentos de build
+ARG BUILD_DATE
+ARG VCS_REF
+ARG VERSION
+
+# Labels para metadados
+LABEL org.label-schema.build-date=$BUILD_DATE \
+      org.label-schema.name="tecnocursos-ai" \
+      org.label-schema.description="AI-Powered Course Creation Platform" \
+      org.label-schema.url="https://tecnocursos.ai" \
+      org.label-schema.vcs-ref=$VCS_REF \
+      org.label-schema.vcs-url="https://github.com/tecnocursos/tecnocursos-ai" \
+      org.label-schema.vendor="TecnoCursos AI" \
+      org.label-schema.version=$VERSION \
+      org.label-schema.schema-version="1.0"
+
+# Variáveis de ambiente para build
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PYTHONHASHSEED=random \
+    PIP_NO_CACHE_DIR=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    PIP_DEFAULT_TIMEOUT=100
+
+# Atualizar sistema e instalar dependências básicas
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    curl \
+    git \
+    pkg-config \
+    && rm -rf /var/lib/apt/lists/*
+
+# Criar usuário não-root
+RUN groupadd --gid 1000 appuser && \
+    useradd --uid 1000 --gid appuser --shell /bin/bash --create-home appuser
+
+# Configurar diretório de trabalho
+WORKDIR /app
+
+# Copiar e instalar dependências Python
+COPY requirements_production.txt .
+RUN pip install --no-cache-dir -r requirements_production.txt
+
+# === STAGE 2: SYSTEM DEPENDENCIES ===
+FROM dependencies AS system-deps
+
+# Instalar dependências do sistema para produção
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    # Multimedia
+    ffmpeg \
+    libsm6 \
+    libxext6 \
+    libfontconfig1 \
+    libxrender1 \
+    # Database clients
+    default-mysql-client \
+    postgresql-client \
+    # Networking
+    curl \
+    wget \
+    # Process monitoring
+    procps \
+    htop \
+    # Security
+    ca-certificates \
+    # Cleanup
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* \
+    && rm -rf /tmp/* \
+    && rm -rf /var/tmp/*
+
+# === STAGE 3: APPLICATION BUILD ===
+FROM system-deps AS app-build
+
+# Copiar código da aplicação
+COPY --chown=appuser:appuser . .
+
+# Remover arquivos desnecessários para produção
+RUN rm -rf \
+    tests/ \
+    ___PSD/ \
+    .git/ \
+    .github/ \
+    *.md \
+    .env* \
+    node_modules/ \
+    src/ \
+    public/ \
+    && find . -name "*.pyc" -delete \
+    && find . -name "__pycache__" -type d -exec rm -rf {} + 2>/dev/null || true
+
+# Compilar bytecode Python para performance
+RUN python -m compileall -b . && \
+    find . -name "*.py" -delete 2>/dev/null || true
+
+# === STAGE 4: RUNTIME OPTIMIZED ===
+FROM python:3.11-slim-bullseye AS runtime
+
+# Copiar usuário e dependências do sistema
+COPY --from=system-deps /etc/passwd /etc/passwd
+COPY --from=system-deps /etc/group /etc/group
+
+# Instalar apenas dependências runtime críticas
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    # Runtime essentials
+    ffmpeg \
+    libsm6 \
+    libxext6 \
+    libfontconfig1 \
+    libxrender1 \
+    default-mysql-client \
+    curl \
+    procps \
+    ca-certificates \
+    # Timezone
+    tzdata \
+    # Cleanup
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* \
+    && rm -rf /tmp/* \
+    && rm -rf /var/tmp/*
+
+# Copiar dependências Python
+COPY --from=dependencies /usr/local/lib/python3.11/site-packages /usr/local/lib/python3.11/site-packages
+COPY --from=dependencies /usr/local/bin /usr/local/bin
+
+# Configurar timezone
+ENV TZ=America/Sao_Paulo
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
+# Configurar usuário não-root
+USER appuser
+WORKDIR /app
+
+# Copiar aplicação otimizada
+COPY --from=app-build --chown=appuser:appuser /app .
+
+# === STAGE 5: PRODUCTION FINAL ===
+FROM runtime AS production
+
+# Variáveis de ambiente de produção
+ENV ENVIRONMENT=production \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PYTHONHASHSEED=random \
+    # Security
+    PYTHONFAULTHANDLER=1 \
+    # Performance
+    MALLOC_ARENA_MAX=2 \
+    # Gunicorn
+    WEB_CONCURRENCY=4 \
+    MAX_WORKERS=8 \
+    WORKER_CLASS=uvicorn.workers.UvicornWorker \
+    WORKER_TIMEOUT=300 \
+    KEEPALIVE=5 \
+    MAX_REQUESTS=1000 \
+    MAX_REQUESTS_JITTER=100 \
+    PRELOAD_APP=true \
+    # Monitoring
+    PROMETHEUS_MULTIPROC_DIR=/tmp/prometheus \
+    # Logging
+    LOG_LEVEL=INFO \
+    LOG_FORMAT=json
+
+# Criar diretórios necessários
+RUN mkdir -p \
+    /app/logs \
+    /app/uploads \
+    /app/cache \
+    /app/backups \
+    /tmp/prometheus \
+    && chmod 755 /app/logs /app/uploads /app/cache /app/backups /tmp/prometheus
+
+# Health check otimizado
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:8000/health || exit 1
+
+# Expose da porta
+EXPOSE 8000
+
+# Volumes para dados persistentes
+VOLUME ["/app/uploads", "/app/cache", "/app/backups", "/app/logs"]
+
+# Configurar entrypoint e comando
+COPY --chown=appuser:appuser docker/entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+ENTRYPOINT ["/entrypoint.sh"]
+
+# Comando padrão otimizado para produção
+CMD ["gunicorn", \
+     "--bind", "0.0.0.0:8000", \
+     "--workers", "${MAX_WORKERS}", \
+     "--worker-class", "${WORKER_CLASS}", \
+     "--timeout", "${WORKER_TIMEOUT}", \
+     "--keepalive", "${KEEPALIVE}", \
+     "--max-requests", "${MAX_REQUESTS}", \
+     "--max-requests-jitter", "${MAX_REQUESTS_JITTER}", \
+     "--preload", \
+     "--access-logfile", "-", \
+     "--error-logfile", "-", \
+     "--log-level", "${LOG_LEVEL}", \
+     "--capture-output", \
+     "--enable-stdio-inheritance", \
+     "app.main:app"]
+
+# === STAGE 6: DESENVOLVIMENTO (OPCIONAL) ===
+FROM runtime AS development
+
+ENV ENVIRONMENT=development \
+    DEBUG=true \
+    LOG_LEVEL=DEBUG
+
+# Instalar dependências de desenvolvimento
+USER root
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    vim \
+    htop \
+    git \
+    && rm -rf /var/lib/apt/lists/*
+
+USER appuser
+
+# Copiar código sem otimizações
+COPY --chown=appuser:appuser . .
+
+# Comando para desenvolvimento
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+
+# === STAGE 7: TESTING ===
+FROM development AS testing
+
+# Copiar arquivos de teste
+COPY --chown=appuser:appuser tests/ tests/
+COPY --chown=appuser:appuser pytest.ini .
+COPY --chown=appuser:appuser requirements.txt .
+
+# Instalar dependências de teste
+RUN pip install --no-cache-dir pytest pytest-cov pytest-asyncio pytest-mock
+
+# Comando para executar testes
+CMD ["python", "-m", "pytest", "tests/", "-v", "--cov=app", "--cov-report=html"] 

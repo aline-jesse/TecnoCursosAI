@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TecnoCursos AI - Editor de Vídeo</title>
+    <meta name="description" content="Editor de vídeo com IA - TecnoCursos AI">
+    <link rel="icon" href="/static/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="/static/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/src/index.css">
+</head>
+<body>
+    <div id="root">
+        <!-- Loading inicial -->
+        <div style="
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        ">
+            <h1>🚀 TecnoCursos AI - Editor de Vídeo</h1>
+            <p>Carregando aplicação...</p>
+            <div style="margin-top: 20px;">
+                <div style="
+                    width: 40px;
+                    height: 40px;
+                    border: 4px solid rgba(255,255,255,0.3);
+                    border-top: 4px solid white;
+                    border-radius: 50%;
+                    animation: spin 1s linear infinite;
+                "></div>
+            </div>
+            <style>
+                @keyframes spin {
+                    0% { transform: rotate(0deg); }
+                    100% { transform: rotate(360deg); }
+                }
+            </style>
+        </div>
+    </div>
+    
+    <!-- React CDN para desenvolvimento -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    
+    <!-- Babel para JSX -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- Aplicação React -->
+    <script type="text/babel" src="/src/App.jsx"></script>
+    
+    <!-- Script de inicialização -->
+    <script type="text/babel">
+        const { createRoot } = ReactDOM;
+        
+        // Aguarda o carregamento dos scripts
+        window.addEventListener('load', () => {
+            const rootElement = document.getElementById('root');
+            
+            if (rootElement && window.App) {
+                const root = createRoot(rootElement);
+                root.render(React.createElement(window.App));
+            } else {
+                console.error('Erro ao carregar a aplicação');
+            }
+        });
+    </script>
+</body>
+</html> 

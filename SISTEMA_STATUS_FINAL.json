@@ -1,0 +1,16 @@
+{
+  "timestamp": "2025-07-17 02:54:19",
+  "status": "PARCIAL",
+  "success_rate": 83.33333333333334,
+  "total_tests": 6,
+  "passed_tests": 5,
+  "failed_tests": 1,
+  "results": {
+    "imports": true,
+    "database": true,
+    "services": true,
+    "api_startup": true,
+    "file_structure": true,
+    "enterprise_features": false
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "healthy": true,
+  "uptime": 3600,
+  "memory": "128MB",
+  "version": "1.0.0",
+  "timestamp": "2025-07-19T12:00:00Z",
+  "services": {
+    "editor": "online",
+    "api": "online",
+    "database": "online"
+  }
+} 

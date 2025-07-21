@@ -1,0 +1,281 @@
+{
+  "timestamp": "2025-07-19 19:40:35",
+  "total_tests": 34,
+  "passed_tests": 32,
+  "failed_tests": 2,
+  "success_rate": 94.11764705882352,
+  "results": [
+    {
+      "name": "Health Check Principal",
+      "endpoint": "/health",
+      "method": "GET",
+      "status_code": 200,
+      "success": true,
+      "response": "{\n  \"status\": \"healthy\",\n  \"timestamp\": \"2025-07-19T19:40:09.157251\",\n  \"version\": \"2.0.0\",\n  \"uptime_seconds\": 0.00023508071899414062,\n  \"database_status\": \"connected\",\n  \"services_status\": {\n    \"ap"
+    },
+    {
+      "name": "API Health Check",
+      "endpoint": "/api/health",
+      "method": "GET",
+      "status_code": 200,
+      "success": true,
+      "response": "{\n  \"status\": \"healthy\",\n  \"timestamp\": \"2025-07-19T19:40:11.200640\",\n  \"version\": \"2.0.0\",\n  \"uptime_seconds\": 0.015084505081176758,\n  \"port\": 8000,\n  \"host\": \"0.0.0.0\",\n  \"upload_system\": true,\n  \"b"
+    },
+    {
+      "name": "Status do Sistema",
+      "endpoint": "/api/status",
+      "method": "GET",
+      "status_code": 200,
+      "success": true,
+      "response": "{\n  \"total_users\": 0,\n  \"total_projects\": 0,\n  \"total_files\": 0,\n  \"total_videos\": 0,\n  \"system_metrics\": {\n    \"cpu_usage_percent\": 0,\n    \"memory_usage_percent\": 0,\n    \"disk_usage_percent\": 0,\n    "
+    },
+    {
+      "name": "Lista de Projetos",
+      "endpoint": "/api/projects",
+      "method": "GET",
+      "status_code": 200,
+      "success": true,
+      "response": "{\n  \"projects\": [\n    {\n      \"id\": 1,\n      \"name\": \"Projeto Demo\",\n      \"description\": \"Projeto de demonstra\\u00e7\\u00e3o\",\n      \"status\": \"active\",\n      \"created_at\": \"2025-07-19T19:40:15.261569"
+    },
+    {
+      "name": "Lista de Vídeos",
+      "endpoint": "/api/videos",
+      "method": "GET",
+      "status_code": 200,
+      "success": true,
+      "response": "{\n  \"videos\": [\n    {\n      \"id\": 1,\n      \"title\": \"V\\u00eddeo Demo\",\n      \"status\": \"completed\",\n      \"created_at\": \"2025-07-19T19:40:17.318912\"\n    }\n  ],\n  \"total\": 1\n}"
+    },
+    {
+      "name": "Lista de Áudios",
+      "endpoint": "/api/audios",
+      "method": "GET",
+      "status_code": 200,
+      "success": true,
+      "response": "{\n  \"audios\": [\n    {\n      \"id\": 1,\n      \"title\": \"\\u00c1udio Demo\",\n      \"status\": \"completed\",\n      \"created_at\": \"2025-07-19T19:40:19.371430\"\n    }\n  ],\n  \"total\": 1\n}"
+    },
+    {
+      "name": "Lista de Uploads",
+      "endpoint": "/api/upload/files",
+      "method": "GET",
+      "status_code": 200,
+      "success": true,
+      "response": "{\n  \"files\": {\n    \"success\": true,\n    \"files\": [\n      {\n        \"filename\": \"e1adabaa-795e-40f8-9f13-7f3982276f29.txt\",\n        \"type\": \"documents\",\n        \"size\": 107,\n        \"modified\": \"2025-0"
+    },
+    {
+      "name": "Estatísticas de Upload",
+      "endpoint": "/api/upload/stats",
+      "method": "GET",
+      "status_code": 200,
+      "success": true,
+      "response": "{\n  \"success\": true,\n  \"stats\": {\n    \"total_files\": 1,\n    \"total_size\": 107,\n    \"files_by_type\": {\n      \".txt\": 1\n    },\n    \"files_by_directory\": {\n      \"videos\": {\n        \"count\": 0,\n        \""
+    },
+    {
+      "name": "Lista de Tarefas",
+      "endpoint": "/api/background/tasks",
+      "method": "GET",
+      "status_code": 500,
+      "success": false,
+      "response": "<!DOCTYPE HTML>\n<html lang=\"en\">\n    <head>\n        <meta charset=\"utf-8\">\n        <title>Error response</title>\n    </head>\n    <body>\n        <h1>Error response</h1>\n        <p>Error code: 500</p>\n        <p>Message: API Error: 'dict' object has no attribute 'id'.</p>\n        <p>Error code explanation: 500 - Server got itself in trouble.</p>\n    </body>\n</html>\n"
+    },
+    {
+      "name": "Estatísticas de Background",
+      "endpoint": "/api/background/stats",
+      "method": "GET",
+      "status_code": 200,
+      "success": true,
+      "response": "{\n  \"total_tasks\": 1,\n  \"pending\": 0,\n  \"running\": true,\n  \"completed\": 1,\n  \"failed\": 0,\n  \"cancelled\": 0,\n  \"queue_size\": 0,\n  \"workers\": 4\n}"
+    },
+    {
+      "name": "Submissão de Tarefa",
+      "endpoint": "/api/background/task",
+      "method": "POST",
+      "status_code": 200,
+      "success": true,
+      "response": "{\n  \"success\": true,\n  \"task_id\": \"b0a6ec20-937b-4fd7-b2ce-93212fc060d7\",\n  \"type\": \"custom\",\n  \"message\": \"Task submitted successfully\"\n}"
+    },
+    {
+      "name": "Página Principal",
+      "endpoint": "/",
+      "method": "GET",
+      "status_code": 200,
+      "success": true,
+      "response": "<!DOCTYPE html>\r\n<html lang=\"pt-BR\">\r\n<head>\r\n    <meta charset=\"UTF-8\">\r\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\r\n    <title>TecnoCursos AI - Editor de Vídeo Inteli"
+    },
+    {
+      "name": "Documentação",
+      "endpoint": "/docs",
+      "method": "GET",
+      "status_code": 500,
+      "success": false,
+      "response": "<!DOCTYPE HTML>\n<html lang=\"en\">\n    <head>\n        <meta charset=\"utf-8\">\n        <title>Error response</title>\n    </head>\n    <body>\n        <h1>Error response</h1>\n        <p>Error code: 500</p>\n        <p>Message: Documentation Error: name 'file_type' is not defined.</p>\n        <p>Error code explanation: 500 - Server got itself in trouble.</p>\n    </body>\n</html>\n"
+    },
+    {
+      "name": "Favicon",
+      "endpoint": "/favicon.ico",
+      "method": "GET",
+      "status_code": 200,
+      "success": true,
+      "response": "\u0000\u0000\u0001\u0000\u0001\u0000\u0010\u0010\u0000\u0000\u0001\u0000 \u0000h\u0004\u0000\u0000\u0016\u0000\u0000\u0000(\u0000\u0000\u0000\u0010\u0000\u0000\u0000 \u0000\u0000\u0000\u0001\u0000 \u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000�@\u0000��@\u0000��@\u0000��@\u0000��@\u0000��@\u0000��@\u0000��@\u0000��@\u0000��@\u0000��@\u0000��@\u0000��@\u0000��@\u0000��@\u0000��@\u0000��@\u0000��@\u0000��@\u0000��@\u0000��@\u0000��@\u0000��@\u0000��@\u0000��@\u0000��@\u0000��@\u0000��@\u0000��@\u0000��@\u0000��@\u0000��@\u0000��@\u0000��@\u0000��@"
+    },
+    {
+      "name": "Upload de Arquivo",
+      "endpoint": "/api/upload",
+      "method": "POST",
+      "status_code": 200,
+      "success": true,
+      "response": "Simulado - arquivo criado"
+    },
+    {
+      "name": "Diretório uploads",
+      "endpoint": "uploads",
+      "method": "CHECK",
+      "status_code": 200,
+      "success": true,
+      "response": "Existe"
+    },
+    {
+      "name": "Diretório uploads/videos",
+      "endpoint": "uploads/videos",
+      "method": "CHECK",
+      "status_code": 200,
+      "success": true,
+      "response": "Existe"
+    },
+    {
+      "name": "Diretório uploads/audios",
+      "endpoint": "uploads/audios",
+      "method": "CHECK",
+      "status_code": 200,
+      "success": true,
+      "response": "Existe"
+    },
+    {
+      "name": "Diretório uploads/images",
+      "endpoint": "uploads/images",
+      "method": "CHECK",
+      "status_code": 200,
+      "success": true,
+      "response": "Existe"
+    },
+    {
+      "name": "Diretório uploads/documents",
+      "endpoint": "uploads/documents",
+      "method": "CHECK",
+      "status_code": 200,
+      "success": true,
+      "response": "Existe"
+    },
+    {
+      "name": "Diretório static",
+      "endpoint": "static",
+      "method": "CHECK",
+      "status_code": 200,
+      "success": true,
+      "response": "Existe"
+    },
+    {
+      "name": "Diretório static/videos",
+      "endpoint": "static/videos",
+      "method": "CHECK",
+      "status_code": 200,
+      "success": true,
+      "response": "Existe"
+    },
+    {
+      "name": "Diretório static/audios",
+      "endpoint": "static/audios",
+      "method": "CHECK",
+      "status_code": 200,
+      "success": true,
+      "response": "Existe"
+    },
+    {
+      "name": "Diretório static/thumbnails",
+      "endpoint": "static/thumbnails",
+      "method": "CHECK",
+      "status_code": 200,
+      "success": true,
+      "response": "Existe"
+    },
+    {
+      "name": "Diretório cache",
+      "endpoint": "cache",
+      "method": "CHECK",
+      "status_code": 200,
+      "success": true,
+      "response": "Existe"
+    },
+    {
+      "name": "Diretório logs",
+      "endpoint": "logs",
+      "method": "CHECK",
+      "status_code": 200,
+      "success": true,
+      "response": "Existe"
+    },
+    {
+      "name": "Arquivo simple_server.py",
+      "endpoint": "simple_server.py",
+      "method": "CHECK",
+      "status_code": 200,
+      "success": true,
+      "response": "Existe"
+    },
+    {
+      "name": "Arquivo upload_handler.py",
+      "endpoint": "upload_handler.py",
+      "method": "CHECK",
+      "status_code": 200,
+      "success": true,
+      "response": "Existe"
+    },
+    {
+      "name": "Arquivo background_processor.py",
+      "endpoint": "background_processor.py",
+      "method": "CHECK",
+      "status_code": 200,
+      "success": true,
+      "response": "Existe"
+    },
+    {
+      "name": "Arquivo monitoring_dashboard.py",
+      "endpoint": "monitoring_dashboard.py",
+      "method": "CHECK",
+      "status_code": 200,
+      "success": true,
+      "response": "Existe"
+    },
+    {
+      "name": "Arquivo config.json",
+      "endpoint": "config.json",
+      "method": "CHECK",
+      "status_code": 200,
+      "success": true,
+      "response": "Existe"
+    },
+    {
+      "name": "Arquivo requirements.txt",
+      "endpoint": "requirements.txt",
+      "method": "CHECK",
+      "status_code": 200,
+      "success": true,
+      "response": "Existe"
+    },
+    {
+      "name": "Arquivo package.json",
+      "endpoint": "package.json",
+      "method": "CHECK",
+      "status_code": 200,
+      "success": true,
+      "response": "Existe"
+    },
+    {
+      "name": "Arquivo index.html",
+      "endpoint": "index.html",
+      "method": "CHECK",
+      "status_code": 200,
+      "success": true,
+      "response": "Existe"
+    }
+  ]
+}

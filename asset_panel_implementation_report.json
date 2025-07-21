@@ -1,0 +1,66 @@
+{
+  "timestamp": "2025-07-18T23:11:15.766017",
+  "total_files": 8,
+  "existing_files": 8,
+  "success_rate": 100.0,
+  "total_lines": 3276,
+  "total_bytes": 118994,
+  "files": [
+    {
+      "file": "src/components/AssetPanel.jsx",
+      "exists": true,
+      "size": 22736,
+      "lines": 579,
+      "description": "Componente principal AssetPanel"
+    },
+    {
+      "file": "src/components/AssetPanel.test.js",
+      "exists": true,
+      "size": 13345,
+      "lines": 384,
+      "description": "Testes unitários do AssetPanel"
+    },
+    {
+      "file": "src/services/assetService.js",
+      "exists": true,
+      "size": 11074,
+      "lines": 370,
+      "description": "Serviço de backend para assets"
+    },
+    {
+      "file": "src/hooks/useAssets.js",
+      "exists": true,
+      "size": 6987,
+      "lines": 295,
+      "description": "Hook personalizado useAssets"
+    },
+    {
+      "file": "src/App.jsx",
+      "exists": true,
+      "size": 12897,
+      "lines": 404,
+      "description": "App.jsx com integração do AssetPanel"
+    },
+    {
+      "file": "INSTALACAO_DEPENDENCIAS_ASSETPANEL.md",
+      "exists": true,
+      "size": 5728,
+      "lines": 253,
+      "description": "Instruções de instalação"
+    },
+    {
+      "file": "demo_asset_panel_complete.html",
+      "exists": true,
+      "size": 37449,
+      "lines": 671,
+      "description": "Demo HTML standalone"
+    },
+    {
+      "file": "RELATORIO_ASSETPANEL_IMPLEMENTACAO_COMPLETA.md",
+      "exists": true,
+      "size": 8778,
+      "lines": 320,
+      "description": "Relatório de implementação"
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "enabled": true,
+  "check_interval_seconds": 30,
+  "alert_thresholds": {
+    "response_time_p95_ms": 2000,
+    "error_rate_percent": 5.0,
+    "cpu_percent": 80.0,
+    "memory_percent": 85.0,
+    "disk_percent": 90.0
+  },
+  "retention": {
+    "metrics_days": 30,
+    "alerts_days": 90,
+    "logs_days": 7
+  },
+  "notifications": {
+    "email_enabled": false,
+    "slack_enabled": false,
+    "webhook_enabled": false
+  }
+}

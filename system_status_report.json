@@ -1,0 +1,10 @@
+{
+  "timestamp": "2025-07-18 17:18:32",
+  "backend": false,
+  "frontend": false,
+  "api_endpoints": false,
+  "database": false,
+  "file_uploads": false,
+  "websocket": false,
+  "system_resources": true
+}

@@ -1,0 +1,1155 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TecnoCursos AI - Editor Profissional</title>
+    
+    <!-- Libraries -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.0/axios.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #0f0f23;
+            color: #e2e8f0;
+            overflow: hidden;
+        }
+        
+        /* Professional Dark Theme */
+        .editor-container {
+            height: 100vh;
+            display: grid;
+            grid-template-areas: 
+                "header header header"
+                "sidebar canvas scenes"
+                "timeline timeline timeline";
+            grid-template-rows: 60px 1fr 250px;
+            grid-template-columns: 320px 1fr 280px;
+            gap: 1px;
+            background: #1a1a2e;
+        }
+        
+        .header {
+            grid-area: header;
+            background: #16213e;
+            border-bottom: 1px solid #2d3748;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 18px;
+            font-weight: 700;
+            color: #4fc3f7;
+        }
+        
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-secondary {
+            background: #2d3748;
+            color: #e2e8f0;
+            border: 1px solid #4a5568;
+        }
+        
+        .btn-secondary:hover {
+            background: #4a5568;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            grid-area: sidebar;
+            background: #1a202c;
+            border-right: 1px solid #2d3748;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .sidebar-tabs {
+            display: flex;
+            background: #2d3748;
+            border-bottom: 1px solid #4a5568;
+        }
+        
+        .tab {
+            flex: 1;
+            padding: 12px 16px;
+            background: none;
+            border: none;
+            color: #a0aec0;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 13px;
+            font-weight: 500;
+        }
+        
+        .tab.active {
+            background: #1a202c;
+            color: #4fc3f7;
+            border-bottom: 2px solid #4fc3f7;
+        }
+        
+        .tab:not(.active):hover {
+            background: #374151;
+            color: #e2e8f0;
+        }
+        
+        .sidebar-content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        /* Upload Area */
+        .upload-area {
+            border: 2px dashed #4a5568;
+            border-radius: 8px;
+            padding: 32px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 24px;
+            background: rgba(79, 195, 247, 0.05);
+        }
+        
+        .upload-area:hover {
+            border-color: #4fc3f7;
+            background: rgba(79, 195, 247, 0.1);
+        }
+        
+        .upload-area.dragover {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.15);
+            transform: scale(1.02);
+        }
+        
+        /* Assets Grid */
+        .assets-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        
+        .asset-item {
+            background: #2d3748;
+            border: 1px solid #4a5568;
+            border-radius: 8px;
+            padding: 12px;
+            cursor: grab;
+            transition: all 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .asset-item:hover {
+            border-color: #4fc3f7;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(79, 195, 247, 0.2);
+        }
+        
+        .asset-item:active {
+            cursor: grabbing;
+        }
+        
+        .asset-preview {
+            width: 100%;
+            height: 60px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            margin-bottom: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .asset-name {
+            font-size: 12px;
+            color: #a0aec0;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        /* Canvas Area */
+        .canvas-area {
+            grid-area: canvas;
+            background: #16213e;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        
+        .canvas-toolbar {
+            background: #1a202c;
+            border-bottom: 1px solid #2d3748;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .canvas-tools {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .tool-btn {
+            width: 36px;
+            height: 36px;
+            border: 1px solid #4a5568;
+            background: #2d3748;
+            color: #a0aec0;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .tool-btn:hover {
+            background: #4a5568;
+            color: #e2e8f0;
+        }
+        
+        .tool-btn.active {
+            background: #4fc3f7;
+            color: white;
+            border-color: #4fc3f7;
+        }
+        
+        .canvas-viewport {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            background: radial-gradient(circle at center, #1a202c 0%, #0f0f23 100%);
+        }
+        
+        .canvas-stage {
+            width: 640px;
+            height: 360px;
+            background: #000;
+            border-radius: 8px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+        }
+        
+        .canvas-element {
+            position: absolute;
+            cursor: move;
+            border: 2px solid transparent;
+            transition: border-color 0.2s;
+        }
+        
+        .canvas-element:hover {
+            border-color: rgba(79, 195, 247, 0.5);
+        }
+        
+        .canvas-element.selected {
+            border-color: #4fc3f7;
+        }
+        
+        .canvas-controls {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .play-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        
+        .play-btn:hover {
+            transform: scale(1.1);
+        }
+        
+        /* Scene List */
+        .scenes-panel {
+            grid-area: scenes;
+            background: #1a202c;
+            border-left: 1px solid #2d3748;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .scenes-header {
+            background: #2d3748;
+            padding: 16px 20px;
+            border-bottom: 1px solid #4a5568;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .scenes-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #e2e8f0;
+        }
+        
+        .scenes-list {
+            flex: 1;
+            padding: 16px;
+            overflow-y: auto;
+        }
+        
+        .scene-item {
+            background: #2d3748;
+            border: 1px solid #4a5568;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .scene-item:hover {
+            border-color: #4fc3f7;
+        }
+        
+        .scene-item.active {
+            border-color: #4fc3f7;
+            background: rgba(79, 195, 247, 0.1);
+        }
+        
+        .scene-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        
+        .scene-title {
+            font-size: 13px;
+            font-weight: 500;
+            color: #e2e8f0;
+        }
+        
+        .scene-duration {
+            font-size: 11px;
+            color: #a0aec0;
+            background: #4a5568;
+            padding: 2px 8px;
+            border-radius: 12px;
+        }
+        
+        .scene-preview {
+            width: 100%;
+            height: 48px;
+            border-radius: 6px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        /* Timeline */
+        .timeline {
+            grid-area: timeline;
+            background: #1a202c;
+            border-top: 1px solid #2d3748;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .timeline-header {
+            background: #2d3748;
+            padding: 12px 20px;
+            border-bottom: 1px solid #4a5568;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .timeline-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #e2e8f0;
+        }
+        
+        .timeline-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .timeline-content {
+            flex: 1;
+            padding: 16px 20px;
+            overflow: auto;
+        }
+        
+        .timeline-tracks {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            min-height: 160px;
+        }
+        
+        .timeline-track {
+            background: #2d3748;
+            border-radius: 6px;
+            padding: 8px;
+            min-height: 40px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            position: relative;
+        }
+        
+        .timeline-clip {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 4px;
+            padding: 8px 12px;
+            color: white;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: grab;
+            transition: all 0.2s;
+            position: relative;
+            min-width: 80px;
+        }
+        
+        .timeline-clip:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
+        }
+        
+        .timeline-clip:active {
+            cursor: grabbing;
+        }
+        
+        .timeline-clip.selected {
+            box-shadow: 0 0 0 2px #4fc3f7;
+        }
+        
+        /* Drag and Drop Styles */
+        .drag-over {
+            background: rgba(79, 195, 247, 0.2) !important;
+            border-color: #4fc3f7 !important;
+        }
+        
+        .dragging {
+            opacity: 0.5;
+            transform: rotate(5deg);
+        }
+        
+        /* Progress Overlay */
+        .progress-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        
+        .progress-content {
+            background: #1a202c;
+            border-radius: 12px;
+            padding: 32px;
+            min-width: 400px;
+            text-align: center;
+        }
+        
+        .progress-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: #e2e8f0;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #2d3748;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 16px;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.3s ease;
+        }
+        
+        .progress-text {
+            font-size: 14px;
+            color: #a0aec0;
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(-100%); }
+            to { transform: translateX(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        .slide-in {
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .editor-container {
+                grid-template-columns: 280px 1fr 240px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .editor-container {
+                grid-template-areas: 
+                    "header"
+                    "canvas"
+                    "timeline";
+                grid-template-columns: 1fr;
+                grid-template-rows: 60px 1fr 200px;
+            }
+            
+            .sidebar, .scenes-panel {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    
+    <script type="text/babel">
+        const { useState, useEffect, useRef, useCallback } = React;
+        
+        // Main Editor Component
+        function VideoEditor() {
+            const [activeTab, setActiveTab] = useState('assets');
+            const [assets, setAssets] = useState([
+                { id: 1, name: 'documento.pdf', type: 'pdf', size: '2.5MB', url: '/sample.pdf' },
+                { id: 2, name: 'imagem.jpg', type: 'image', size: '1.8MB', url: '/sample.jpg' },
+                { id: 3, name: 'video.mp4', type: 'video', size: '15.2MB', url: '/sample.mp4' },
+                { id: 4, name: 'audio.mp3', type: 'audio', size: '3.1MB', url: '/sample.mp3' }
+            ]);
+            const [scenes, setScenes] = useState([
+                { id: 1, title: 'Cena 1', duration: 5, active: true, elements: [] },
+                { id: 2, title: 'Cena 2', duration: 8, active: false, elements: [] },
+                { id: 3, title: 'Cena 3', duration: 3, active: false, elements: [] }
+            ]);
+            const [timelineClips, setTimelineClips] = useState([
+                { id: 1, title: 'Cena 1', duration: 5, width: 100 },
+                { id: 2, title: 'Cena 2', duration: 8, width: 160 },
+                { id: 3, title: 'Cena 3', duration: 3, width: 60 }
+            ]);
+            const [isPlaying, setIsPlaying] = useState(false);
+            const [currentTime, setCurrentTime] = useState(0);
+            const [totalDuration, setTotalDuration] = useState(16);
+            const [selectedElement, setSelectedElement] = useState(null);
+            const [showProgress, setShowProgress] = useState(false);
+            const [progress, setProgress] = useState(0);
+            const [progressText, setProgressText] = useState('');
+            
+            const canvasRef = useRef(null);
+            const fileInputRef = useRef(null);
+            
+            // Asset Type Icons and Colors
+            const getAssetIcon = (type) => {
+                const icons = {
+                    pdf: 'fas fa-file-pdf',
+                    image: 'fas fa-image',
+                    video: 'fas fa-video',
+                    audio: 'fas fa-music'
+                };
+                return icons[type] || 'fas fa-file';
+            };
+            
+            const getAssetColor = (type) => {
+                const colors = {
+                    pdf: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
+                    image: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                    video: 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)',
+                    audio: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)'
+                };
+                return colors[type] || 'linear-gradient(135deg, #6b7280 0%, #4b5563 100%)';
+            };
+            
+            // File Upload Handler
+            const handleFileUpload = useCallback(async (files) => {
+                setShowProgress(true);
+                setProgress(0);
+                setProgressText('Processando arquivos...');
+                
+                for (let i = 0; i < files.length; i++) {
+                    const file = files[i];
+                    const progress = ((i + 1) / files.length) * 100;
+                    setProgress(progress);
+                    setProgressText(`Processando ${file.name}...`);
+                    
+                    // Simulate processing time
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                    
+                    // Add to assets
+                    const newAsset = {
+                        id: Date.now() + i,
+                        name: file.name,
+                        type: file.type.startsWith('image/') ? 'image' : 
+                              file.type.startsWith('video/') ? 'video' :
+                              file.type.startsWith('audio/') ? 'audio' : 'pdf',
+                        size: (file.size / (1024 * 1024)).toFixed(1) + 'MB',
+                        url: URL.createObjectURL(file),
+                        file: file
+                    };
+                    
+                    setAssets(prev => [...prev, newAsset]);
+                }
+                
+                setTimeout(() => {
+                    setShowProgress(false);
+                    setProgress(0);
+                }, 500);
+            }, []);
+            
+            // Drag and Drop Handlers
+            const handleDragStart = useCallback((e, asset) => {
+                e.dataTransfer.setData('application/json', JSON.stringify(asset));
+                e.currentTarget.classList.add('dragging');
+            }, []);
+            
+            const handleDragEnd = useCallback((e) => {
+                e.currentTarget.classList.remove('dragging');
+            }, []);
+            
+            const handleCanvasDrop = useCallback((e) => {
+                e.preventDefault();
+                const data = e.dataTransfer.getData('application/json');
+                if (data) {
+                    const asset = JSON.parse(data);
+                    const rect = canvasRef.current.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    
+                    // Add element to canvas
+                    const newElement = {
+                        id: Date.now(),
+                        assetId: asset.id,
+                        type: asset.type,
+                        name: asset.name,
+                        x: x - 50,
+                        y: y - 25,
+                        width: 100,
+                        height: 50
+                    };
+                    
+                    // Add to current scene
+                    setScenes(prev => prev.map(scene => 
+                        scene.active 
+                            ? { ...scene, elements: [...scene.elements, newElement] }
+                            : scene
+                    ));
+                }
+            }, []);
+            
+            const handleCanvasDragOver = useCallback((e) => {
+                e.preventDefault();
+            }, []);
+            
+            // Timeline Handlers
+            const handleTimelineClipDrag = useCallback((e, clip) => {
+                e.dataTransfer.setData('timeline-clip', JSON.stringify(clip));
+            }, []);
+            
+            const handleTimelineDrop = useCallback((e) => {
+                e.preventDefault();
+                const data = e.dataTransfer.getData('timeline-clip');
+                if (data) {
+                    const clip = JSON.parse(data);
+                    // Handle timeline reordering logic here
+                    console.log('Timeline clip dropped:', clip);
+                }
+            }, []);
+            
+            // Playback Controls
+            const togglePlayback = useCallback(() => {
+                setIsPlaying(!isPlaying);
+                if (!isPlaying) {
+                    // Start playback simulation
+                    const interval = setInterval(() => {
+                        setCurrentTime(prev => {
+                            if (prev >= totalDuration) {
+                                setIsPlaying(false);
+                                clearInterval(interval);
+                                return 0;
+                            }
+                            return prev + 0.1;
+                        });
+                    }, 100);
+                }
+            }, [isPlaying, totalDuration]);
+            
+            // Export Handler
+            const handleExport = useCallback(async () => {
+                setShowProgress(true);
+                setProgress(0);
+                setProgressText('Exportando vídeo...');
+                
+                // Simulate export process
+                for (let i = 0; i <= 100; i += 5) {
+                    setProgress(i);
+                    setProgressText(`Exportando vídeo... ${i}%`);
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                }
+                
+                // Simulate download
+                const link = document.createElement('a');
+                link.href = '#';
+                link.download = 'video-export.mp4';
+                link.click();
+                
+                setTimeout(() => {
+                    setShowProgress(false);
+                    setProgress(0);
+                }, 1000);
+            }, []);
+            
+            // File input handler
+            const handleFileInputChange = (e) => {
+                const files = Array.from(e.target.files);
+                if (files.length > 0) {
+                    handleFileUpload(files);
+                }
+            };
+            
+            // Drop zone handlers
+            useEffect(() => {
+                const uploadArea = document.querySelector('.upload-area');
+                if (!uploadArea) return;
+                
+                const handleDrop = (e) => {
+                    e.preventDefault();
+                    uploadArea.classList.remove('dragover');
+                    const files = Array.from(e.dataTransfer.files);
+                    handleFileUpload(files);
+                };
+                
+                const handleDragOver = (e) => {
+                    e.preventDefault();
+                    uploadArea.classList.add('dragover');
+                };
+                
+                const handleDragLeave = () => {
+                    uploadArea.classList.remove('dragover');
+                };
+                
+                const handleClick = () => {
+                    fileInputRef.current?.click();
+                };
+                
+                uploadArea.addEventListener('drop', handleDrop);
+                uploadArea.addEventListener('dragover', handleDragOver);
+                uploadArea.addEventListener('dragleave', handleDragLeave);
+                uploadArea.addEventListener('click', handleClick);
+                
+                return () => {
+                    uploadArea.removeEventListener('drop', handleDrop);
+                    uploadArea.removeEventListener('dragover', handleDragOver);
+                    uploadArea.removeEventListener('dragleave', handleDragLeave);
+                    uploadArea.removeEventListener('click', handleClick);
+                };
+            }, [handleFileUpload]);
+            
+            return (
+                <div className="editor-container">
+                    {/* Header */}
+                    <header className="header">
+                        <div className="logo">
+                            <i className="fas fa-video"></i>
+                            <span>TecnoCursos AI</span>
+                            <span style={{fontSize: '12px', color: '#a0aec0', fontWeight: 'normal'}}>Editor Profissional</span>
+                        </div>
+                        
+                        <div className="header-actions">
+                            <button className="btn btn-secondary">
+                                <i className="fas fa-save"></i>
+                                Salvar
+                            </button>
+                            <button className="btn btn-primary" onClick={handleExport}>
+                                <i className="fas fa-download"></i>
+                                Exportar
+                            </button>
+                        </div>
+                    </header>
+                    
+                    {/* Sidebar */}
+                    <div className="sidebar">
+                        <div className="sidebar-tabs">
+                            <button 
+                                className={`tab ${activeTab === 'assets' ? 'active' : ''}`}
+                                onClick={() => setActiveTab('assets')}
+                            >
+                                <i className="fas fa-images"></i>
+                                Assets
+                            </button>
+                            <button 
+                                className={`tab ${activeTab === 'audio' ? 'active' : ''}`}
+                                onClick={() => setActiveTab('audio')}
+                            >
+                                <i className="fas fa-music"></i>
+                                Áudio
+                            </button>
+                            <button 
+                                className={`tab ${activeTab === 'text' ? 'active' : ''}`}
+                                onClick={() => setActiveTab('text')}
+                            >
+                                <i className="fas fa-font"></i>
+                                Texto
+                            </button>
+                        </div>
+                        
+                        <div className="sidebar-content">
+                            {activeTab === 'assets' && (
+                                <>
+                                    <div style={{marginBottom: '24px'}}>
+                                        <h3 style={{fontSize: '14px', fontWeight: '600', marginBottom: '12px', color: '#e2e8f0'}}>
+                                            Upload de Arquivos
+                                        </h3>
+                                        <div className="upload-area">
+                                            <i className="fas fa-cloud-upload-alt" style={{fontSize: '32px', color: '#4fc3f7', marginBottom: '12px'}}></i>
+                                            <p style={{fontSize: '14px', color: '#a0aec0', marginBottom: '4px'}}>
+                                                Arraste arquivos aqui
+                                            </p>
+                                            <p style={{fontSize: '12px', color: '#718096'}}>
+                                                ou clique para selecionar
+                                            </p>
+                                        </div>
+                                        <input
+                                            ref={fileInputRef}
+                                            type="file"
+                                            multiple
+                                            accept=".pdf,.pptx,.jpg,.jpeg,.png,.mp4,.mp3,.wav"
+                                            style={{display: 'none'}}
+                                            onChange={handleFileInputChange}
+                                        />
+                                    </div>
+                                    
+                                    <div>
+                                        <h3 style={{fontSize: '14px', fontWeight: '600', marginBottom: '12px', color: '#e2e8f0'}}>
+                                            Biblioteca de Assets ({assets.length})
+                                        </h3>
+                                        <div className="assets-grid">
+                                            {assets.map(asset => (
+                                                <div 
+                                                    key={asset.id} 
+                                                    className="asset-item fade-in"
+                                                    draggable
+                                                    onDragStart={(e) => handleDragStart(e, asset)}
+                                                    onDragEnd={handleDragEnd}
+                                                >
+                                                    <div 
+                                                        className="asset-preview"
+                                                        style={{background: getAssetColor(asset.type)}}
+                                                    >
+                                                        <i className={getAssetIcon(asset.type)}></i>
+                                                    </div>
+                                                    <p className="asset-name" title={asset.name}>
+                                                        {asset.name}
+                                                    </p>
+                                                    <p style={{fontSize: '10px', color: '#718096', textAlign: 'center'}}>
+                                                        {asset.size}
+                                                    </p>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </>
+                            )}
+                            
+                            {activeTab === 'audio' && (
+                                <div>
+                                    <h3 style={{fontSize: '14px', fontWeight: '600', marginBottom: '12px', color: '#e2e8f0'}}>
+                                        Biblioteca de Áudio
+                                    </h3>
+                                    <p style={{fontSize: '13px', color: '#a0aec0'}}>
+                                        Adicione arquivos de áudio para narração e música de fundo.
+                                    </p>
+                                </div>
+                            )}
+                            
+                            {activeTab === 'text' && (
+                                <div>
+                                    <h3 style={{fontSize: '14px', fontWeight: '600', marginBottom: '12px', color: '#e2e8f0'}}>
+                                        Elementos de Texto
+                                    </h3>
+                                    <p style={{fontSize: '13px', color: '#a0aec0'}}>
+                                        Adicione títulos, legendas e outros elementos de texto.
+                                    </p>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                    
+                    {/* Canvas Area */}
+                    <div className="canvas-area">
+                        <div className="canvas-toolbar">
+                            <div className="canvas-tools">
+                                <button className="tool-btn active" title="Selecionar">
+                                    <i className="fas fa-mouse-pointer"></i>
+                                </button>
+                                <button className="tool-btn" title="Mover">
+                                    <i className="fas fa-arrows-alt"></i>
+                                </button>
+                                <button className="tool-btn" title="Redimensionar">
+                                    <i className="fas fa-expand-arrows-alt"></i>
+                                </button>
+                                <button className="tool-btn" title="Texto">
+                                    <i className="fas fa-font"></i>
+                                </button>
+                            </div>
+                            
+                            <div style={{fontSize: '13px', color: '#a0aec0'}}>
+                                Zoom: 100% | 1920x1080
+                            </div>
+                        </div>
+                        
+                        <div className="canvas-viewport">
+                            <div 
+                                ref={canvasRef}
+                                className="canvas-stage"
+                                onDrop={handleCanvasDrop}
+                                onDragOver={handleCanvasDragOver}
+                            >
+                                {scenes.find(s => s.active)?.elements.map(element => (
+                                    <div
+                                        key={element.id}
+                                        className={`canvas-element ${selectedElement === element.id ? 'selected' : ''}`}
+                                        style={{
+                                            left: element.x,
+                                            top: element.y,
+                                            width: element.width,
+                                            height: element.height,
+                                            background: getAssetColor(element.type),
+                                            borderRadius: '4px',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            color: 'white',
+                                            fontSize: '12px',
+                                            fontWeight: '500'
+                                        }}
+                                        onClick={() => setSelectedElement(element.id)}
+                                    >
+                                        <i className={getAssetIcon(element.type)} style={{marginRight: '4px'}}></i>
+                                        {element.name}
+                                    </div>
+                                ))}
+                                
+                                {scenes.find(s => s.active)?.elements.length === 0 && (
+                                    <div style={{
+                                        position: 'absolute',
+                                        top: '50%',
+                                        left: '50%',
+                                        transform: 'translate(-50%, -50%)',
+                                        textAlign: 'center',
+                                        color: '#718096'
+                                    }}>
+                                        <i className="fas fa-mouse-pointer" style={{fontSize: '48px', marginBottom: '16px'}}></i>
+                                        <p style={{fontSize: '16px', fontWeight: '500', marginBottom: '8px'}}>
+                                            Arraste assets aqui
+                                        </p>
+                                        <p style={{fontSize: '13px'}}>
+                                            Adicione elementos da sidebar para começar a editar
+                                        </p>
+                                    </div>
+                                )}
+                            </div>
+                            
+                            <div className="canvas-controls">
+                                <button className="control-btn">
+                                    <i className="fas fa-step-backward"></i>
+                                </button>
+                                <button className="play-btn" onClick={togglePlayback}>
+                                    <i className={`fas fa-${isPlaying ? 'pause' : 'play'}`}></i>
+                                </button>
+                                <button className="control-btn">
+                                    <i className="fas fa-step-forward"></i>
+                                </button>
+                                <span style={{fontSize: '13px', color: '#a0aec0', marginLeft: '12px'}}>
+                                    {Math.floor(currentTime / 60)}:{(currentTime % 60).toFixed(0).padStart(2, '0')} / {Math.floor(totalDuration / 60)}:{(totalDuration % 60).toFixed(0).padStart(2, '0')}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {/* Scenes Panel */}
+                    <div className="scenes-panel">
+                        <div className="scenes-header">
+                            <h3 className="scenes-title">Cenas ({scenes.length})</h3>
+                            <button className="btn btn-secondary" style={{fontSize: '12px', padding: '6px 12px'}}>
+                                <i className="fas fa-plus"></i>
+                            </button>
+                        </div>
+                        
+                        <div className="scenes-list">
+                            {scenes.map(scene => (
+                                <div 
+                                    key={scene.id}
+                                    className={`scene-item ${scene.active ? 'active' : ''}`}
+                                    onClick={() => setScenes(prev => prev.map(s => ({...s, active: s.id === scene.id})))}
+                                >
+                                    <div className="scene-header">
+                                        <span className="scene-title">{scene.title}</span>
+                                        <span className="scene-duration">{scene.duration}s</span>
+                                    </div>
+                                    <div className="scene-preview"></div>
+                                    <div style={{fontSize: '11px', color: '#718096', marginTop: '4px'}}>
+                                        {scene.elements.length} elementos
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                    
+                    {/* Timeline */}
+                    <div className="timeline">
+                        <div className="timeline-header">
+                            <h3 className="timeline-title">Timeline</h3>
+                            <div className="timeline-controls">
+                                <button className="tool-btn" title="Zoom In">
+                                    <i className="fas fa-search-plus"></i>
+                                </button>
+                                <button className="tool-btn" title="Zoom Out">
+                                    <i className="fas fa-search-minus"></i>
+                                </button>
+                                <button className="tool-btn" title="Ajustar">
+                                    <i className="fas fa-expand"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div className="timeline-content">
+                            <div className="timeline-tracks">
+                                <div 
+                                    className="timeline-track"
+                                    onDrop={handleTimelineDrop}
+                                    onDragOver={(e) => e.preventDefault()}
+                                >
+                                    {timelineClips.map(clip => (
+                                        <div 
+                                            key={clip.id}
+                                            className="timeline-clip"
+                                            style={{width: `${clip.width}px`}}
+                                            draggable
+                                            onDragStart={(e) => handleTimelineClipDrag(e, clip)}
+                                        >
+                                            {clip.title}
+                                            <div style={{fontSize: '10px', opacity: 0.8}}>
+                                                {clip.duration}s
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                                
+                                <div className="timeline-track" style={{background: '#2a3441'}}>
+                                    <div style={{fontSize: '12px', color: '#718096', padding: '8px'}}>
+                                        Arraste clips de áudio aqui
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {/* Progress Overlay */}
+                    {showProgress && (
+                        <div className="progress-overlay">
+                            <div className="progress-content">
+                                <div className="progress-title">{progressText}</div>
+                                <div className="progress-bar">
+                                    <div 
+                                        className="progress-fill"
+                                        style={{width: `${progress}%`}}
+                                    ></div>
+                                </div>
+                                <div className="progress-text">{progress.toFixed(0)}%</div>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        }
+        
+        // Render the app
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<VideoEditor />);
+    </script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+// Este arquivo foi gerado automaticamente por scripts/codegen/generateComponents.js
+// Não edite manualmente - use o sistema de geração
+
+.modal-container {
+  padding: 16px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.modal-container h3 {
+  margin: 0 0 12px 0;
+  color: #374151;
+  font-size: 18px;
+  font-weight: 600;
+}

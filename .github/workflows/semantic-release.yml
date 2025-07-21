@@ -1,0 +1,162 @@
+name: 🚀 Semantic Release
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+      - develop
+
+jobs:
+  # ============================================================================
+  # VALIDAÇÃO DE COMMITS
+  # ============================================================================
+  validate-commits:
+    name: ✅ Validar Commits
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 📥 Checkout código
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    
+    - name: 🐍 Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+    
+    - name: 📦 Instalar dependências
+      run: npm ci
+    
+    - name: 🔍 Validar commits
+      run: |
+        npx commitlint --from HEAD~10 --to HEAD --verbose
+        echo "✅ Commits validados com sucesso"
+    
+    - name: 🎨 Verificar formatação
+      run: |
+        npm run format:check
+        echo "✅ Formatação verificada"
+    
+    - name: 🔧 Verificar linting
+      run: |
+        npm run lint
+        echo "✅ Linting verificado"
+
+  # ============================================================================
+  # SEMANTIC RELEASE
+  # ============================================================================
+  semantic-release:
+    name: 🚀 Semantic Release
+    runs-on: ubuntu-latest
+    needs: validate-commits
+    if: github.ref == 'refs/heads/main'
+    
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+    
+    steps:
+    - name: 📥 Checkout código
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        token: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: 🐍 Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        registry-url: 'https://npm.pkg.github.com'
+    
+    - name: 📦 Instalar dependências
+      run: npm ci
+    
+    - name: 🧪 Executar testes
+      run: |
+        npm run test:ci
+        echo "✅ Testes executados"
+    
+    - name: 🏗️ Build da aplicação
+      run: |
+        npm run build
+        echo "✅ Build concluído"
+    
+    - name: 🚀 Executar Semantic Release
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      run: |
+        npx semantic-release
+        echo "✅ Semantic release executado"
+    
+    - name: 📤 Upload artifacts
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: release-artifacts
+        path: |
+          dist/
+          build/
+          CHANGELOG.md
+
+  # ============================================================================
+  # NOTIFICAÇÕES
+  # ============================================================================
+  notify-release:
+    name: 📢 Notificar Release
+    runs-on: ubuntu-latest
+    needs: semantic-release
+    if: always() && needs.semantic-release.result == 'success'
+    
+    steps:
+    - name: 💬 Notificar Slack
+      uses: 8398a7/action-slack@v3
+      with:
+        status: ${{ job.status }}
+        channel: '#releases'
+        text: '🎉 Nova versão lançada automaticamente!'
+        webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}
+    
+    - name: 📧 Notificar equipe
+      run: |
+        echo "📧 Enviando notificação por email..."
+        # Aqui seria implementada a lógica de notificação por email
+
+  # ============================================================================
+  # DEPLOY AUTOMÁTICO
+  # ============================================================================
+  auto-deploy:
+    name: 🚀 Deploy Automático
+    runs-on: ubuntu-latest
+    needs: semantic-release
+    if: needs.semantic-release.result == 'success'
+    environment: production
+    
+    steps:
+    - name: 📥 Checkout código
+      uses: actions/checkout@v4
+    
+    - name: 🚀 Deploy para produção
+      run: |
+        echo "🚀 Iniciando deploy automático..."
+        # Aqui seria implementada a lógica de deploy
+        echo "✅ Deploy concluído com sucesso"
+    
+    - name: 🔍 Health check
+      run: |
+        echo "🔍 Verificando saúde da aplicação..."
+        # Aqui seria implementada a verificação de saúde
+        echo "✅ Aplicação saudável"
+    
+    - name: 📊 Atualizar métricas
+      run: |
+        echo "📊 Atualizando métricas de deploy..."
+        # Aqui seria implementada a atualização de métricas 

@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - TecnoCursos AI</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <!-- Favicon with multiple formats for better compatibility -->
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+    <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+    <link rel="apple-touch-icon" href="/static/favicon.svg">
+    <style>
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .login-card {
+            max-width: 400px;
+            width: 100%;
+            margin: 20px;
+        }
+        
+        .login-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .login-header h1 {
+            color: white;
+            margin-bottom: 0.5rem;
+            font-size: 2.5rem;
+        }
+        
+        .login-header p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.1rem;
+        }
+        
+        .form-floating {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-floating input {
+            padding-top: 1.625rem;
+            padding-bottom: 0.625rem;
+        }
+        
+        .form-floating label {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            padding: 1rem 0.75rem;
+            pointer-events: none;
+            color: #6c757d;
+            transition: all 0.1s ease-in-out;
+        }
+        
+        .form-floating input:focus ~ label,
+        .form-floating input:not(:placeholder-shown) ~ label {
+            opacity: 0.65;
+            transform: scale(0.85) translateY(-0.5rem) translateX(0.15rem);
+        }
+        
+        .social-login {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        
+        .social-btn {
+            flex: 1;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            color: var(--dark-color);
+            text-align: center;
+        }
+        
+        .social-btn:hover {
+            background: #f8f9fa;
+            transform: translateY(-1px);
+        }
+        
+        .password-toggle {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #6c757d;
+            font-size: 1.2rem;
+        }
+        
+        .password-field {
+            position: relative;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-card">
+            <!-- Header -->
+            <div class="login-header fade-in">
+                <h1>TecnoCursos AI</h1>
+                <p>Faça login para acessar sua conta</p>
+            </div>
+
+            <!-- Login Form -->
+            <div class="card bounce-in">
+                <div class="card-body">
+                    <form id="login-form">
+                        <div class="form-floating">
+                            <input type="email" class="form-control" id="email" name="email" 
+                                   placeholder="seu@email.com" required>
+                            <label for="email">Email</label>
+                        </div>
+
+                        <div class="form-floating password-field">
+                            <input type="password" class="form-control" id="password" name="password" 
+                                   placeholder="Sua senha" required>
+                            <label for="password">Senha</label>
+                            <button type="button" class="password-toggle" onclick="togglePassword('password')">
+                                👁️
+                            </button>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-check">
+                                <input type="checkbox" name="remember_me"> Lembrar de mim
+                            </label>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100 mb-3" id="login-btn">
+                            Entrar
+                        </button>
+
+                        <div class="text-center">
+                            <a href="#" onclick="showForgotPassword()" class="text-primary">
+                                Esqueceu sua senha?
+                            </a>
+                        </div>
+                    </form>
+
+                    <!-- Divider -->
+                    <div class="text-center my-3">
+                        <span class="text-muted">ou</span>
+                    </div>
+
+                    <!-- Social Login -->
+                    <div class="social-login">
+                        <button class="social-btn" onclick="loginWithGoogle()">
+                            🔍 Google
+                        </button>
+                        <button class="social-btn" onclick="loginWithGitHub()">
+                            🐙 GitHub
+                        </button>
+                    </div>
+
+                    <!-- Register Link -->
+                    <div class="text-center mt-4">
+                        <p class="text-muted">
+                            Não tem uma conta? 
+                            <a href="/register.html" class="text-primary">Cadastre-se</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Demo Credentials -->
+            <div class="card mt-3" style="background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px);">
+                <div class="card-body text-center">
+                    <h6 style="color: white; margin-bottom: 1rem;">Credenciais de Demonstração</h6>
+                    <div style="display: flex; gap: 1rem;">
+                        <button class="btn btn-outline" onclick="fillDemoCredentials('admin')" 
+                                style="flex: 1; color: white; border-color: white;">
+                            Admin
+                        </button>
+                        <button class="btn btn-outline" onclick="fillDemoCredentials('user')" 
+                                style="flex: 1; color: white; border-color: white;">
+                            Usuário
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/static/js/app.js"></script>
+    <script>
+        // Check if already logged in
+        if (api.token && api.user) {
+            window.location.href = '/dashboard.html';
+        }
+
+        // Form submission - with improved error handling
+        const loginForm = document.getElementById('login-form');
+        if (loginForm) {
+            loginForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                try {
+                    const formData = new FormData(e.target);
+                    const email = formData.get('email');
+                    const password = formData.get('password');
+                    const rememberMe = formData.get('remember_me');
+                    
+                    const loginBtn = document.getElementById('login-btn');
+                    if (!loginBtn) return;
+                    
+                    const originalText = loginBtn.innerHTML;
+                    
+                    // UI feedback
+                    loginBtn.innerHTML = '<div class="spinner" style="width: 20px; height: 20px; margin: 0 auto;"></div>';
+                    loginBtn.disabled = true;
+                    
+                    // Perform login
+                    await api.login(email, password);
+                    
+                    showNotification('Login realizado com sucesso!', 'success');
+                    
+                    // Redirect after short delay
+                    setTimeout(() => {
+                        try {
+                            window.location.href = '/dashboard.html';
+                        } catch (redirectError) {
+                            console.log('Redirect error:', redirectError.message);
+                            window.location.reload();
+                        }
+                    }, 1000);
+                    
+                } catch (error) {
+                    const loginBtn = document.getElementById('login-btn');
+                    if (loginBtn) {
+                        showNotification('Erro no login: ' + error.message, 'danger');
+                        loginBtn.innerHTML = 'Entrar';
+                        loginBtn.disabled = false;
+                    }
+                }
+            });
+        }
+
+        function togglePassword(fieldId) {
+            try {
+                const field = document.getElementById(fieldId);
+                if (!field) return;
+                
+                const toggle = field.nextElementSibling && field.nextElementSibling.nextElementSibling;
+                if (!toggle) return;
+                
+                if (field.type === 'password') {
+                    field.type = 'text';
+                    toggle.textContent = '🙈';
+                } else {
+                    field.type = 'password';
+                    toggle.textContent = '👁️';
+                }
+            } catch (error) {
+                console.log('Toggle password error:', error.message);
+            }
+        }
+
+        function fillDemoCredentials(type) {
+            try {
+                const emailField = document.getElementById('email');
+                const passwordField = document.getElementById('password');
+                
+                if (!emailField || !passwordField) {
+                    console.log('Demo credentials: fields not found');
+                    return;
+                }
+                
+                if (type === 'admin') {
+                    emailField.value = 'admin@tecnocursos.ai';
+                    passwordField.value = 'admin123';
+                } else {
+                    emailField.value = 'user@tecnocursos.ai';
+                    passwordField.value = 'user123';
+                }
+                
+                showNotification('Credenciais preenchidas! Clique em "Entrar" para continuar.', 'info');
+            } catch (error) {
+                console.log('Fill demo credentials error:', error.message);
+            }
+        }
+
+        function showForgotPassword() {
+            const modalContent = `
+                <form id="forgot-password-form">
+                    <div class="form-group">
+                        <label class="form-label">Email para recuperação</label>
+                        <input type="email" class="form-control" name="email" required>
+                    </div>
+                    <p class="text-muted small">
+                        Enviaremos um link para redefinir sua senha.
+                    </p>
+                </form>
+            `;
+
+            showModal('Recuperar Senha', modalContent, [
+                {
+                    text: 'Cancelar',
+                    type: 'secondary',
+                    onclick: 'closeModal(this)'
+                },
+                {
+                    text: 'Enviar',
+                    type: 'primary',
+                    onclick: 'submitForgotPassword()'
+                }
+            ]);
+        }
+
+        async function submitForgotPassword() {
+            try {
+                const form = document.getElementById('forgot-password-form');
+                if (!form) {
+                    console.log('Forgot password form not found');
+                    return;
+                }
+                
+                if (!validateForm(form)) return;
+
+                const formData = new FormData(form);
+                const email = formData.get('email');
+                
+                if (!email) {
+                    showNotification('Por favor, informe um email válido', 'warning');
+                    return;
+                }
+
+                await api.request('/auth/forgot-password', {
+                    method: 'POST',
+                    body: JSON.stringify({ email })
+                });
+                
+                showNotification('Email de recuperação enviado!', 'success');
+                closeModal(form);
+            } catch (error) {
+                console.log('Submit forgot password error:', error.message);
+                showNotification('Erro ao enviar email: ' + error.message, 'danger');
+            }
+        }
+
+        function loginWithGoogle() {
+            try {
+                showNotification('Login com Google em desenvolvimento', 'info');
+                // TODO: Implementar OAuth com Google
+            } catch (error) {
+                console.log('Google login error:', error.message);
+            }
+        }
+
+        function loginWithGitHub() {
+            try {
+                showNotification('Login com GitHub em desenvolvimento', 'info');
+                // TODO: Implementar OAuth com GitHub
+            } catch (error) {
+                console.log('GitHub login error:', error.message);
+            }
+        }
+
+        // Auto-focus on email field - with error handling
+        document.addEventListener('DOMContentLoaded', () => {
+            try {
+                const emailField = document.getElementById('email');
+                if (emailField) {
+                    emailField.focus();
+                }
+            } catch (error) {
+                console.log('Auto-focus not available:', error.message);
+            }
+        });
+
+        // Handle Enter key - with improved error handling
+        document.addEventListener('keypress', (e) => {
+            try {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    const loginForm = document.getElementById('login-form');
+                    if (document.activeElement && loginForm && loginForm.contains(document.activeElement)) {
+                        e.preventDefault();
+                        const submitEvent = new Event('submit', { bubbles: true, cancelable: true });
+                        loginForm.dispatchEvent(submitEvent);
+                    }
+                }
+            } catch (error) {
+                console.log('Enter key handler error:', error.message);
+            }
+        });
+    </script>
+</body>
+</html> 

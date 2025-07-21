@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TecnoCursos AI - Editor de Vídeo Inteligente</title>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- React Production Build -->
+    <script crossorigin src="https://unpkg.com/react@18.2.0/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18.2.0/umd/react-dom.production.min.js"></script>
+    
+    <style>
+        /* Reset e base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f9fafb;
+            color: #1f2937;
+            line-height: 1.6;
+        }
+        
+        /* Layout principal */
+        .editor-container {
+            height: calc(100vh - 64px);
+            display: flex;
+        }
+        
+        .sidebar {
+            width: 300px;
+            min-width: 300px;
+            background: white;
+            border-right: 1px solid #e5e7eb;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .timeline {
+            height: 200px;
+            min-height: 200px;
+            background: white;
+            border-top: 1px solid #e5e7eb;
+            padding: 1rem;
+        }
+        
+        .canvas-container {
+            flex: 1;
+            background: linear-gradient(45deg, #f0f0f0 25%, transparent 25%), 
+                        linear-gradient(-45deg, #f0f0f0 25%, transparent 25%), 
+                        linear-gradient(45deg, transparent 75%, #f0f0f0 75%), 
+                        linear-gradient(-45deg, transparent 75%, #f0f0f0 75%);
+            background-size: 20px 20px;
+            background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        
+        /* Header */
+        .header {
+            background: white;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border-bottom: 1px solid #e5e7eb;
+            padding: 1rem 1.5rem;
+        }
+        
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: #3b82f6;
+        }
+        
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-primary {
+            background-color: #3b82f6;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #2563eb;
+        }
+        
+        .btn-secondary {
+            background-color: #f3f4f6;
+            color: #374151;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #e5e7eb;
+        }
+        
+        /* Sidebar */
+        .sidebar-tabs {
+            display: flex;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .tab {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            border: none;
+            background: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .tab.active {
+            color: #3b82f6;
+            border-bottom: 2px solid #3b82f6;
+            background-color: #eff6ff;
+        }
+        
+        .tab:not(.active) {
+            color: #6b7280;
+        }
+        
+        .tab:not(.active):hover {
+            color: #374151;
+            background-color: #f9fafb;
+        }
+        
+        .sidebar-content {
+            flex: 1;
+            padding: 1rem;
+            overflow-y: auto;
+        }
+        
+        /* Upload area */
+        .upload-area {
+            border: 2px dashed #d1d5db;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-bottom: 1rem;
+        }
+        
+        .upload-area:hover {
+            border-color: #3b82f6;
+            background-color: #eff6ff;
+        }
+        
+        .upload-area.dragover {
+            border-color: #3b82f6;
+            background-color: #eff6ff;
+        }
+        
+        /* Assets grid */
+        .assets-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+        
+        .asset-item {
+            background: white;
+            border-radius: 0.5rem;
+            padding: 0.75rem;
+            border: 1px solid #e5e7eb;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .asset-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .asset-preview {
+            width: 100%;
+            height: 5rem;
+            border-radius: 0.25rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.25rem;
+        }
+        
+        .asset-name {
+            font-size: 0.75rem;
+            color: #6b7280;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        /* Templates */
+        .template-item {
+            background: white;
+            border-radius: 0.5rem;
+            padding: 0.75rem;
+            border: 1px solid #e5e7eb;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-bottom: 0.5rem;
+        }
+        
+        .template-item:hover {
+            border-color: #93c5fd;
+        }
+        
+        .template-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .template-title {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #1f2937;
+        }
+        
+        .template-description {
+            font-size: 0.75rem;
+            color: #6b7280;
+        }
+        
+        /* Main content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .canvas-area {
+            flex: 1;
+            display: flex;
+        }
+        
+        .canvas {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        
+        .canvas-placeholder {
+            background: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            max-width: 32rem;
+            width: 100%;
+            margin: 0 1rem;
+            text-align: center;
+        }
+        
+        .canvas-controls {
+            position: absolute;
+            bottom: 1rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 0.5rem 1rem;
+        }
+        
+        .control-btn {
+            padding: 0.5rem;
+            color: #6b7280;
+            background: none;
+            border: none;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+        
+        .control-btn:hover {
+            color: #374151;
+        }
+        
+        .control-divider {
+            width: 1px;
+            height: 1.5rem;
+            background-color: #d1d5db;
+        }
+        
+        /* Scene list */
+        .scene-list {
+            width: 16rem;
+            background: white;
+            border-left: 1px solid #e5e7eb;
+            padding: 1rem;
+        }
+        
+        .scene-item {
+            background: white;
+            border-radius: 0.5rem;
+            padding: 0.75rem;
+            border: 1px solid #e5e7eb;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-bottom: 0.5rem;
+        }
+        
+        .scene-item:hover {
+            background-color: #f9fafb;
+        }
+        
+        .scene-item.active {
+            background-color: #eff6ff;
+            border-color: #93c5fd;
+        }
+        
+        .scene-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+        
+        .scene-title {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #1f2937;
+        }
+        
+        .scene-duration {
+            font-size: 0.75rem;
+            color: #6b7280;
+        }
+        
+        .scene-preview {
+            width: 100%;
+            height: 4rem;
+            border-radius: 0.25rem;
+        }
+        
+        /* Timeline */
+        .timeline-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+        }
+        
+        .timeline-title {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #1f2937;
+        }
+        
+        .timeline-controls {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .timeline-container {
+            overflow-x: auto;
+        }
+        
+        .timeline-track {
+            display: flex;
+            align-items: center;
+            min-width: 100%;
+            height: 3rem;
+        }
+        
+        .timeline-clip {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 0.25rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin: 0 0.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        
+        .timeline-clip:hover {
+            transform: scale(1.02);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+        
+        .timeline-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 0.75rem;
+            padding-top: 0.75rem;
+            border-top: 1px solid #e5e7eb;
+        }
+        
+        .timeline-tools {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .tool-btn {
+            padding: 0.5rem;
+            color: #6b7280;
+            background: none;
+            border: none;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+        
+        .tool-btn:hover {
+            color: #374151;
+        }
+        
+        /* Progress bar */
+        .progress-container {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            background: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 1rem;
+            width: 20rem;
+            z-index: 50;
+        }
+        
+        .progress-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+        
+        .progress-title {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #1f2937;
+        }
+        
+        .progress-percentage {
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+        
+        .progress-bar-container {
+            width: 100%;
+            background-color: #e5e7eb;
+            border-radius: 9999px;
+            height: 0.5rem;
+        }
+        
+        .progress-bar-fill {
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+            height: 0.5rem;
+            border-radius: 9999px;
+            transition: width 0.3s ease;
+        }
+        
+        /* Animações */
+        @keyframes fadeIn {
+            from { 
+                opacity: 0; 
+                transform: translateY(10px); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0); 
+            }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        /* Scrollbar customizada */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        
+        /* Responsividade */
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 250px;
+                min-width: 250px;
+            }
+            
+            .scene-list {
+                width: 12rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .editor-container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                min-width: auto;
+                height: 200px;
+            }
+            
+            .canvas-area {
+                flex-direction: column;
+            }
+            
+            .scene-list {
+                width: 100%;
+                height: 150px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Container dedicado para o React app -->
+    <div id="react-root">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="header-left">
+                    <div class="logo">
+                        <i class="fas fa-video"></i>
+                        <span>TecnoCursos AI</span>
+                    </div>
+                    <span style="font-size: 0.875rem; color: #6b7280;">Editor de Vídeo Inteligente</span>
+                </div>
+                
+                <div class="header-right">
+                    <button class="btn btn-secondary">
+                        <i class="fas fa-save"></i>
+                        Salvar
+                    </button>
+                    <button class="btn btn-primary">
+                        <i class="fas fa-download"></i>
+                        Exportar
+                    </button>
+                    <div style="width: 1px; height: 1.5rem; background-color: #d1d5db;"></div>
+                    <button class="control-btn">
+                        <i class="fas fa-cog"></i>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Editor Container -->
+        <div class="editor-container">
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <!-- Tabs -->
+                <div class="sidebar-tabs">
+                    <button class="tab active">
+                        <i class="fas fa-images" style="margin-right: 0.5rem;"></i>Assets
+                    </button>
+                    <button class="tab">
+                        <i class="fas fa-film" style="margin-right: 0.5rem;"></i>Cenas
+                    </button>
+                    <button class="tab">
+                        <i class="fas fa-music" style="margin-right: 0.5rem;"></i>Áudio
+                    </button>
+                </div>
+                
+                <!-- Asset Panel -->
+                <div class="sidebar-content">
+                    <div style="margin-bottom: 1rem;">
+                        <h3 style="font-size: 0.875rem; font-weight: 500; color: #1f2937; margin-bottom: 0.5rem;">Upload de Arquivos</h3>
+                        <div class="upload-area">
+                            <i class="fas fa-cloud-upload-alt" style="font-size: 3rem; color: #9ca3af; margin-bottom: 0.5rem;"></i>
+                            <p style="font-size: 0.875rem; color: #6b7280;">Arraste arquivos aqui ou clique para selecionar</p>
+                            <p style="font-size: 0.75rem; color: #9ca3af; margin-top: 0.25rem;">PDF, PPTX, imagens, vídeos</p>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom: 1rem;">
+                        <h3 style="font-size: 0.875rem; font-weight: 500; color: #1f2937; margin-bottom: 0.5rem;">Assets Disponíveis</h3>
+                        <div class="assets-grid">
+                            <div class="asset-item">
+                                <div class="asset-preview" style="background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);">
+                                    <i class="fas fa-file-pdf"></i>
+                                </div>
+                                <p class="asset-name">documento.pdf</p>
+                            </div>
+                            <div class="asset-item">
+                                <div class="asset-preview" style="background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);">
+                                    <i class="fas fa-image"></i>
+                                </div>
+                                <p class="asset-name">imagem.jpg</p>
+                            </div>
+                            <div class="asset-item">
+                                <div class="asset-preview" style="background: linear-gradient(135deg, #ef4444 0%, #ec4899 100%);">
+                                    <i class="fas fa-video"></i>
+                                </div>
+                                <p class="asset-name">video.mp4</p>
+                            </div>
+                            <div class="asset-item">
+                                <div class="asset-preview" style="background: linear-gradient(135deg, #f59e0b 0%, #f97316 100%);">
+                                    <i class="fas fa-music"></i>
+                                </div>
+                                <p class="asset-name">audio.mp3</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h3 style="font-size: 0.875rem; font-weight: 500; color: #1f2937; margin-bottom: 0.5rem;">Templates</h3>
+                        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                            <div class="template-item">
+                                <div class="template-header">
+                                    <div>
+                                        <p class="template-title">Profissional</p>
+                                        <p class="template-description">Template corporativo</p>
+                                    </div>
+                                    <i class="fas fa-check" style="color: #3b82f6;"></i>
+                                </div>
+                            </div>
+                            <div class="template-item">
+                                <div class="template-header">
+                                    <div>
+                                        <p class="template-title">Educacional</p>
+                                        <p class="template-description">Para cursos e treinamentos</p>
+                                    </div>
+                                    <i class="fas fa-plus" style="color: #9ca3af;"></i>
+                                </div>
+                            </div>
+                            <div class="template-item">
+                                <div class="template-header">
+                                    <div>
+                                        <p class="template-title">Casual</p>
+                                        <p class="template-description">Estilo descontraído</p>
+                                    </div>
+                                    <i class="fas fa-plus" style="color: #9ca3af;"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Main Content -->
+            <div class="main-content">
+                <!-- Canvas Area -->
+                <div class="canvas-area">
+                    <!-- Canvas -->
+                    <div class="canvas">
+                        <div class="canvas-placeholder">
+                            <i class="fas fa-play-circle" style="font-size: 4rem; color: #d1d5db; margin-bottom: 1rem;"></i>
+                            <h3 style="font-size: 1.125rem; font-weight: 500; color: #1f2937; margin-bottom: 0.5rem;">Área de Edição</h3>
+                            <p style="font-size: 0.875rem; color: #6b7280; margin-bottom: 1rem;">Arraste assets da sidebar para começar a editar</p>
+                            <button class="btn btn-primary">
+                                <i class="fas fa-plus" style="margin-right: 0.5rem;"></i>Adicionar Cena
+                            </button>
+                        </div>
+                        
+                        <!-- Controls Overlay -->
+                        <div class="canvas-controls">
+                            <button class="control-btn">
+                                <i class="fas fa-step-backward"></i>
+                            </button>
+                            <button class="control-btn">
+                                <i class="fas fa-play"></i>
+                            </button>
+                            <button class="control-btn">
+                                <i class="fas fa-step-forward"></i>
+                            </button>
+                            <div class="control-divider"></div>
+                            <span style="font-size: 0.875rem; color: #6b7280;">00:00 / 00:30</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Scene List -->
+                    <div class="scene-list">
+                        <h3 style="font-size: 0.875rem; font-weight: 500; color: #1f2937; margin-bottom: 0.75rem;">Cenas</h3>
+                        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                            <div class="scene-item active">
+                                <div class="scene-header">
+                                    <span class="scene-title">Cena 1</span>
+                                    <span class="scene-duration">5s</span>
+                                </div>
+                                <div class="scene-preview" style="background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);"></div>
+                            </div>
+                            <div class="scene-item">
+                                <div class="scene-header">
+                                    <span class="scene-title">Cena 2</span>
+                                    <span class="scene-duration">8s</span>
+                                </div>
+                                <div class="scene-preview" style="background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);"></div>
+                            </div>
+                            <div class="scene-item">
+                                <div class="scene-header">
+                                    <span class="scene-title">Cena 3</span>
+                                    <span class="scene-duration">3s</span>
+                                </div>
+                                <div class="scene-preview" style="background: linear-gradient(135deg, #ef4444 0%, #ec4899 100%);"></div>
+                            </div>
+                        </div>
+                        
+                        <button class="btn btn-secondary" style="width: 100%; margin-top: 0.75rem;">
+                            <i class="fas fa-plus" style="margin-right: 0.5rem;"></i>Nova Cena
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Timeline -->
+                <div class="timeline">
+                    <div class="timeline-header">
+                        <h3 class="timeline-title">Timeline</h3>
+                        <div class="timeline-controls">
+                            <button class="control-btn">
+                                <i class="fas fa-zoom-in"></i>
+                            </button>
+                            <button class="control-btn">
+                                <i class="fas fa-zoom-out"></i>
+                            </button>
+                            <div class="control-divider"></div>
+                            <span style="font-size: 0.75rem; color: #6b7280;">Zoom: 100%</span>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-container">
+                        <div class="timeline-track">
+                            <div class="timeline-clip" style="width: 8rem;">Cena 1</div>
+                            <div class="timeline-clip" style="width: 12rem;">Cena 2</div>
+                            <div class="timeline-clip" style="width: 6rem;">Cena 3</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Timeline Controls -->
+                    <div class="timeline-footer">
+                        <div class="timeline-tools">
+                            <button class="tool-btn">
+                                <i class="fas fa-cut"></i>
+                            </button>
+                            <button class="tool-btn">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                            <button class="tool-btn">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <span style="font-size: 0.75rem; color: #6b7280;">Duração: 00:16</span>
+                            <button class="btn btn-primary" style="font-size: 0.75rem; padding: 0.25rem 0.75rem;">
+                                Preview
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- React App - Versão compilada para produção -->
+    <script>
+        // React App compilado para produção - sem avisos
+        (function() {
+            'use strict';
+            
+            const React = window.React;
+            const ReactDOM = window.ReactDOM;
+            
+            if (!React || !ReactDOM) {
+                console.error('React não carregado');
+                return;
+            }
+            
+            const { useState, useEffect } = React;
+            
+            function TecnoCursosEditor() {
+                const [isLoading, setIsLoading] = useState(false);
+                const [uploadProgress, setUploadProgress] = useState(0);
+                const [assets, setAssets] = useState([]);
+                const [scenes, setScenes] = useState([]);
+                
+                useEffect(function() {
+                    // Inicializar editor - sem logs em produção
+                }, []);
+                
+                const handleFileUpload = async function(files) {
+                    setIsLoading(true);
+                    setUploadProgress(0);
+                    
+                    // Simular upload
+                    for (let i = 0; i <= 100; i += 10) {
+                        await new Promise(function(resolve) {
+                            setTimeout(resolve, 100);
+                        });
+                        setUploadProgress(i);
+                    }
+                    
+                    setIsLoading(false);
+                };
+                
+                const handleDragOver = function(e) {
+                    e.preventDefault();
+                    e.currentTarget.classList.add('dragover');
+                };
+                
+                const handleDragLeave = function(e) {
+                    e.currentTarget.classList.remove('dragover');
+                };
+                
+                const handleDrop = function(e) {
+                    e.preventDefault();
+                    e.currentTarget.classList.remove('dragover');
+                    
+                    const files = Array.from(e.dataTransfer.files);
+                    handleFileUpload(files);
+                };
+                
+                return React.createElement('div', { className: 'fade-in' },
+                    isLoading && React.createElement('div', { className: 'progress-container' },
+                        React.createElement('div', { className: 'progress-header' },
+                            React.createElement('span', { className: 'progress-title' }, 'Processando arquivos...'),
+                            React.createElement('span', { className: 'progress-percentage' }, uploadProgress + '%')
+                        ),
+                        React.createElement('div', { className: 'progress-bar-container' },
+                            React.createElement('div', { 
+                                className: 'progress-bar-fill',
+                                style: { width: uploadProgress + '%' }
+                            })
+                        )
+                    ),
+                    React.createElement('div', {
+                        className: 'upload-area',
+                        onDragOver: handleDragOver,
+                        onDragLeave: handleDragLeave,
+                        onDrop: handleDrop
+                    })
+                );
+            }
+            
+            // Usar createRoot para React 18 - versão de produção
+            const container = document.getElementById('react-root');
+            if (container) {
+                const root = ReactDOM.createRoot(container);
+                root.render(React.createElement(TecnoCursosEditor));
+            }
+        })();
+    </script>
+</body>
+</html>

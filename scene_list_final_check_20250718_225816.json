@@ -1,0 +1,144 @@
+{
+  "timestamp": "2025-07-18T22:58:10.247384",
+  "implementation": {},
+  "files": {
+    "Componente SceneList": {
+      "success": true,
+      "details": {
+        "filepath": "src/components/SceneList.jsx",
+        "exists": true
+      },
+      "timestamp": "2025-07-18T22:58:10.248062"
+    },
+    "Serviço SceneListService": {
+      "success": true,
+      "details": {
+        "filepath": "src/services/sceneListService.js",
+        "exists": true
+      },
+      "timestamp": "2025-07-18T22:58:10.248107"
+    },
+    "Hook useSceneList": {
+      "success": true,
+      "details": {
+        "filepath": "src/hooks/useSceneList.js",
+        "exists": true
+      },
+      "timestamp": "2025-07-18T22:58:10.248143"
+    },
+    "Exemplo de uso no App.jsx": {
+      "success": true,
+      "details": {
+        "filepath": "src/App.jsx",
+        "exists": true
+      },
+      "timestamp": "2025-07-18T22:58:10.248176"
+    },
+    "Conteúdo SceneList.jsx": {
+      "success": true,
+      "details": {
+        "filepath": "src/components/SceneList.jsx",
+        "missing_content": []
+      },
+      "timestamp": "2025-07-18T22:58:10.248736"
+    },
+    "package.json existe": {
+      "success": true,
+      "details": {
+        "filepath": "package.json",
+        "exists": true
+      },
+      "timestamp": "2025-07-18T22:58:10.248983"
+    },
+    "Testes unitários SceneList": {
+      "success": true,
+      "details": {
+        "filepath": "src/components/SceneList.test.js",
+        "exists": true
+      },
+      "timestamp": "2025-07-18T22:58:10.249688"
+    },
+    "Testes de integração backend": {
+      "success": true,
+      "details": {
+        "filepath": "test_scene_list_backend.py",
+        "exists": true
+      },
+      "timestamp": "2025-07-18T22:58:10.249730"
+    },
+    "Instruções de instalação": {
+      "success": true,
+      "details": {
+        "filepath": "INSTALACAO_DEPENDENCIAS_SCENELIST.md",
+        "exists": true
+      },
+      "timestamp": "2025-07-18T22:58:10.249967"
+    },
+    "Relatório de implementação": {
+      "success": true,
+      "details": {
+        "filepath": "RELATORIO_SCENELIST_IMPLEMENTACAO_COMPLETA.md",
+        "exists": true
+      },
+      "timestamp": "2025-07-18T22:58:10.250038"
+    }
+  },
+  "dependencies": {
+    "react instalado": {
+      "success": true,
+      "details": {},
+      "timestamp": "2025-07-18T22:58:10.249468"
+    },
+    "react-dom instalado": {
+      "success": true,
+      "details": {},
+      "timestamp": "2025-07-18T22:58:10.249478"
+    },
+    "react-beautiful-dnd instalado": {
+      "success": true,
+      "details": {},
+      "timestamp": "2025-07-18T22:58:10.249482"
+    },
+    "@heroicons/react instalado": {
+      "success": true,
+      "details": {},
+      "timestamp": "2025-07-18T22:58:10.249485"
+    },
+    "tailwindcss instalado": {
+      "success": false,
+      "details": {},
+      "timestamp": "2025-07-18T22:58:10.249488"
+    }
+  },
+  "tests": {
+    "Testes npm executados": {
+      "success": false,
+      "details": {
+        "error": "[WinError 2] O sistema não pode encontrar o arquivo especificado"
+      },
+      "timestamp": "2025-07-18T22:58:16.400348"
+    }
+  },
+  "summary": {
+    "total_checks": 18,
+    "passed": 15,
+    "failed": 3,
+    "warnings": 0
+  },
+  "backend": {
+    "Backend acessível": {
+      "success": false,
+      "details": {
+        "error": "HTTPConnectionPool(host='localhost', port=8000): Read timed out. (read timeout=3)"
+      },
+      "timestamp": "2025-07-18T22:58:16.386684"
+    }
+  },
+  "documentation": {
+    "Guia de uso gerado": {
+      "success": true,
+      "details": {},
+      "timestamp": "2025-07-18T22:58:16.401741"
+    }
+  }
+}

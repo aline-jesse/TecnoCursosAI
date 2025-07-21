@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EditorCanvas - Demonstração</title>
+    <script src="https://unpkg.com/fabric@5.3.0/dist/fabric.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            display: flex;
+            height: 100vh;
+        }
+        
+        .sidebar {
+            width: 300px;
+            background: white;
+            border-right: 1px solid #ddd;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .main-canvas {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .canvas-container {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+        
+        .toolbar {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            background: #007bff;
+            color: white;
+        }
+        
+        .btn:hover {
+            background: #0056b3;
+        }
+        
+        .btn.secondary {
+            background: #6c757d;
+        }
+        
+        .btn.secondary:hover {
+            background: #545b62;
+        }
+        
+        .asset-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            margin-bottom: 8px;
+            background: #f8f9fa;
+            border-radius: 4px;
+            cursor: move;
+            border: 2px solid transparent;
+        }
+        
+        .asset-item:hover {
+            border-color: #007bff;
+            background: #e3f2fd;
+        }
+        
+        .asset-preview {
+            width: 40px;
+            height: 40px;
+            background: #ddd;
+            border-radius: 4px;
+            margin-right: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+        
+        .properties {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+        }
+        
+        .property-group {
+            margin-bottom: 15px;
+        }
+        
+        .property-label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            font-size: 12px;
+            color: #333;
+        }
+        
+        .property-input {
+            width: 100%;
+            padding: 6px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+        
+        .property-row {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .property-row .property-input {
+            flex: 1;
+        }
+        
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .slider {
+            flex: 1;
+        }
+        
+        .slider-value {
+            font-size: 12px;
+            min-width: 40px;
+            color: #666;
+        }
+        
+        .layer-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4px;
+        }
+        
+        .layer-btn {
+            padding: 4px 8px;
+            font-size: 10px;
+            background: #e9ecef;
+            color: #333;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        
+        .layer-btn:hover {
+            background: #dee2e6;
+        }
+        
+        h2 {
+            margin-bottom: 15px;
+            color: #333;
+            font-size: 18px;
+        }
+        
+        h3 {
+            margin-bottom: 10px;
+            color: #666;
+            font-size: 14px;
+        }
+        
+        #canvas-element {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        .info {
+            background: #e3f2fd;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            font-size: 12px;
+            color: #1976d2;
+        }
+        
+        .zoom-info {
+            margin-top: 10px;
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar com assets e propriedades -->
+    <div class="sidebar">
+        <h2>🎨 EditorCanvas Demo</h2>
+        
+        <div class="info">
+            Arraste os elementos para o canvas e explore as funcionalidades!
+        </div>
+        
+        <h3>👥 Avatares</h3>
+        <div class="asset-item" draggable="true" data-type="avatar" data-name="Professor" data-emoji="👨‍🏫">
+            <div class="asset-preview">👨‍🏫</div>
+            <div>Professor</div>
+        </div>
+        <div class="asset-item" draggable="true" data-type="avatar" data-name="Professora" data-emoji="👩‍🏫">
+            <div class="asset-preview">👩‍🏫</div>
+            <div>Professora</div>
+        </div>
+        <div class="asset-item" draggable="true" data-type="avatar" data-name="Estudante" data-emoji="👦">
+            <div class="asset-preview">👦</div>
+            <div>Estudante</div>
+        </div>
+        
+        <h3>🖼️ Fundos</h3>
+        <div class="asset-item" draggable="true" data-type="background" data-name="Sala de Aula" data-color="#7C3AED">
+            <div class="asset-preview" style="background: #7C3AED; color: white;">🏫</div>
+            <div>Sala de Aula</div>
+        </div>
+        <div class="asset-item" draggable="true" data-type="background" data-name="Escritório" data-color="#059669">
+            <div class="asset-preview" style="background: #059669; color: white;">🏢</div>
+            <div>Escritório</div>
+        </div>
+        
+        <!-- Propriedades do objeto selecionado -->
+        <div class="properties" id="properties" style="display: none;">
+            <h3>⚙️ Propriedades</h3>
+            <div id="object-info" style="margin-bottom: 10px; font-size: 12px; color: #666;"></div>
+            
+            <div class="property-group">
+                <label class="property-label">Posição</label>
+                <div class="property-row">
+                    <input type="number" id="prop-x" class="property-input" placeholder="X">
+                    <input type="number" id="prop-y" class="property-input" placeholder="Y">
+                </div>
+            </div>
+            
+            <div class="property-group">
+                <label class="property-label">Tamanho</label>
+                <div class="property-row">
+                    <input type="number" id="prop-width" class="property-input" placeholder="Largura">
+                    <input type="number" id="prop-height" class="property-input" placeholder="Altura">
+                </div>
+            </div>
+            
+            <div class="property-group">
+                <label class="property-label">Rotação</label>
+                <div class="slider-container">
+                    <input type="range" id="prop-rotation" class="slider" min="-180" max="180" value="0">
+                    <span class="slider-value" id="rotation-value">0°</span>
+                </div>
+            </div>
+            
+            <div class="property-group">
+                <label class="property-label">Opacidade</label>
+                <div class="slider-container">
+                    <input type="range" id="prop-opacity" class="slider" min="0" max="1" step="0.1" value="1">
+                    <span class="slider-value" id="opacity-value">100%</span>
+                </div>
+            </div>
+            
+            <div class="property-group">
+                <label class="property-label">Camadas</label>
+                <div class="layer-buttons">
+                    <button class="layer-btn" onclick="moveLayer('up')">⬆️ Frente</button>
+                    <button class="layer-btn" onclick="moveLayer('down')">⬇️ Trás</button>
+                    <button class="layer-btn" onclick="moveLayer('top')">⏫ Topo</button>
+                    <button class="layer-btn" onclick="moveLayer('bottom')">⏬ Fundo</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Área principal do canvas -->
+    <div class="main-canvas">
+        <div class="toolbar">
+            <button class="btn" onclick="addText()">📝 Adicionar Texto</button>
+            <button class="btn secondary" onclick="toggleSnap()" id="snap-btn">🧲 Snap: ON</button>
+            <button class="btn" onclick="duplicateObject()">📋 Duplicar</button>
+            <button class="btn" onclick="deleteObject()" style="background: #dc3545;">🗑️ Excluir</button>
+        </div>
+        
+        <div class="canvas-container">
+            <canvas id="canvas-element" width="800" height="450"></canvas>
+        </div>
+        
+        <div class="zoom-info" id="zoom-info">Zoom: 100% | Use scroll para zoom</div>
+    </div>
+
+    <script>
+        // Variáveis globais
+        let canvas;
+        let selectedObject = null;
+        let snapEnabled = true;
+        let objectCounter = 0;
+
+        // Inicializar canvas
+        function initCanvas() {
+            canvas = new fabric.Canvas('canvas-element', {
+                backgroundColor: '#f8f9fa',
+                selection: true,
+                preserveObjectStacking: true
+            });
+
+            // Eventos do canvas
+            canvas.on('selection:created', handleSelection);
+            canvas.on('selection:updated', handleSelection);
+            canvas.on('selection:cleared', clearSelection);
+            canvas.on('object:modified', updateProperties);
+            canvas.on('object:moving', updateProperties);
+            canvas.on('object:scaling', updateProperties);
+            canvas.on('object:rotating', updateProperties);
+
+            // Zoom com scroll
+            canvas.on('mouse:wheel', function(opt) {
+                const delta = opt.e.deltaY;
+                let zoom = canvas.getZoom();
+                zoom *= 0.999 ** delta;
+                if (zoom > 3) zoom = 3;
+                if (zoom < 0.1) zoom = 0.1;
+                canvas.zoomToPoint({ x: opt.e.offsetX, y: opt.e.offsetY }, zoom);
+                document.getElementById('zoom-info').textContent = `Zoom: ${Math.round(zoom * 100)}% | Use scroll para zoom`;
+                opt.e.preventDefault();
+                opt.e.stopPropagation();
+            });
+
+            // Configurar snap
+            setupSnapping();
+            
+            // Drag and drop
+            setupDragDrop();
+        }
+
+        // Configurar snapping
+        function setupSnapping() {
+            canvas.on('object:moving', function(e) {
+                if (!snapEnabled) return;
+                
+                const obj = e.target;
+                const canvasObjects = canvas.getObjects();
+                const snapThreshold = 10;
+                
+                // Snap com outros objetos
+                canvasObjects.forEach(function(otherObj) {
+                    if (otherObj === obj) return;
+                    
+                    if (Math.abs(obj.left - otherObj.left) < snapThreshold) {
+                        obj.set('left', otherObj.left);
+                    }
+                    if (Math.abs(obj.top - otherObj.top) < snapThreshold) {
+                        obj.set('top', otherObj.top);
+                    }
+                });
+                
+                // Snap com bordas do canvas
+                if (Math.abs(obj.left) < snapThreshold) obj.set('left', 0);
+                if (Math.abs(obj.top) < snapThreshold) obj.set('top', 0);
+                if (Math.abs(obj.left + obj.width * obj.scaleX - canvas.width) < snapThreshold) {
+                    obj.set('left', canvas.width - obj.width * obj.scaleX);
+                }
+                if (Math.abs(obj.top + obj.height * obj.scaleY - canvas.height) < snapThreshold) {
+                    obj.set('top', canvas.height - obj.height * obj.scaleY);
+                }
+            });
+        }
+
+        // Configurar drag and drop
+        function setupDragDrop() {
+            const assetItems = document.querySelectorAll('.asset-item');
+            
+            assetItems.forEach(item => {
+                item.addEventListener('dragstart', function(e) {
+                    const data = {
+                        type: this.dataset.type,
+                        name: this.dataset.name,
+                        emoji: this.dataset.emoji,
+                        color: this.dataset.color
+                    };
+                    e.dataTransfer.setData('text/plain', JSON.stringify(data));
+                });
+            });
+
+            const canvasContainer = document.querySelector('.canvas-container');
+            canvasContainer.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                e.dataTransfer.dropEffect = 'copy';
+            });
+
+            canvasContainer.addEventListener('drop', function(e) {
+                e.preventDefault();
+                try {
+                    const data = JSON.parse(e.dataTransfer.getData('text/plain'));
+                    const rect = canvas.getElement().getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    
+                    if (data.type === 'avatar') {
+                        addAvatar(data, x, y);
+                    } else if (data.type === 'background') {
+                        addBackground(data);
+                    }
+                } catch (error) {
+                    console.error('Erro no drop:', error);
+                }
+            });
+        }
+
+        // Adicionar avatar
+        function addAvatar(data, x, y) {
+            const text = new fabric.Text(data.emoji, {
+                left: x - 25,
+                top: y - 25,
+                fontSize: 50,
+                selectable: true,
+                hasControls: true,
+                objectType: 'avatar',
+                objectName: data.name,
+                objectId: ++objectCounter
+            });
+            
+            canvas.add(text);
+            canvas.setActiveObject(text);
+            canvas.renderAll();
+        }
+
+        // Adicionar fundo
+        function addBackground(data) {
+            const rect = new fabric.Rect({
+                left: 0,
+                top: 0,
+                width: canvas.width,
+                height: canvas.height,
+                fill: data.color,
+                selectable: false,
+                evented: false,
+                objectType: 'background',
+                objectName: data.name,
+                objectId: ++objectCounter
+            });
+            
+            canvas.add(rect);
+            canvas.sendToBack(rect);
+            canvas.renderAll();
+        }
+
+        // Adicionar texto
+        function addText() {
+            const text = new fabric.IText('Clique para editar', {
+                left: canvas.width / 2 - 100,
+                top: canvas.height / 2,
+                fontSize: 24,
+                fill: '#000000',
+                fontFamily: 'Arial',
+                selectable: true,
+                editable: true,
+                objectType: 'text',
+                objectName: 'Texto',
+                objectId: ++objectCounter
+            });
+            
+            canvas.add(text);
+            canvas.setActiveObject(text);
+            text.enterEditing();
+            canvas.renderAll();
+        }
+
+        // Toggle snap
+        function toggleSnap() {
+            snapEnabled = !snapEnabled;
+            document.getElementById('snap-btn').textContent = `🧲 Snap: ${snapEnabled ? 'ON' : 'OFF'}`;
+        }
+
+        // Duplicar objeto
+        function duplicateObject() {
+            if (!selectedObject) return;
+            
+            selectedObject.clone(function(cloned) {
+                cloned.set({
+                    left: cloned.left + 20,
+                    top: cloned.top + 20,
+                    objectId: ++objectCounter
+                });
+                canvas.add(cloned);
+                canvas.setActiveObject(cloned);
+                canvas.renderAll();
+            });
+        }
+
+        // Excluir objeto
+        function deleteObject() {
+            if (!selectedObject) return;
+            canvas.remove(selectedObject);
+            clearSelection();
+            canvas.renderAll();
+        }
+
+        // Mover camadas
+        function moveLayer(direction) {
+            if (!selectedObject) return;
+            
+            switch(direction) {
+                case 'up':
+                    canvas.bringForward(selectedObject);
+                    break;
+                case 'down':
+                    canvas.sendBackwards(selectedObject);
+                    break;
+                case 'top':
+                    canvas.bringToFront(selectedObject);
+                    break;
+                case 'bottom':
+                    canvas.sendToBack(selectedObject);
+                    break;
+            }
+            canvas.renderAll();
+        }
+
+        // Manipular seleção
+        function handleSelection(e) {
+            selectedObject = e.selected[0];
+            if (selectedObject) {
+                showProperties();
+                updateProperties();
+            }
+        }
+
+        function clearSelection() {
+            selectedObject = null;
+            hideProperties();
+        }
+
+        function showProperties() {
+            document.getElementById('properties').style.display = 'block';
+        }
+
+        function hideProperties() {
+            document.getElementById('properties').style.display = 'none';
+        }
+
+        // Atualizar propriedades
+        function updateProperties() {
+            if (!selectedObject) return;
+            
+            const info = `${selectedObject.objectType || 'Objeto'}: ${selectedObject.objectName || 'Sem nome'}`;
+            document.getElementById('object-info').textContent = info;
+            
+            document.getElementById('prop-x').value = Math.round(selectedObject.left || 0);
+            document.getElementById('prop-y').value = Math.round(selectedObject.top || 0);
+            document.getElementById('prop-width').value = Math.round((selectedObject.width || 0) * (selectedObject.scaleX || 1));
+            document.getElementById('prop-height').value = Math.round((selectedObject.height || 0) * (selectedObject.scaleY || 1));
+            document.getElementById('prop-rotation').value = selectedObject.angle || 0;
+            document.getElementById('prop-opacity').value = selectedObject.opacity || 1;
+            
+            document.getElementById('rotation-value').textContent = Math.round(selectedObject.angle || 0) + '°';
+            document.getElementById('opacity-value').textContent = Math.round((selectedObject.opacity || 1) * 100) + '%';
+        }
+
+        // Event listeners para propriedades
+        function setupPropertyListeners() {
+            document.getElementById('prop-x').addEventListener('input', function() {
+                if (selectedObject) {
+                    selectedObject.set('left', parseFloat(this.value));
+                    canvas.renderAll();
+                }
+            });
+
+            document.getElementById('prop-y').addEventListener('input', function() {
+                if (selectedObject) {
+                    selectedObject.set('top', parseFloat(this.value));
+                    canvas.renderAll();
+                }
+            });
+
+            document.getElementById('prop-width').addEventListener('input', function() {
+                if (selectedObject && selectedObject.width) {
+                    selectedObject.set('scaleX', parseFloat(this.value) / selectedObject.width);
+                    canvas.renderAll();
+                }
+            });
+
+            document.getElementById('prop-height').addEventListener('input', function() {
+                if (selectedObject && selectedObject.height) {
+                    selectedObject.set('scaleY', parseFloat(this.value) / selectedObject.height);
+                    canvas.renderAll();
+                }
+            });
+
+            document.getElementById('prop-rotation').addEventListener('input', function() {
+                if (selectedObject) {
+                    selectedObject.set('angle', parseFloat(this.value));
+                    document.getElementById('rotation-value').textContent = this.value + '°';
+                    canvas.renderAll();
+                }
+            });
+
+            document.getElementById('prop-opacity').addEventListener('input', function() {
+                if (selectedObject) {
+                    selectedObject.set('opacity', parseFloat(this.value));
+                    document.getElementById('opacity-value').textContent = Math.round(this.value * 100) + '%';
+                    canvas.renderAll();
+                }
+            });
+        }
+
+        // Atalhos de teclado
+        function setupKeyboardShortcuts() {
+            document.addEventListener('keydown', function(e) {
+                if (e.target.tagName === 'INPUT') return;
+                
+                switch(e.key) {
+                    case 'Delete':
+                    case 'Backspace':
+                        if (selectedObject) {
+                            deleteObject();
+                            e.preventDefault();
+                        }
+                        break;
+                    case 't':
+                        if (e.ctrlKey) {
+                            addText();
+                            e.preventDefault();
+                        }
+                        break;
+                    case 'd':
+                        if (e.ctrlKey && selectedObject) {
+                            duplicateObject();
+                            e.preventDefault();
+                        }
+                        break;
+                }
+            });
+        }
+
+        // Inicializar quando a página carregar
+        window.addEventListener('load', function() {
+            initCanvas();
+            setupPropertyListeners();
+            setupKeyboardShortcuts();
+            
+            // Adicionar um texto de boas-vindas
+            setTimeout(() => {
+                const welcomeText = new fabric.Text('🎨 EditorCanvas Demo\n\nArraste elementos da sidebar\nou pressione Ctrl+T para texto', {
+                    left: canvas.width / 2 - 150,
+                    top: canvas.height / 2 - 50,
+                    fontSize: 18,
+                    fill: '#666',
+                    textAlign: 'center',
+                    fontFamily: 'Arial',
+                    selectable: true,
+                    objectType: 'text',
+                    objectName: 'Texto de Boas-vindas',
+                    objectId: ++objectCounter
+                });
+                
+                canvas.add(welcomeText);
+                canvas.renderAll();
+            }, 500);
+        });
+    </script>
+</body>
+</html> 

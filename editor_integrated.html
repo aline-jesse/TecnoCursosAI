@@ -1,0 +1,2538 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TecnoCursos AI - Editor Integrado</title>
+    
+    <!-- Libraries -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.0/axios.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Include all CSS from editor_professional.html -->
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #0f0f23;
+            color: #e2e8f0;
+            overflow: hidden;
+        }
+        
+        /* Professional Dark Theme */
+        .editor-container {
+            height: 100vh;
+            display: grid;
+            grid-template-areas: 
+                "header header header"
+                "sidebar canvas scenes"
+                "timeline timeline timeline";
+            grid-template-rows: 60px 1fr 250px;
+            grid-template-columns: 320px 1fr 280px;
+            gap: 1px;
+            background: #1a1a2e;
+        }
+        
+        .header {
+            grid-area: header;
+            background: #16213e;
+            border-bottom: 1px solid #2d3748;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 18px;
+            font-weight: 700;
+            color: #4fc3f7;
+        }
+        
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-secondary {
+            background: #2d3748;
+            color: #e2e8f0;
+            border: 1px solid #4a5568;
+        }
+        
+        .btn-secondary:hover {
+            background: #4a5568;
+        }
+        
+        /* Mobile Menu Toggle */
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: #e2e8f0;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 8px;
+        }
+        
+        .mobile-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 999;
+        }
+        
+        .mobile-sidebar {
+            position: fixed;
+            top: 60px;
+            left: -100%;
+            width: 280px;
+            height: calc(100vh - 60px);
+            background: #1a202c;
+            transition: left 0.3s ease;
+            z-index: 1000;
+            border-right: 1px solid #2d3748;
+        }
+        
+        .mobile-sidebar.open {
+            left: 0;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            grid-area: sidebar;
+            background: #1a202c;
+            border-right: 1px solid #2d3748;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .sidebar-tabs {
+            display: flex;
+            background: #2d3748;
+            border-bottom: 1px solid #4a5568;
+        }
+        
+        .tab {
+            flex: 1;
+            padding: 12px 16px;
+            background: none;
+            border: none;
+            color: #a0aec0;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 13px;
+            font-weight: 500;
+        }
+        
+        .tab.active {
+            background: #1a202c;
+            color: #4fc3f7;
+            border-bottom: 2px solid #4fc3f7;
+        }
+        
+        .tab:not(.active):hover {
+            background: #374151;
+            color: #e2e8f0;
+        }
+        
+        .sidebar-content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        /* Upload Area */
+        .upload-area {
+            border: 2px dashed #4a5568;
+            border-radius: 8px;
+            padding: 32px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 24px;
+            background: rgba(79, 195, 247, 0.05);
+        }
+        
+        .upload-area:hover {
+            border-color: #4fc3f7;
+            background: rgba(79, 195, 247, 0.1);
+        }
+        
+        .upload-area.dragover {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.15);
+            transform: scale(1.02);
+        }
+        
+        /* Assets Grid */
+        .assets-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        
+        .asset-item {
+            background: #2d3748;
+            border: 1px solid #4a5568;
+            border-radius: 8px;
+            padding: 12px;
+            cursor: grab;
+            transition: all 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .asset-item:hover {
+            border-color: #4fc3f7;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(79, 195, 247, 0.2);
+        }
+        
+        .asset-item:active {
+            cursor: grabbing;
+        }
+        
+        .asset-preview {
+            width: 100%;
+            height: 60px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            margin-bottom: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .asset-name {
+            font-size: 12px;
+            color: #a0aec0;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        /* Canvas Area */
+        .canvas-area {
+            grid-area: canvas;
+            background: #16213e;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        
+        .canvas-toolbar {
+            background: #1a202c;
+            border-bottom: 1px solid #2d3748;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .canvas-tools {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .tool-btn {
+            width: 36px;
+            height: 36px;
+            border: 1px solid #4a5568;
+            background: #2d3748;
+            color: #a0aec0;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .tool-btn:hover {
+            background: #4a5568;
+            color: #e2e8f0;
+        }
+        
+        .tool-btn.active {
+            background: #4fc3f7;
+            color: white;
+            border-color: #4fc3f7;
+        }
+        
+        .canvas-viewport {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            background: radial-gradient(circle at center, #1a202c 0%, #0f0f23 100%);
+        }
+        
+        .canvas-stage {
+            width: 640px;
+            height: 360px;
+            background: #000;
+            border-radius: 8px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+        }
+        
+        .canvas-element {
+            position: absolute;
+            cursor: move;
+            border: 2px solid transparent;
+            transition: border-color 0.2s;
+        }
+        
+        .canvas-element:hover {
+            border-color: rgba(79, 195, 247, 0.5);
+        }
+        
+        .canvas-element.selected {
+            border-color: #4fc3f7;
+        }
+        
+        .canvas-controls {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .play-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        
+        .play-btn:hover {
+            transform: scale(1.1);
+        }
+        
+        /* Scene List */
+        .scenes-panel {
+            grid-area: scenes;
+            background: #1a202c;
+            border-left: 1px solid #2d3748;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .scenes-header {
+            background: #2d3748;
+            padding: 16px 20px;
+            border-bottom: 1px solid #4a5568;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .scenes-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #e2e8f0;
+        }
+        
+        .scenes-list {
+            flex: 1;
+            padding: 16px;
+            overflow-y: auto;
+        }
+        
+        .scene-item {
+            background: #2d3748;
+            border: 1px solid #4a5568;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .scene-item:hover {
+            border-color: #4fc3f7;
+        }
+        
+        .scene-item.active {
+            border-color: #4fc3f7;
+            background: rgba(79, 195, 247, 0.1);
+        }
+        
+        .scene-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        
+        .scene-title {
+            font-size: 13px;
+            font-weight: 500;
+            color: #e2e8f0;
+        }
+        
+        .scene-duration {
+            font-size: 11px;
+            color: #a0aec0;
+            background: #4a5568;
+            padding: 2px 8px;
+            border-radius: 12px;
+        }
+        
+        .scene-preview {
+            width: 100%;
+            height: 48px;
+            border-radius: 6px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        /* Timeline */
+        .timeline {
+            grid-area: timeline;
+            background: #1a202c;
+            border-top: 1px solid #2d3748;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .timeline-header {
+            background: #2d3748;
+            padding: 12px 20px;
+            border-bottom: 1px solid #4a5568;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .timeline-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #e2e8f0;
+        }
+        
+        .timeline-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .timeline-content {
+            flex: 1;
+            padding: 16px 20px;
+            overflow: auto;
+        }
+        
+        .timeline-tracks {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            min-height: 160px;
+        }
+        
+        .timeline-track {
+            background: #2d3748;
+            border-radius: 6px;
+            padding: 8px;
+            min-height: 40px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            position: relative;
+        }
+        
+        .timeline-clip {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 4px;
+            padding: 8px 12px;
+            color: white;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: grab;
+            transition: all 0.2s;
+            position: relative;
+            min-width: 80px;
+        }
+        
+        .timeline-clip:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
+        }
+        
+        .timeline-clip:active {
+            cursor: grabbing;
+        }
+        
+        .timeline-clip.selected {
+            box-shadow: 0 0 0 2px #4fc3f7;
+        }
+        
+        /* Drag and Drop Styles */
+        .drag-over {
+            background: rgba(79, 195, 247, 0.2) !important;
+            border-color: #4fc3f7 !important;
+        }
+        
+        .dragging {
+            opacity: 0.5;
+            transform: rotate(5deg);
+        }
+        
+        /* Progress Overlay */
+        .progress-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        
+        .progress-content {
+            background: #1a202c;
+            border-radius: 12px;
+            padding: 32px;
+            min-width: 400px;
+            text-align: center;
+        }
+        
+        .progress-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: #e2e8f0;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #2d3748;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 16px;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.3s ease;
+        }
+        
+        .progress-text {
+            font-size: 14px;
+            color: #a0aec0;
+        }
+        
+        /* Status indicator */
+        .status-indicator {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #1a202c;
+            border: 1px solid #4a5568;
+            border-radius: 8px;
+            padding: 12px 16px;
+            font-size: 12px;
+            color: #a0aec0;
+            z-index: 100;
+        }
+        
+        .status-indicator.connected {
+            border-color: #10b981;
+            color: #10b981;
+        }
+        
+        .status-indicator.error {
+            border-color: #ef4444;
+            color: #ef4444;
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(-100%); }
+            to { transform: translateX(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        .slide-in {
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        /* Responsive Design */
+        
+        /* Tablet Landscape - Large */
+        @media (max-width: 1200px) {
+            .editor-container {
+                grid-template-columns: 280px 1fr 240px;
+            }
+            
+            .assets-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header-actions {
+                gap: 8px;
+            }
+            
+            .btn {
+                padding: 6px 12px;
+                font-size: 13px;
+            }
+        }
+        
+        /* Tablet Portrait */
+        @media (max-width: 1024px) {
+            .editor-container {
+                grid-template-columns: 260px 1fr 220px;
+                grid-template-rows: 60px 1fr 180px;
+            }
+            
+            .sidebar-content {
+                padding: 16px;
+            }
+            
+            .timeline {
+                height: 180px;
+            }
+            
+            .logo {
+                font-size: 16px;
+            }
+            
+            .header-actions .btn span {
+                display: none;
+            }
+        }
+        
+        /* Mobile Landscape */
+        @media (max-width: 768px) {
+            .editor-container {
+                grid-template-areas: 
+                    "header"
+                    "canvas"
+                    "timeline";
+                grid-template-columns: 1fr;
+                grid-template-rows: 60px 1fr 160px;
+            }
+            
+            .sidebar, .scenes-panel {
+                display: none;
+            }
+            
+            .mobile-menu-toggle {
+                display: block;
+            }
+            
+            .mobile-overlay.active {
+                display: block;
+            }
+            
+            .header {
+                padding: 0 16px;
+            }
+            
+            .header-actions {
+                gap: 4px;
+            }
+            
+            .btn {
+                padding: 8px;
+                min-width: auto;
+            }
+            
+            .btn span {
+                display: none;
+            }
+            
+            .canvas-container {
+                margin: 8px;
+            }
+            
+            .timeline {
+                height: 160px;
+                padding: 8px;
+            }
+            
+            .timeline-tracks {
+                gap: 4px;
+            }
+            
+            .timeline-track {
+                height: 40px;
+            }
+            
+            .timeline-clip {
+                min-height: 35px;
+                font-size: 11px;
+                padding: 4px 6px;
+            }
+            
+            .controls-panel {
+                padding: 8px;
+                gap: 8px;
+            }
+            
+            .control-group {
+                gap: 4px;
+            }
+            
+            .control-btn {
+                padding: 6px;
+                font-size: 12px;
+            }
+        }
+        
+        /* Mobile Portrait */
+        @media (max-width: 480px) {
+            .editor-container {
+                grid-template-rows: 55px 1fr 140px;
+            }
+            
+            .header {
+                height: 55px;
+                padding: 0 12px;
+            }
+            
+            .logo {
+                font-size: 14px;
+                gap: 8px;
+            }
+            
+            .logo i {
+                font-size: 16px;
+            }
+            
+            .header-actions {
+                gap: 2px;
+            }
+            
+            .btn {
+                padding: 6px;
+                font-size: 12px;
+            }
+            
+            .canvas-container {
+                margin: 4px;
+            }
+            
+            .canvas-element {
+                font-size: 10px;
+                min-height: 20px;
+                padding: 2px 4px;
+            }
+            
+            .element-controls {
+                gap: 2px;
+            }
+            
+            .element-control {
+                padding: 2px;
+                font-size: 10px;
+            }
+            
+            .timeline {
+                height: 140px;
+                padding: 6px;
+            }
+            
+            .timeline-track {
+                height: 35px;
+            }
+            
+            .timeline-clip {
+                min-height: 30px;
+                font-size: 10px;
+                padding: 2px 4px;
+            }
+            
+            .controls-panel {
+                padding: 6px;
+                gap: 6px;
+                flex-wrap: wrap;
+            }
+            
+            .control-group {
+                gap: 2px;
+                min-width: auto;
+            }
+            
+            .control-btn {
+                padding: 4px;
+                font-size: 11px;
+                min-width: 32px;
+            }
+            
+            .time-display {
+                font-size: 11px;
+            }
+            
+            .mobile-sidebar {
+                width: 100%;
+                left: -100%;
+            }
+            
+            .mobile-sidebar.open {
+                left: 0;
+            }
+        }
+        
+        /* Extra Small Mobile */
+        @media (max-width: 360px) {
+            .editor-container {
+                grid-template-rows: 50px 1fr 120px;
+            }
+            
+            .header {
+                height: 50px;
+                padding: 0 8px;
+            }
+            
+            .logo span {
+                display: none;
+            }
+            
+            .canvas-container {
+                margin: 2px;
+            }
+            
+            .timeline {
+                height: 120px;
+                padding: 4px;
+            }
+            
+            .timeline-track {
+                height: 30px;
+            }
+            
+            .timeline-clip {
+                min-height: 25px;
+                font-size: 9px;
+                padding: 1px 3px;
+            }
+            
+            .controls-panel {
+                padding: 4px;
+                gap: 4px;
+            }
+            
+            .control-btn {
+                padding: 3px;
+                font-size: 10px;
+                min-width: 28px;
+            }
+        }
+        
+        /* Touch-specific improvements */
+        @media (hover: none) and (pointer: coarse) {
+            .btn, .control-btn, .tab, .timeline-clip, .canvas-element {
+                min-height: 44px;
+                touch-action: manipulation;
+            }
+            
+            .element-control, .timeline-clip {
+                min-width: 44px;
+            }
+            
+            .canvas-element {
+                padding: 8px;
+            }
+            
+            .timeline-clip {
+                padding: 8px;
+            }
+            
+            .asset-item {
+                padding: 16px;
+                min-height: 60px;
+            }
+            
+            .upload-area {
+                padding: 40px 20px;
+                min-height: 120px;
+            }
+        }
+        
+        /* High DPI displays */
+        @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+            .canvas {
+                image-rendering: -webkit-optimize-contrast;
+                image-rendering: crisp-edges;
+            }
+            
+            .asset-preview img, .canvas-element img {
+                image-rendering: -webkit-optimize-contrast;
+                image-rendering: crisp-edges;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    
+    <script type="text/babel">
+        const { useState, useEffect, useRef, useCallback } = React;
+        
+        // API Configuration
+        const API_BASE_URL = window.location.origin;
+        const API_CONFIG = {
+            baseURL: API_BASE_URL,
+            timeout: 30000,
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        };
+        
+        // Create axios instance
+        const apiClient = axios.create(API_CONFIG);
+        
+        // API Service
+        class EditorAPIService {
+            constructor() {
+                this.client = apiClient;
+                this.currentProject = null;
+            }
+            
+            // Projects
+            async createProject(name, description = '', template = 'professional') {
+                const formData = new FormData();
+                formData.append('name', name);
+                formData.append('description', description);
+                formData.append('template', template);
+                
+                const response = await this.client.post('/api/editor/projects/create', formData);
+                return response.data;
+            }
+            
+            async listProjects() {
+                try {
+                    const response = await this.client.get('/api/editor/test/projects/list');
+                    return response.data;
+                } catch (error) {
+                    console.warn('Usando endpoint de teste para projetos');
+                    const response = await this.client.get('/api/editor/test/projects/list');
+                    return response.data;
+                }
+            }
+            
+            async getProject(projectId) {
+                const response = await this.client.get(`/api/editor/projects/${projectId}`);
+                return response.data;
+            }
+            
+            async saveProject(projectId, projectData) {
+                const response = await this.client.put(`/api/editor/projects/${projectId}/save`, projectData);
+                return response.data;
+            }
+            
+            // Assets
+            async uploadAssets(files, projectId = null) {
+                const formData = new FormData();
+                files.forEach(file => {
+                    formData.append('files', file);
+                });
+                if (projectId) {
+                    formData.append('project_id', projectId);
+                }
+                
+                try {
+                    const response = await this.client.post('/api/editor/test/assets/upload', formData, {
+                        headers: {
+                            'Content-Type': 'multipart/form-data'
+                        }
+                    });
+                    return response.data;
+                } catch (error) {
+                    console.warn('Usando endpoint de teste para upload');
+                    const response = await this.client.post('/api/editor/test/assets/upload', formData);
+                    return response.data;
+                }
+            }
+            
+            async listAssets(projectId = null, assetType = null) {
+                try {
+                    const response = await this.client.get('/api/editor/test/assets/list');
+                    return response.data;
+                } catch (error) {
+                    console.warn('Usando endpoint de teste para assets');
+                    const response = await this.client.get('/api/editor/test/assets/list');
+                    return response.data;
+                }
+            }
+            
+            // Export
+            async exportProject(projectId, exportSettings = {}) {
+                const response = await this.client.post(`/api/editor/projects/${projectId}/export`, exportSettings);
+                return response.data;
+            }
+            
+            async getExportStatus(projectId) {
+                const response = await this.client.get(`/api/editor/projects/${projectId}/export/status`);
+                return response.data;
+            }
+            
+            // Templates
+            async listTemplates() {
+                const response = await this.client.get('/api/editor/templates/list');
+                return response.data;
+            }
+            
+            async getTemplatePreview(templateId) {
+                const response = await this.client.get(`/api/editor/templates/${templateId}/preview`);
+                return response.data;
+            }
+        }
+        
+        // Main Editor Component with Backend Integration
+        function IntegratedVideoEditor() {
+            const [activeTab, setActiveTab] = useState('assets');
+            const [assets, setAssets] = useState([]);
+            const [scenes, setScenes] = useState([]);
+            const [timelineClips, setTimelineClips] = useState([]);
+            const [isPlaying, setIsPlaying] = useState(false);
+            const [currentTime, setCurrentTime] = useState(0);
+            const [totalDuration, setTotalDuration] = useState(16);
+            const [selectedElement, setSelectedElement] = useState(null);
+            const [showProgress, setShowProgress] = useState(false);
+            const [progress, setProgress] = useState(0);
+            const [progressText, setProgressText] = useState('');
+            const [connectionStatus, setConnectionStatus] = useState('connecting');
+            const [currentProject, setCurrentProject] = useState(null);
+            const [templates, setTemplates] = useState([]);
+            const [audioTracks, setAudioTracks] = useState([]);
+            const [audioAnalysis, setAudioAnalysis] = useState({});
+            const [availableFonts, setAvailableFonts] = useState([]);
+            const [textTemplates, setTextTemplates] = useState([]);
+            const [showTextEditor, setShowTextEditor] = useState(false);
+            const [currentTextElement, setCurrentTextElement] = useState(null);
+            const [autosaveStatus, setAutosaveStatus] = useState('idle');
+            const [lastSaveTime, setLastSaveTime] = useState(null);
+            const [projectVersions, setProjectVersions] = useState([]);
+            const [autosaveInterval, setAutosaveInterval] = useState(30);
+            const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+            
+            const canvasRef = useRef(null);
+            const fileInputRef = useRef(null);
+            const apiService = useRef(new EditorAPIService());
+            
+            // Audio management functions
+            const handleAudioUpload = async (event) => {
+                const files = Array.from(event.target.files);
+                
+                for (const file of files) {
+                    if (file.type.startsWith('audio/')) {
+                        const formData = new FormData();
+                        formData.append('files', file);
+                        
+                        try {
+                            const response = await apiService.current.uploadAssets(formData);
+                            
+                            if (response.success && response.assets.length > 0) {
+                                const asset = response.assets[0];
+                                
+                                // Simular duração do áudio (em produção seria obtida do arquivo)
+                                const duration = Math.floor(Math.random() * 180) + 30; // 30-210 segundos
+                                
+                                const audioTrack = {
+                                    id: asset.id,
+                                    name: asset.name,
+                                    type: 'music',
+                                    duration: duration,
+                                    file_path: asset.url,
+                                    volume: 1.0,
+                                    start_time: 0,
+                                    is_background: false
+                                };
+                                
+                                setAudioTracks(prev => [...prev, audioTrack]);
+                                showNotification('Áudio carregado com sucesso', 'success');
+                            }
+                        } catch (error) {
+                            console.error('Erro no upload de áudio:', error);
+                            showNotification('Erro ao carregar áudio', 'error');
+                        }
+                    }
+                }
+                
+                // Limpar input
+                event.target.value = '';
+            };
+            
+            const analyzeAudio = async (track) => {
+                try {
+                    setShowProgress(true);
+                    setProgressText('Analisando áudio...');
+                    setProgress(0);
+                    
+                    // Simular progresso
+                    const progressInterval = setInterval(() => {
+                        setProgress(prev => {
+                            if (prev >= 90) {
+                                clearInterval(progressInterval);
+                                return 90;
+                            }
+                            return prev + 10;
+                        });
+                    }, 200);
+                    
+                    const response = await apiService.current.post('/api/editor/audio/analyze', {
+                        file_path: track.file_path
+                    });
+                    
+                    clearInterval(progressInterval);
+                    setProgress(100);
+                    
+                    setTimeout(() => {
+                        setShowProgress(false);
+                        setProgress(0);
+                    }, 1000);
+                    
+                    if (response.success) {
+                        setAudioAnalysis(prev => ({
+                            ...prev,
+                            [track.id]: response.analysis
+                        }));
+                        
+                        showNotification(`Áudio analisado: ${response.analysis.beats?.length || 0} batidas detectadas`, 'success');
+                    }
+                } catch (error) {
+                    console.error('Erro na análise de áudio:', error);
+                    setShowProgress(false);
+                    showNotification('Erro ao analisar áudio', 'error');
+                }
+            };
+            
+            const syncAudioTracks = async () => {
+                if (audioTracks.length < 2) {
+                    showNotification('Precisa de pelo menos 2 trilhas para sincronizar', 'warning');
+                    return;
+                }
+                
+                try {
+                    setShowProgress(true);
+                    setProgressText('Sincronizando trilhas de áudio...');
+                    setProgress(0);
+                    
+                    // Simular progresso
+                    const progressInterval = setInterval(() => {
+                        setProgress(prev => {
+                            if (prev >= 90) {
+                                clearInterval(progressInterval);
+                                return 90;
+                            }
+                            return prev + 15;
+                        });
+                    }, 500);
+                    
+                    const tracksData = audioTracks.map(track => ({
+                        name: track.name,
+                        file_path: track.file_path,
+                        start_time: track.start_time,
+                        duration: track.duration,
+                        volume: track.volume,
+                        is_background: track.is_background,
+                        audio_type: track.type
+                    }));
+                    
+                    const response = await apiService.current.post('/api/editor/audio/sync', {
+                        tracks: tracksData,
+                        video_duration: totalDuration,
+                        sync_points: []
+                    });
+                    
+                    clearInterval(progressInterval);
+                    setProgress(100);
+                    
+                    setTimeout(() => {
+                        setShowProgress(false);
+                        setProgress(0);
+                    }, 1000);
+                    
+                    if (response.success) {
+                        showNotification('Trilhas sincronizadas com sucesso', 'success');
+                        
+                        // Adicionar à timeline
+                        const syncedClip = {
+                            id: `audio_sync_${Date.now()}`,
+                            title: 'Áudio Sincronizado',
+                            duration: totalDuration,
+                            width: totalDuration * 20,
+                            type: 'audio',
+                            audio_url: response.audio_url
+                        };
+                        
+                        setTimelineClips(prev => [...prev, syncedClip]);
+                    }
+                } catch (error) {
+                    console.error('Erro na sincronização:', error);
+                    setShowProgress(false);
+                    showNotification('Erro ao sincronizar trilhas', 'error');
+                }
+            };
+            
+            // Text editor functions
+            const applyTextTemplate = async (templateId) => {
+                try {
+                    const text = prompt('Digite o texto:') || 'Texto de exemplo';
+                    
+                    const response = await apiService.current.post('/api/editor/text/apply-template', {
+                        text: text,
+                        template_id: templateId,
+                        x: 100,
+                        y: 100
+                    });
+                    
+                    if (response.success) {
+                        const activeScene = scenes.find(s => s.active);
+                        if (activeScene) {
+                            const newElement = {
+                                id: response.text_element.id,
+                                name: `Texto: ${text.substring(0, 20)}...`,
+                                type: 'text',
+                                x: response.text_element.x,
+                                y: response.text_element.y,
+                                width: response.text_element.width,
+                                height: response.text_element.height,
+                                text: response.text_element.text,
+                                style: response.text_element.style
+                            };
+                            
+                            setScenes(prev => prev.map(scene => 
+                                scene.active 
+                                    ? { ...scene, elements: [...scene.elements, newElement] }
+                                    : scene
+                            ));
+                            
+                            showNotification(`Template "${templateId}" aplicado com sucesso`, 'success');
+                        }
+                    }
+                } catch (error) {
+                    console.error('Erro ao aplicar template de texto:', error);
+                    showNotification('Erro ao aplicar template de texto', 'error');
+                }
+            };
+            
+            const createCustomText = async (textData) => {
+                try {
+                    const response = await apiService.current.post('/api/editor/text/create', textData);
+                    
+                    if (response.success) {
+                        const activeScene = scenes.find(s => s.active);
+                        if (activeScene) {
+                            const newElement = {
+                                id: response.text_element.id,
+                                name: `Texto: ${textData.text.substring(0, 20)}...`,
+                                type: 'text',
+                                x: response.text_element.x,
+                                y: response.text_element.y,
+                                width: response.text_element.width,
+                                height: response.text_element.height,
+                                text: response.text_element.text,
+                                style: response.text_element.style
+                            };
+                            
+                            setScenes(prev => prev.map(scene => 
+                                scene.active 
+                                    ? { ...scene, elements: [...scene.elements, newElement] }
+                                    : scene
+                            ));
+                            
+                            showNotification('Texto criado com sucesso', 'success');
+                        }
+                    }
+                } catch (error) {
+                    console.error('Erro ao criar texto:', error);
+                    showNotification('Erro ao criar texto', 'error');
+                }
+            };
+            
+            // Initialize
+            useEffect(() => {
+                initializeEditor();
+            }, []);
+            
+            const initializeEditor = async () => {
+                try {
+                    setConnectionStatus('connecting');
+                    
+                    // Test API connection
+                    await apiService.current.listProjects();
+                    setConnectionStatus('connected');
+                    
+                    // Load initial data
+                    await Promise.all([
+                        loadAssets(),
+                        loadTemplates(),
+                        loadFonts(),
+                        loadTextTemplates(),
+                        createDefaultProject()
+                    ]);
+                    
+                } catch (error) {
+                    console.error('Failed to initialize editor:', error);
+                    setConnectionStatus('error');
+                    // Fallback to mock data
+                    loadMockData();
+                }
+            };
+            
+            const createDefaultProject = async () => {
+                try {
+                    const result = await apiService.current.createProject(
+                        `Projeto ${new Date().toLocaleString()}`,
+                        'Projeto criado automaticamente',
+                        'professional'
+                    );
+                    
+                    if (result.success) {
+                        setCurrentProject(result.project);
+                        setScenes(result.project.scenes || []);
+                        
+                        // Registrar sessão de auto-save
+                        await registerAutosaveSession(result.project.id);
+                    }
+                } catch (error) {
+                    console.error('Failed to create project:', error);
+                }
+            };
+            
+            // Auto-save functions
+            const registerAutosaveSession = async (projectId) => {
+                try {
+                    const initialData = {
+                        scenes: scenes,
+                        timeline: timelineClips,
+                        settings: { resolution: '1920x1080', fps: 30 }
+                    };
+                    
+                    const response = await apiService.current.post('/api/editor/autosave/register', {
+                        project_id: projectId,
+                        initial_data: initialData
+                    });
+                    
+                    if (response.success) {
+                        setAutosaveInterval(response.autosave_interval);
+                        setAutosaveStatus('active');
+                        showNotification('Auto-save ativado', 'success');
+                        
+                        // Iniciar timer de atualização de status
+                        startAutosaveStatusUpdater(projectId);
+                    }
+                } catch (error) {
+                    console.error('Erro ao registrar auto-save:', error);
+                    setAutosaveStatus('error');
+                }
+            };
+            
+            const updateAutosaveData = async (projectId, data) => {
+                try {
+                    await apiService.current.post('/api/editor/autosave/update', {
+                        project_id: projectId,
+                        project_data: data
+                    });
+                    
+                    setAutosaveStatus('saving');
+                    setTimeout(() => setAutosaveStatus('saved'), 1000);
+                    setLastSaveTime(new Date());
+                    
+                } catch (error) {
+                    console.error('Erro no auto-save:', error);
+                    setAutosaveStatus('error');
+                }
+            };
+            
+            const manualSave = async () => {
+                if (!currentProject) return;
+                
+                try {
+                    setAutosaveStatus('saving');
+                    
+                    const response = await apiService.current.post('/api/editor/autosave/manual', {
+                        project_id: currentProject.id,
+                        description: 'Save manual do usuário'
+                    });
+                    
+                    if (response.success) {
+                        setAutosaveStatus('saved');
+                        setLastSaveTime(new Date());
+                        showNotification('Projeto salvo manualmente', 'success');
+                        await loadProjectVersions();
+                    } else {
+                        setAutosaveStatus('error');
+                        showNotification('Erro no save manual', 'error');
+                    }
+                } catch (error) {
+                    console.error('Erro no save manual:', error);
+                    setAutosaveStatus('error');
+                    showNotification('Erro no save manual', 'error');
+                }
+            };
+            
+            const loadProjectVersions = async () => {
+                if (!currentProject) return;
+                
+                try {
+                    const response = await apiService.current.get(`/api/editor/autosave/versions/${currentProject.id}`);
+                    
+                    if (response.success) {
+                        setProjectVersions(response.versions);
+                    }
+                } catch (error) {
+                    console.error('Erro ao carregar versões:', error);
+                }
+            };
+            
+            const restoreVersion = async (versionId) => {
+                if (!currentProject) return;
+                
+                try {
+                    const confirmed = confirm('Tem certeza que deseja restaurar esta versão? As alterações não salvas serão perdidas.');
+                    if (!confirmed) return;
+                    
+                    setShowProgress(true);
+                    setProgressText('Restaurando versão...');
+                    setProgress(0);
+                    
+                    // Simular progresso
+                    const progressInterval = setInterval(() => {
+                        setProgress(prev => Math.min(prev + 20, 90));
+                    }, 200);
+                    
+                    const response = await apiService.current.post('/api/editor/autosave/restore', {
+                        project_id: currentProject.id,
+                        version_id: versionId
+                    });
+                    
+                    clearInterval(progressInterval);
+                    setProgress(100);
+                    
+                    if (response.success) {
+                        // Atualizar interface com dados restaurados
+                        const restoredData = response.project_data;
+                        
+                        if (restoredData.scenes) {
+                            setScenes(restoredData.scenes);
+                        }
+                        if (restoredData.timeline) {
+                            setTimelineClips(restoredData.timeline);
+                        }
+                        
+                        showNotification('Versão restaurada com sucesso', 'success');
+                        await loadProjectVersions();
+                    } else {
+                        showNotification('Erro ao restaurar versão', 'error');
+                    }
+                    
+                    setTimeout(() => {
+                        setShowProgress(false);
+                        setProgress(0);
+                    }, 1000);
+                    
+                } catch (error) {
+                    console.error('Erro ao restaurar versão:', error);
+                    setShowProgress(false);
+                    showNotification('Erro ao restaurar versão', 'error');
+                }
+            };
+            
+            const startAutosaveStatusUpdater = (projectId) => {
+                setInterval(async () => {
+                    try {
+                        const response = await apiService.current.get(`/api/editor/autosave/session/${projectId}`);
+                        
+                        if (response.success && response.session) {
+                            const session = response.session;
+                            setLastSaveTime(new Date(session.last_save));
+                            
+                            // Atualizar dados automaticamente se houver mudanças
+                            const currentData = {
+                                scenes: scenes,
+                                timeline: timelineClips,
+                                assets: assets,
+                                timestamp: new Date().toISOString()
+                            };
+                            
+                            await updateAutosaveData(projectId, currentData);
+                        }
+                    } catch (error) {
+                        console.error('Erro no status updater:', error);
+                    }
+                }, autosaveInterval * 1000);
+            };
+            
+            const loadAssets = async () => {
+                try {
+                    const result = await apiService.current.listAssets();
+                    if (result.success) {
+                        setAssets(result.assets);
+                    }
+                } catch (error) {
+                    console.error('Failed to load assets:', error);
+                }
+            };
+            
+            const loadTemplates = async () => {
+                try {
+                    const result = await apiService.current.listTemplates();
+                    if (result.success) {
+                        setTemplates(result.templates);
+                    }
+                } catch (error) {
+                    console.error('Failed to load templates:', error);
+                }
+            };
+            
+            const loadFonts = async () => {
+                try {
+                    const result = await apiService.current.get('/api/editor/text/fonts');
+                    if (result.success) {
+                        setAvailableFonts(result.fonts);
+                    }
+                } catch (error) {
+                    console.error('Failed to load fonts:', error);
+                }
+            };
+            
+            const loadTextTemplates = async () => {
+                try {
+                    const result = await apiService.current.get('/api/editor/text/templates');
+                    if (result.success) {
+                        setTextTemplates(result.templates);
+                    }
+                } catch (error) {
+                    console.error('Failed to load text templates:', error);
+                }
+            };
+            
+            const loadMockData = () => {
+                // Fallback mock data when backend is not available
+                setAssets([
+                    { id: 1, name: 'documento.pdf', type: 'pdf', size: '2.5MB', url: '/sample.pdf' },
+                    { id: 2, name: 'imagem.jpg', type: 'image', size: '1.8MB', url: '/sample.jpg' },
+                    { id: 3, name: 'video.mp4', type: 'video', size: '15.2MB', url: '/sample.mp4' },
+                    { id: 4, name: 'audio.mp3', type: 'audio', size: '3.1MB', url: '/sample.mp3' }
+                ]);
+                
+                setScenes([
+                    { id: 1, title: 'Cena 1', duration: 5, active: true, elements: [] },
+                    { id: 2, title: 'Cena 2', duration: 8, active: false, elements: [] },
+                    { id: 3, title: 'Cena 3', duration: 3, active: false, elements: [] }
+                ]);
+                
+                setTimelineClips([
+                    { id: 1, title: 'Cena 1', duration: 5, width: 100 },
+                    { id: 2, title: 'Cena 2', duration: 8, width: 160 },
+                    { id: 3, title: 'Cena 3', duration: 3, width: 60 }
+                ]);
+            };
+            
+            // Auto-save functionality
+            useEffect(() => {
+                if (currentProject && connectionStatus === 'connected') {
+                    const autoSaveInterval = setInterval(async () => {
+                        try {
+                            await saveProject();
+                        } catch (error) {
+                            console.error('Auto-save failed:', error);
+                        }
+                    }, 30000); // Auto-save every 30 seconds
+                    
+                    return () => clearInterval(autoSaveInterval);
+                }
+            }, [currentProject, scenes, timelineClips, connectionStatus]);
+            
+            const saveProject = async () => {
+                if (!currentProject) return;
+                
+                try {
+                    const projectData = {
+                        scenes: scenes,
+                        timeline: timelineClips,
+                        settings: {
+                            resolution: '1920x1080',
+                            fps: 30,
+                            duration: totalDuration
+                        },
+                        timestamp: new Date().toISOString()
+                    };
+                    
+                    await apiService.current.saveProject(currentProject.id, projectData);
+                    console.log('Project auto-saved');
+                } catch (error) {
+                    console.error('Save failed:', error);
+                }
+            };
+            
+            // File Upload Handler with Backend Integration
+            const handleFileUpload = useCallback(async (files) => {
+                setShowProgress(true);
+                setProgress(0);
+                setProgressText('Enviando arquivos...');
+                
+                try {
+                    const result = await apiService.current.uploadAssets(
+                        files, 
+                        currentProject?.id
+                    );
+                    
+                    if (result.success) {
+                        setAssets(prev => [...prev, ...result.assets]);
+                        setProgress(100);
+                        setProgressText('Upload concluído!');
+                        
+                        setTimeout(() => {
+                            setShowProgress(false);
+                            setProgress(0);
+                        }, 1000);
+                    } else {
+                        throw new Error('Upload failed');
+                    }
+                } catch (error) {
+                    console.error('Upload failed:', error);
+                    setProgressText('Erro no upload');
+                    setTimeout(() => {
+                        setShowProgress(false);
+                        setProgress(0);
+                    }, 2000);
+                }
+            }, [currentProject]);
+            
+            // Export Handler with Backend Integration
+            const handleExport = useCallback(async () => {
+                if (!currentProject) {
+                    alert('Nenhum projeto selecionado');
+                    return;
+                }
+                
+                setShowProgress(true);
+                setProgress(0);
+                setProgressText('Iniciando exportação...');
+                
+                try {
+                    // Save project before export
+                    await saveProject();
+                    
+                    // Start export
+                    const exportResult = await apiService.current.exportProject(
+                        currentProject.id,
+                        {
+                            resolution: '1920x1080',
+                            fps: 30,
+                            quality: 'high',
+                            format: 'mp4'
+                        }
+                    );
+                    
+                    if (exportResult.success) {
+                        setProgressText('Exportando vídeo...');
+                        
+                        // Poll export status
+                        const pollStatus = async () => {
+                            try {
+                                const statusResult = await apiService.current.getExportStatus(currentProject.id);
+                                
+                                if (statusResult.success) {
+                                    if (statusResult.status === 'completed') {
+                                        setProgress(100);
+                                        setProgressText('Exportação concluída!');
+                                        
+                                        // Download video
+                                        const link = document.createElement('a');
+                                        link.href = statusResult.video.url;
+                                        link.download = statusResult.video.title + '.mp4';
+                                        link.click();
+                                        
+                                        setTimeout(() => {
+                                            setShowProgress(false);
+                                            setProgress(0);
+                                        }, 2000);
+                                    } else if (statusResult.status === 'processing') {
+                                        setProgress(prev => Math.min(prev + 10, 90));
+                                        setTimeout(pollStatus, 2000);
+                                    } else {
+                                        throw new Error('Export failed');
+                                    }
+                                }
+                            } catch (error) {
+                                console.error('Status check failed:', error);
+                                setTimeout(pollStatus, 5000); // Retry after 5 seconds
+                            }
+                        };
+                        
+                        setTimeout(pollStatus, 2000);
+                    } else {
+                        throw new Error(exportResult.message || 'Export failed');
+                    }
+                } catch (error) {
+                    console.error('Export failed:', error);
+                    setProgressText('Erro na exportação');
+                    setTimeout(() => {
+                        setShowProgress(false);
+                        setProgress(0);
+                    }, 3000);
+                }
+            }, [currentProject, saveProject]);
+            
+            // Asset Type Icons and Colors
+            const getAssetIcon = (type) => {
+                const icons = {
+                    pdf: 'fas fa-file-pdf',
+                    image: 'fas fa-image',
+                    video: 'fas fa-video',
+                    audio: 'fas fa-music'
+                };
+                return icons[type] || 'fas fa-file';
+            };
+            
+            const getAssetColor = (type) => {
+                const colors = {
+                    pdf: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
+                    image: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                    video: 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)',
+                    audio: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)'
+                };
+                return colors[type] || 'linear-gradient(135deg, #6b7280 0%, #4b5563 100%)';
+            };
+            
+            // Drag and Drop Handlers (same as before)
+            const handleDragStart = useCallback((e, asset) => {
+                e.dataTransfer.setData('application/json', JSON.stringify(asset));
+                e.currentTarget.classList.add('dragging');
+            }, []);
+            
+            const handleDragEnd = useCallback((e) => {
+                e.currentTarget.classList.remove('dragging');
+            }, []);
+            
+            const handleCanvasDrop = useCallback((e) => {
+                e.preventDefault();
+                const data = e.dataTransfer.getData('application/json');
+                if (data) {
+                    const asset = JSON.parse(data);
+                    const rect = canvasRef.current.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    
+                    // Add element to canvas
+                    const newElement = {
+                        id: Date.now(),
+                        assetId: asset.id,
+                        type: asset.type,
+                        name: asset.name,
+                        x: x - 50,
+                        y: y - 25,
+                        width: 100,
+                        height: 50
+                    };
+                    
+                    // Add to current scene
+                    setScenes(prev => prev.map(scene => 
+                        scene.active 
+                            ? { ...scene, elements: [...scene.elements, newElement] }
+                            : scene
+                    ));
+                }
+            }, []);
+            
+            const handleCanvasDragOver = useCallback((e) => {
+                e.preventDefault();
+            }, []);
+            
+            // File input handler
+            const handleFileInputChange = (e) => {
+                const files = Array.from(e.target.files);
+                if (files.length > 0) {
+                    handleFileUpload(files);
+                }
+            };
+            
+            // Drop zone handlers
+            useEffect(() => {
+                const uploadArea = document.querySelector('.upload-area');
+                if (!uploadArea) return;
+                
+                const handleDrop = (e) => {
+                    e.preventDefault();
+                    uploadArea.classList.remove('dragover');
+                    const files = Array.from(e.dataTransfer.files);
+                    handleFileUpload(files);
+                };
+                
+                const handleDragOver = (e) => {
+                    e.preventDefault();
+                    uploadArea.classList.add('dragover');
+                };
+                
+                const handleDragLeave = () => {
+                    uploadArea.classList.remove('dragover');
+                };
+                
+                const handleClick = () => {
+                    fileInputRef.current?.click();
+                };
+                
+                uploadArea.addEventListener('drop', handleDrop);
+                uploadArea.addEventListener('dragover', handleDragOver);
+                uploadArea.addEventListener('dragleave', handleDragLeave);
+                uploadArea.addEventListener('click', handleClick);
+                
+                return () => {
+                    uploadArea.removeEventListener('drop', handleDrop);
+                    uploadArea.removeEventListener('dragover', handleDragOver);
+                    uploadArea.removeEventListener('dragleave', handleDragLeave);
+                    uploadArea.removeEventListener('click', handleClick);
+                };
+            }, [handleFileUpload]);
+            
+            // Mobile and keyboard events
+            useEffect(() => {
+                const handleKeyPress = (e) => {
+                    // Escape to close mobile menu
+                    if (e.key === 'Escape' && mobileMenuOpen) {
+                        setMobileMenuOpen(false);
+                    }
+                    
+                    // Ctrl+S to save
+                    if (e.ctrlKey && e.key === 's') {
+                        e.preventDefault();
+                        manualSave();
+                    }
+                };
+                
+                const handleResize = () => {
+                    // Close mobile menu on resize to desktop
+                    if (window.innerWidth > 768 && mobileMenuOpen) {
+                        setMobileMenuOpen(false);
+                    }
+                };
+                
+                const handleTouchStart = (e) => {
+                    // Prevent double-tap zoom on buttons
+                    if (e.target.matches('button, .btn, .control-btn, .tab')) {
+                        e.preventDefault();
+                    }
+                };
+                
+                document.addEventListener('keydown', handleKeyPress);
+                window.addEventListener('resize', handleResize);
+                document.addEventListener('touchstart', handleTouchStart, { passive: false });
+                
+                return () => {
+                    document.removeEventListener('keydown', handleKeyPress);
+                    window.removeEventListener('resize', handleResize);
+                    document.removeEventListener('touchstart', handleTouchStart);
+                };
+            }, [mobileMenuOpen, manualSave]);
+            
+            return (
+                <div className="editor-container">
+                    {/* Status Indicator */}
+                    <div className={`status-indicator ${connectionStatus}`}>
+                        <i className={`fas fa-${connectionStatus === 'connected' ? 'wifi' : connectionStatus === 'error' ? 'exclamation-triangle' : 'spinner fa-spin'}`}></i>
+                        {connectionStatus === 'connected' && 'Conectado ao servidor'}
+                        {connectionStatus === 'error' && 'Erro de conexão'}
+                        {connectionStatus === 'connecting' && 'Conectando...'}
+                    </div>
+                    
+                    {/* Header */}
+                    <header className="header">
+                        <div style={{display: 'flex', alignItems: 'center', gap: '12px'}}>
+                            <button 
+                                className="mobile-menu-toggle"
+                                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                            >
+                                <i className={`fas ${mobileMenuOpen ? 'fa-times' : 'fa-bars'}`}></i>
+                            </button>
+                            <div className="logo">
+                                <i className="fas fa-video"></i>
+                                <span>TecnoCursos AI</span>
+                                <span style={{fontSize: '12px', color: '#a0aec0', fontWeight: 'normal'}}>
+                                    Editor Integrado {currentProject && `- ${currentProject.name}`}
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <div className="header-actions">
+                            <div style={{fontSize: '12px', color: '#a0aec0', marginRight: '16px'}}>
+                                Status: <span style={{color: connectionStatus === 'connected' ? '#10b981' : '#ef4444'}}>
+                                    {connectionStatus === 'connected' ? 'Conectado' : 'Desconectado'}
+                                </span>
+                            </div>
+                            
+                            <div style={{fontSize: '12px', color: '#a0aec0', marginRight: '16px'}}>
+                                Auto-save: <span style={{
+                                    color: autosaveStatus === 'saved' ? '#10b981' : 
+                                          autosaveStatus === 'saving' ? '#f59e0b' : 
+                                          autosaveStatus === 'error' ? '#ef4444' : '#6b7280'
+                                }}>
+                                    {autosaveStatus === 'saved' ? '✓ Salvo' : 
+                                     autosaveStatus === 'saving' ? '⏳ Salvando...' : 
+                                     autosaveStatus === 'error' ? '❌ Erro' : 
+                                     autosaveStatus === 'active' ? '🔄 Ativo' : '⏸️ Inativo'}
+                                </span>
+                                {lastSaveTime && (
+                                    <div style={{fontSize: '10px', color: '#718096'}}>
+                                        {lastSaveTime.toLocaleTimeString()}
+                                    </div>
+                                )}
+                            </div>
+                            
+                            <button 
+                                className="btn btn-secondary" 
+                                style={{marginRight: '8px'}}
+                                onClick={manualSave}
+                                disabled={autosaveStatus === 'saving'}
+                            >
+                                <i className="fas fa-save"></i>
+                                Salvar
+                            </button>
+                            
+                            <button 
+                                className="btn btn-secondary" 
+                                style={{marginRight: '8px'}}
+                                onClick={loadProjectVersions}
+                                title="Ver versões"
+                            >
+                                <i className="fas fa-history"></i>
+                                Versões ({projectVersions.length})
+                            </button>
+                            
+                            <button className="btn btn-primary" onClick={handleExport}>
+                                <i className="fas fa-download"></i>
+                                Exportar
+                            </button>
+                        </div>
+                    </header>
+                    
+                    {/* Sidebar */}
+                    <div className="sidebar">
+                        <div className="sidebar-tabs">
+                            <button 
+                                className={`tab ${activeTab === 'assets' ? 'active' : ''}`}
+                                onClick={() => setActiveTab('assets')}
+                            >
+                                <i className="fas fa-images"></i>
+                                Assets
+                            </button>
+                            <button 
+                                className={`tab ${activeTab === 'audio' ? 'active' : ''}`}
+                                onClick={() => setActiveTab('audio')}
+                            >
+                                <i className="fas fa-music"></i>
+                                Áudio
+                            </button>
+                            <button 
+                                className={`tab ${activeTab === 'text' ? 'active' : ''}`}
+                                onClick={() => setActiveTab('text')}
+                            >
+                                <i className="fas fa-font"></i>
+                                Texto
+                            </button>
+                        </div>
+                        
+                        <div className="sidebar-content">
+                            {activeTab === 'assets' && (
+                                <>
+                                    <div style={{marginBottom: '24px'}}>
+                                        <h3 style={{fontSize: '14px', fontWeight: '600', marginBottom: '12px', color: '#e2e8f0'}}>
+                                            Upload de Arquivos
+                                        </h3>
+                                        <div className="upload-area">
+                                            <i className="fas fa-cloud-upload-alt" style={{fontSize: '32px', color: '#4fc3f7', marginBottom: '12px'}}></i>
+                                            <p style={{fontSize: '14px', color: '#a0aec0', marginBottom: '4px'}}>
+                                                Arraste arquivos aqui
+                                            </p>
+                                            <p style={{fontSize: '12px', color: '#718096'}}>
+                                                ou clique para selecionar
+                                            </p>
+                                        </div>
+                                        <input
+                                            ref={fileInputRef}
+                                            type="file"
+                                            multiple
+                                            accept=".pdf,.pptx,.jpg,.jpeg,.png,.mp4,.mp3,.wav"
+                                            style={{display: 'none'}}
+                                            onChange={handleFileInputChange}
+                                        />
+                                    </div>
+                                    
+                                    <div>
+                                        <h3 style={{fontSize: '14px', fontWeight: '600', marginBottom: '12px', color: '#e2e8f0'}}>
+                                            Biblioteca de Assets ({assets.length})
+                                        </h3>
+                                        <div className="assets-grid">
+                                            {assets.map(asset => (
+                                                <div 
+                                                    key={asset.id} 
+                                                    className="asset-item fade-in"
+                                                    draggable
+                                                    onDragStart={(e) => handleDragStart(e, asset)}
+                                                    onDragEnd={handleDragEnd}
+                                                >
+                                                    <div 
+                                                        className="asset-preview"
+                                                        style={{background: getAssetColor(asset.type)}}
+                                                    >
+                                                        <i className={getAssetIcon(asset.type)}></i>
+                                                    </div>
+                                                    <p className="asset-name" title={asset.name}>
+                                                        {asset.name}
+                                                    </p>
+                                                    <p style={{fontSize: '10px', color: '#718096', textAlign: 'center'}}>
+                                                        {asset.size}
+                                                    </p>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </>
+                            )}
+                            
+                            {activeTab === 'audio' && (
+                                <div>
+                                    <h3 style={{fontSize: '14px', fontWeight: '600', marginBottom: '12px', color: '#e2e8f0'}}>
+                                        Biblioteca de Áudio
+                                    </h3>
+                                    <div style={{marginBottom: '16px'}}>
+                                        <input
+                                            type="file"
+                                            accept="audio/*"
+                                            multiple
+                                            onChange={handleAudioUpload}
+                                            style={{
+                                                width: '100%',
+                                                padding: '8px 12px',
+                                                background: '#2d3748',
+                                                border: '1px solid #4a5568',
+                                                borderRadius: '4px',
+                                                color: '#e2e8f0',
+                                                fontSize: '13px'
+                                            }}
+                                        />
+                                    </div>
+                                    
+                                    {audioTracks.length > 0 && (
+                                        <div>
+                                            <h4 style={{fontSize: '13px', fontWeight: '500', marginBottom: '8px', color: '#cbd5e0'}}>
+                                                Trilhas Disponíveis
+                                            </h4>
+                                            <div style={{maxHeight: '200px', overflowY: 'auto'}}>
+                                                {audioTracks.map(track => (
+                                                    <div 
+                                                        key={track.id}
+                                                        style={{
+                                                            padding: '8px',
+                                                            background: '#2d3748',
+                                                            borderRadius: '4px',
+                                                            marginBottom: '4px',
+                                                            cursor: 'pointer',
+                                                            border: '1px solid #4a5568'
+                                                        }}
+                                                        draggable
+                                                        onDragStart={(e) => handleDragStart(e, track)}
+                                                    >
+                                                        <div style={{display: 'flex', alignItems: 'center', gap: '8px'}}>
+                                                            <i className="fas fa-music" style={{color: '#ef4444'}}></i>
+                                                            <div style={{flex: 1}}>
+                                                                <div style={{fontSize: '12px', fontWeight: '500', color: '#e2e8f0'}}>
+                                                                    {track.name}
+                                                                </div>
+                                                                <div style={{fontSize: '11px', color: '#a0aec0'}}>
+                                                                    {track.duration}s · {track.type}
+                                                                </div>
+                                                            </div>
+                                                            <button
+                                                                style={{
+                                                                    background: 'none',
+                                                                    border: 'none',
+                                                                    color: '#4fc3f7',
+                                                                    cursor: 'pointer',
+                                                                    fontSize: '11px'
+                                                                }}
+                                                                onClick={() => analyzeAudio(track)}
+                                                            >
+                                                                Analisar
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                            
+                                            {audioTracks.length > 1 && (
+                                                <button
+                                                    style={{
+                                                        width: '100%',
+                                                        padding: '8px',
+                                                        background: '#667eea',
+                                                        border: 'none',
+                                                        borderRadius: '4px',
+                                                        color: 'white',
+                                                        fontSize: '12px',
+                                                        fontWeight: '500',
+                                                        cursor: 'pointer',
+                                                        marginTop: '8px'
+                                                    }}
+                                                    onClick={syncAudioTracks}
+                                                >
+                                                    <i className="fas fa-sync" style={{marginRight: '4px'}}></i>
+                                                    Sincronizar Trilhas
+                                                </button>
+                                            )}
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                            
+                            {activeTab === 'text' && (
+                                <div>
+                                    <h3 style={{fontSize: '14px', fontWeight: '600', marginBottom: '12px', color: '#e2e8f0'}}>
+                                        Editor de Texto Avançado
+                                    </h3>
+                                    
+                                    <button
+                                        style={{
+                                            width: '100%',
+                                            padding: '12px',
+                                            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                                            border: 'none',
+                                            borderRadius: '6px',
+                                            color: 'white',
+                                            fontSize: '14px',
+                                            fontWeight: '600',
+                                            cursor: 'pointer',
+                                            marginBottom: '16px',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            gap: '8px'
+                                        }}
+                                        onClick={() => setShowTextEditor(true)}
+                                    >
+                                        <i className="fas fa-plus"></i>
+                                        Criar Texto
+                                    </button>
+                                    
+                                    {textTemplates.length > 0 && (
+                                        <div>
+                                            <h4 style={{fontSize: '13px', fontWeight: '500', marginBottom: '8px', color: '#cbd5e0'}}>
+                                                Templates Rápidos
+                                            </h4>
+                                            <div style={{maxHeight: '150px', overflowY: 'auto'}}>
+                                                {textTemplates.map(template => (
+                                                    <div 
+                                                        key={template.id}
+                                                        style={{
+                                                            padding: '8px',
+                                                            background: '#2d3748',
+                                                            borderRadius: '4px',
+                                                            marginBottom: '4px',
+                                                            cursor: 'pointer',
+                                                            border: '1px solid #4a5568'
+                                                        }}
+                                                        onClick={() => applyTextTemplate(template.id)}
+                                                    >
+                                                        <div style={{fontSize: '12px', fontWeight: '500', color: '#e2e8f0'}}>
+                                                            {template.name}
+                                                        </div>
+                                                        <div style={{fontSize: '11px', color: '#a0aec0'}}>
+                                                            {template.category}
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+                                    
+                                    {availableFonts.length > 0 && (
+                                        <div style={{marginTop: '16px'}}>
+                                            <h4 style={{fontSize: '13px', fontWeight: '500', marginBottom: '8px', color: '#cbd5e0'}}>
+                                                Fontes Disponíveis ({availableFonts.length})
+                                            </h4>
+                                            <div style={{fontSize: '11px', color: '#a0aec0'}}>
+                                                {availableFonts.slice(0, 5).map(font => font.name).join(', ')}
+                                                {availableFonts.length > 5 && '...'}
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                    
+                    {/* Mobile Sidebar */}
+                    {mobileMenuOpen && (
+                        <>
+                            <div 
+                                className="mobile-overlay active"
+                                onClick={() => setMobileMenuOpen(false)}
+                            ></div>
+                            <div className={`mobile-sidebar ${mobileMenuOpen ? 'open' : ''}`}>
+                                <div className="sidebar-tabs">
+                                    <button 
+                                        className={`tab ${activeTab === 'assets' ? 'active' : ''}`}
+                                        onClick={() => setActiveTab('assets')}
+                                    >
+                                        <i className="fas fa-images"></i> Assets
+                                    </button>
+                                    <button 
+                                        className={`tab ${activeTab === 'templates' ? 'active' : ''}`}
+                                        onClick={() => setActiveTab('templates')}
+                                    >
+                                        <i className="fas fa-layer-group"></i> Templates
+                                    </button>
+                                    <button 
+                                        className={`tab ${activeTab === 'text' ? 'active' : ''}`}
+                                        onClick={() => setActiveTab('text')}
+                                    >
+                                        <i className="fas fa-font"></i> Texto
+                                    </button>
+                                </div>
+                                
+                                <div className="sidebar-content">
+                                    {activeTab === 'assets' && (
+                                        <div>
+                                            <h3 style={{fontSize: '14px', fontWeight: '600', marginBottom: '12px', color: '#e2e8f0'}}>
+                                                Meus Assets
+                                            </h3>
+                                            
+                                            <div className="upload-area" onClick={() => fileInputRef.current?.click()}>
+                                                <i className="fas fa-cloud-upload-alt" style={{fontSize: '24px', color: '#4fc3f7', marginBottom: '8px'}}></i>
+                                                <p style={{color: '#cbd5e0', fontSize: '14px', fontWeight: '500'}}>
+                                                    Clique para enviar
+                                                </p>
+                                                <p style={{color: '#a0aec0', fontSize: '12px'}}>
+                                                    ou arraste arquivos aqui
+                                                </p>
+                                            </div>
+                                            
+                                            <div className="assets-grid">
+                                                {assets.map(asset => (
+                                                    <div key={asset.id} className="asset-item">
+                                                        <div className="asset-preview">
+                                                            {asset.type === 'image' && (
+                                                                <img src={asset.url} alt={asset.name} style={{width: '100%', height: '100%', objectFit: 'cover', borderRadius: '4px'}} />
+                                                            )}
+                                                            {asset.type === 'video' && (
+                                                                <video src={asset.url} style={{width: '100%', height: '100%', objectFit: 'cover', borderRadius: '4px'}} />
+                                                            )}
+                                                            {asset.type === 'audio' && (
+                                                                <div style={{background: '#4fc3f7', width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '4px'}}>
+                                                                    <i className="fas fa-music" style={{fontSize: '24px', color: 'white'}}></i>
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                        <div style={{fontSize: '12px', color: '#cbd5e0', marginTop: '4px', textAlign: 'center'}}>
+                                                            {asset.name}
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+                                    
+                                    {activeTab === 'templates' && (
+                                        <div>
+                                            <h3 style={{fontSize: '14px', fontWeight: '600', marginBottom: '12px', color: '#e2e8f0'}}>
+                                                Templates
+                                            </h3>
+                                            <div style={{color: '#a0aec0', fontSize: '13px'}}>
+                                                {templates.length} templates disponíveis
+                                            </div>
+                                        </div>
+                                    )}
+                                    
+                                    {activeTab === 'text' && (
+                                        <div>
+                                            <h3 style={{fontSize: '14px', fontWeight: '600', marginBottom: '12px', color: '#e2e8f0'}}>
+                                                Editor de Texto
+                                            </h3>
+                                            
+                                            <button
+                                                style={{
+                                                    width: '100%',
+                                                    padding: '12px',
+                                                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                                                    border: 'none',
+                                                    borderRadius: '6px',
+                                                    color: 'white',
+                                                    fontSize: '14px',
+                                                    fontWeight: '600',
+                                                    cursor: 'pointer',
+                                                    marginBottom: '16px',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    gap: '8px'
+                                                }}
+                                                onClick={() => {
+                                                    setShowTextEditor(true);
+                                                    setMobileMenuOpen(false);
+                                                }}
+                                            >
+                                                <i className="fas fa-plus"></i>
+                                                Criar Texto
+                                            </button>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </>
+                    )}
+                    
+                    {/* Canvas Area - Same as before */}
+                    <div className="canvas-area">
+                        <div className="canvas-toolbar">
+                            <div className="canvas-tools">
+                                <button className="tool-btn active" title="Selecionar">
+                                    <i className="fas fa-mouse-pointer"></i>
+                                </button>
+                                <button className="tool-btn" title="Mover">
+                                    <i className="fas fa-arrows-alt"></i>
+                                </button>
+                                <button className="tool-btn" title="Redimensionar">
+                                    <i className="fas fa-expand-arrows-alt"></i>
+                                </button>
+                                <button className="tool-btn" title="Texto">
+                                    <i className="fas fa-font"></i>
+                                </button>
+                            </div>
+                            
+                            <div style={{fontSize: '13px', color: '#a0aec0'}}>
+                                Zoom: 100% | 1920x1080
+                            </div>
+                        </div>
+                        
+                        <div className="canvas-viewport">
+                            <div 
+                                ref={canvasRef}
+                                className="canvas-stage"
+                                onDrop={handleCanvasDrop}
+                                onDragOver={handleCanvasDragOver}
+                            >
+                                {scenes.find(s => s.active)?.elements.map(element => (
+                                    <div
+                                        key={element.id}
+                                        className={`canvas-element ${selectedElement === element.id ? 'selected' : ''}`}
+                                        style={{
+                                            left: element.x,
+                                            top: element.y,
+                                            width: element.width,
+                                            height: element.height,
+                                            background: getAssetColor(element.type),
+                                            borderRadius: '4px',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            color: 'white',
+                                            fontSize: '12px',
+                                            fontWeight: '500'
+                                        }}
+                                        onClick={() => setSelectedElement(element.id)}
+                                    >
+                                        <i className={getAssetIcon(element.type)} style={{marginRight: '4px'}}></i>
+                                        {element.name}
+                                    </div>
+                                ))}
+                                
+                                {scenes.find(s => s.active)?.elements.length === 0 && (
+                                    <div style={{
+                                        position: 'absolute',
+                                        top: '50%',
+                                        left: '50%',
+                                        transform: 'translate(-50%, -50%)',
+                                        textAlign: 'center',
+                                        color: '#718096'
+                                    }}>
+                                        <i className="fas fa-mouse-pointer" style={{fontSize: '48px', marginBottom: '16px'}}></i>
+                                        <p style={{fontSize: '16px', fontWeight: '500', marginBottom: '8px'}}>
+                                            Arraste assets aqui
+                                        </p>
+                                        <p style={{fontSize: '13px'}}>
+                                            Adicione elementos da sidebar para começar a editar
+                                        </p>
+                                    </div>
+                                )}
+                            </div>
+                            
+                            <div className="canvas-controls">
+                                <button className="control-btn">
+                                    <i className="fas fa-step-backward"></i>
+                                </button>
+                                <button className="play-btn">
+                                    <i className={`fas fa-${isPlaying ? 'pause' : 'play'}`}></i>
+                                </button>
+                                <button className="control-btn">
+                                    <i className="fas fa-step-forward"></i>
+                                </button>
+                                <span style={{fontSize: '13px', color: '#a0aec0', marginLeft: '12px'}}>
+                                    {Math.floor(currentTime / 60)}:{(currentTime % 60).toFixed(0).padStart(2, '0')} / {Math.floor(totalDuration / 60)}:{(totalDuration % 60).toFixed(0).padStart(2, '0')}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {/* Scenes Panel - Same as before */}
+                    <div className="scenes-panel">
+                        <div className="scenes-header">
+                            <h3 className="scenes-title">Cenas ({scenes.length})</h3>
+                            <button className="btn btn-secondary" style={{fontSize: '12px', padding: '6px 12px'}}>
+                                <i className="fas fa-plus"></i>
+                            </button>
+                        </div>
+                        
+                        <div className="scenes-list">
+                            {scenes.map(scene => (
+                                <div 
+                                    key={scene.id}
+                                    className={`scene-item ${scene.active ? 'active' : ''}`}
+                                    onClick={() => setScenes(prev => prev.map(s => ({...s, active: s.id === scene.id})))}
+                                >
+                                    <div className="scene-header">
+                                        <span className="scene-title">{scene.title}</span>
+                                        <span className="scene-duration">{scene.duration}s</span>
+                                    </div>
+                                    <div className="scene-preview"></div>
+                                    <div style={{fontSize: '11px', color: '#718096', marginTop: '4px'}}>
+                                        {scene.elements.length} elementos
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                    
+                    {/* Timeline - Same as before */}
+                    <div className="timeline">
+                        <div className="timeline-header">
+                            <h3 className="timeline-title">Timeline</h3>
+                            <div className="timeline-controls">
+                                <button className="tool-btn" title="Zoom In">
+                                    <i className="fas fa-search-plus"></i>
+                                </button>
+                                <button className="tool-btn" title="Zoom Out">
+                                    <i className="fas fa-search-minus"></i>
+                                </button>
+                                <button className="tool-btn" title="Ajustar">
+                                    <i className="fas fa-expand"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div className="timeline-content">
+                            <div className="timeline-tracks">
+                                <div className="timeline-track">
+                                    {timelineClips.map(clip => (
+                                        <div 
+                                            key={clip.id}
+                                            className="timeline-clip"
+                                            style={{width: `${clip.width}px`}}
+                                        >
+                                            {clip.title}
+                                            <div style={{fontSize: '10px', opacity: 0.8}}>
+                                                {clip.duration}s
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                                
+                                <div className="timeline-track" style={{background: '#2a3441'}}>
+                                    <div style={{fontSize: '12px', color: '#718096', padding: '8px'}}>
+                                        Arraste clips de áudio aqui
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {/* Progress Overlay */}
+                    {showProgress && (
+                        <div className="progress-overlay">
+                            <div className="progress-content">
+                                <div className="progress-title">{progressText}</div>
+                                <div className="progress-bar">
+                                    <div 
+                                        className="progress-fill"
+                                        style={{width: `${progress}%`}}
+                                    ></div>
+                                </div>
+                                <div className="progress-text">{progress.toFixed(0)}%</div>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        }
+        
+        // Render the app
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<IntegratedVideoEditor />);
+    </script>
+</body>
+</html>

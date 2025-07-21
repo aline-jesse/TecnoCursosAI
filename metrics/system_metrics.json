@@ -1,0 +1,13 @@
+{
+  "system": {
+    "memory_percent": 88.5,
+    "cpu_percent": 8.2,
+    "disk_percent": 88.3,
+    "timestamp": "2025-07-19T22:06:30.375150"
+  },
+  "application": {
+    "uptime": 1752973590.3751621,
+    "process_count": 429,
+    "network_connections": 228
+  }
+}

@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TecnoCursos AI - Editor de Vídeos</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        .container {
+            display: flex;
+            height: 100vh;
+        }
+        
+        .sidebar {
+            width: 350px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-right: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+        
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            color: white;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .header h1 {
+            font-size: 24px;
+            font-weight: 300;
+            margin-bottom: 10px;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 10px;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 20px;
+            font-weight: bold;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+        
+        .panel {
+            margin: 15px;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .panel h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .upload-area {
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 15px;
+        }
+        
+        .upload-area:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+        
+        .upload-area.dragover {
+            border-color: #667eea;
+            background: #e8f0ff;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            margin: 5px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+        }
+        
+        .btn-success {
+            background: #28a745;
+        }
+        
+        .btn-warning {
+            background: #ffc107;
+            color: #333;
+        }
+        
+        .scene-item {
+            padding: 12px;
+            margin: 8px 0;
+            background: #f8f9fa;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+        
+        .scene-item:hover {
+            background: #e9ecef;
+        }
+        
+        .scene-item.selected {
+            background: #667eea;
+            color: white;
+            border-left-color: #fff;
+        }
+        
+        .scene-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .scene-name {
+            font-weight: 500;
+        }
+        
+        .scene-duration {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+        
+        .scene-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .scene-controls label {
+            font-size: 12px;
+            color: inherit;
+            opacity: 0.8;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .canvas-area {
+            flex: 1;
+            background: white;
+            margin: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            position: relative;
+        }
+        
+        .canvas-placeholder {
+            text-align: center;
+        }
+        
+        .canvas-placeholder h3 {
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .canvas-placeholder p {
+            color: #666;
+        }
+        
+        .timeline {
+            height: 120px;
+            background: white;
+            margin: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 15px;
+            overflow-x: auto;
+        }
+        
+        .timeline-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .timeline-track {
+            height: 60px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            position: relative;
+            margin-top: 10px;
+        }
+        
+        .timeline-scene {
+            position: absolute;
+            height: 40px;
+            background: #667eea;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .timeline-scene:hover {
+            background: #5a6fd8;
+            transform: scale(1.05);
+        }
+        
+        .assets-list {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .asset-item {
+            padding: 8px;
+            margin: 4px 0;
+            background: #f8f9fa;
+            border-radius: 4px;
+            font-size: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .asset-size {
+            color: #666;
+            font-size: 10px;
+        }
+        
+        .toolbar {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .toolbar-left, .toolbar-right {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .create-scene {
+            margin-bottom: 15px;
+        }
+        
+        .create-scene input {
+            margin-bottom: 10px;
+        }
+        
+        .scenes-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .canvas-content {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
+        
+        .scene-preview {
+            flex: 1;
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .scene-elements {
+            margin-top: 15px;
+        }
+        
+        .scene-element {
+            padding: 8px;
+            margin: 5px 0;
+            background: white;
+            border-radius: 4px;
+            border-left: 3px solid #667eea;
+        }
+        
+        .assets-panel {
+            flex: 1;
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+        }
+        
+        .assets-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .asset-thumbnail {
+            background: white;
+            padding: 10px;
+            border-radius: 6px;
+            text-align: center;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .asset-thumbnail:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 6px;
+            color: white;
+            font-weight: 500;
+            z-index: 1000;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        .notification.success {
+            background: #28a745;
+        }
+        
+        .notification.error {
+            background: #dc3545;
+        }
+        
+        .notification.warning {
+            background: #ffc107;
+            color: #333;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                height: 200px;
+            }
+            
+            .stats {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <div class="panel">
+                <h3>📁 Biblioteca de Assets</h3>
+                <div class="upload-area" id="uploadArea">
+                    <p>Arraste arquivos aqui ou clique para selecionar</p>
+                    <input type="file" id="fileInput" multiple style="display: none;" accept=".pdf,.pptx,.doc,.docx,.txt,.jpg,.jpeg,.png,.mp4,.mp3">
+                    <button class="btn" onclick="document.getElementById('fileInput').click()">
+                        Selecionar Arquivos
+                    </button>
+                </div>
+                <div class="assets-list" id="assetsList"></div>
+            </div>
+            
+            <div class="panel">
+                <h3>🎭 Lista de Cenas</h3>
+                <div class="create-scene">
+                    <input type="text" id="newSceneName" placeholder="Nome da nova cena" class="form-control">
+                    <button class="btn" onclick="createScene()">+ Nova Cena</button>
+                </div>
+                <div class="scenes-list" id="scenesList"></div>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div class="header">
+                <h1>TecnoCursos AI - Editor de Vídeos</h1>
+                <div class="stats">
+                    <div class="stat-item">
+                        <div class="stat-value" id="totalScenes">0</div>
+                        <div class="stat-label">Cenas</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="totalAssets">0</div>
+                        <div class="stat-label">Assets</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="totalDuration">0s</div>
+                        <div class="stat-label">Duração</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="projectStatus">Pronto</div>
+                        <div class="stat-label">Status</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="toolbar">
+                <div class="toolbar-left">
+                    <button class="btn" onclick="saveProject()">💾 Salvar</button>
+                    <button class="btn btn-secondary" onclick="previewProject()">👁️ Preview</button>
+                    <button class="btn btn-warning" onclick="exportProject()">🎬 Exportar</button>
+                </div>
+                <div class="toolbar-right">
+                    <button class="btn btn-success" onclick="generateVideo()">🎥 Gerar Vídeo</button>
+                </div>
+            </div>
+            
+            <div class="canvas-area" id="canvasArea">
+                <div class="canvas-placeholder">
+                    <h3>Selecione uma cena para editar</h3>
+                    <p>Use a lista de cenas à esquerda para selecionar uma cena</p>
+                </div>
+            </div>
+            
+            <div class="timeline">
+                <div class="timeline-header">
+                    <h3>⏱️ Timeline</h3>
+                    <span id="timelineDuration">Duração Total: 0s</span>
+                </div>
+                <div class="timeline-track" id="timelineTrack"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="loading" id="loading">
+        <div class="spinner"></div>
+        <p>Processando...</p>
+    </div>
+
+    <div class="notification" id="notification"></div>
+
+    <script>
+        // Estado da aplicação
+        let scenes = [];
+        let assets = [];
+        let selectedScene = null;
+        let projectName = "Projeto TecnoCursos AI";
+        let isProcessing = false;
+
+        // Elementos DOM
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const assetsList = document.getElementById('assetsList');
+        const scenesList = document.getElementById('scenesList');
+        const canvasArea = document.getElementById('canvasArea');
+        const timelineTrack = document.getElementById('timelineTrack');
+        const newSceneName = document.getElementById('newSceneName');
+        const loading = document.getElementById('loading');
+        const notification = document.getElementById('notification');
+
+        // Event listeners
+        uploadArea.addEventListener('dragover', handleDragOver);
+        uploadArea.addEventListener('dragleave', handleDragLeave);
+        uploadArea.addEventListener('drop', handleDrop);
+        fileInput.addEventListener('change', handleFileSelect);
+
+        // Funções de upload
+        function handleDragOver(e) {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        }
+
+        function handleDragLeave(e) {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            handleFiles(files);
+        }
+
+        function handleFileSelect(e) {
+            const files = e.target.files;
+            handleFiles(files);
+        }
+
+        function handleFiles(files) {
+            showNotification('Processando arquivos...', 'info');
+            
+            Array.from(files).forEach((file, index) => {
+                setTimeout(() => {
+                    const asset = {
+                        id: Date.now() + Math.random() + index,
+                        name: file.name,
+                        type: file.type,
+                        size: file.size,
+                        url: URL.createObjectURL(file),
+                        uploadedAt: new Date()
+                    };
+                    assets.push(asset);
+                    updateAssetsList();
+                    updateStats();
+                    showNotification(`Arquivo ${file.name} adicionado!`, 'success');
+                }, index * 100);
+            });
+        }
+
+        function updateAssetsList() {
+            assetsList.innerHTML = assets.map(asset => `
+                <div class="asset-item">
+                    <span>${asset.name}</span>
+                    <span class="asset-size">(${formatFileSize(asset.size)})</span>
+                </div>
+            `).join('');
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        // Funções de cenas
+        function createScene() {
+            const name = newSceneName.value.trim();
+            if (name) {
+                const scene = {
+                    id: Date.now(),
+                    name: name,
+                    duration: 5,
+                    elements: [],
+                    createdAt: new Date(),
+                    status: 'draft'
+                };
+                scenes.push(scene);
+                newSceneName.value = '';
+                updateScenesList();
+                updateTimeline();
+                updateStats();
+                showNotification(`Cena "${name}" criada!`, 'success');
+            } else {
+                showNotification('Digite um nome para a cena!', 'warning');
+            }
+        }
+
+        function selectScene(scene) {
+            selectedScene = scene;
+            updateScenesList();
+            updateCanvas();
+            showNotification(`Editando cena: ${scene.name}`, 'info');
+        }
+
+        function updateScenesList() {
+            scenesList.innerHTML = scenes.map(scene => `
+                <div class="scene-item ${selectedScene?.id === scene.id ? 'selected' : ''}" 
+                     onclick="selectScene(${JSON.stringify(scene).replace(/"/g, '&quot;')})">
+                    <div class="scene-header">
+                        <span class="scene-name">${scene.name}</span>
+                        <span class="scene-duration">${scene.duration}s</span>
+                    </div>
+                    <div class="scene-controls">
+                        <label>Duração:</label>
+                        <input type="number" min="1" max="60" value="${scene.duration}" 
+                               onchange="updateSceneDuration(${scene.id}, this.value)"
+                               class="form-control" style="width: 60px;">
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function updateSceneDuration(sceneId, duration) {
+            const scene = scenes.find(s => s.id === sceneId);
+            if (scene) {
+                scene.duration = parseInt(duration);
+                updateTimeline();
+                updateStats();
+            }
+        }
+
+        function updateCanvas() {
+            if (selectedScene) {
+                canvasArea.innerHTML = `
+                    <div class="canvas-content">
+                        <div class="scene-preview">
+                            <h4>Preview da Cena: ${selectedScene.name}</h4>
+                            <p>Duração: ${selectedScene.duration}s</p>
+                            <div class="scene-elements">
+                                ${selectedScene.elements.map(element => `
+                                    <div class="scene-element">
+                                        <strong>${element.type}:</strong> ${element.content}
+                                    </div>
+                                `).join('')}
+                            </div>
+                            <button class="btn" onclick="addElement()" style="margin-top: 15px;">
+                                + Adicionar Elemento
+                            </button>
+                        </div>
+                        
+                        <div class="assets-panel">
+                            <h4>Assets Disponíveis</h4>
+                            <div class="assets-grid">
+                                ${assets.map(asset => `
+                                    <div class="asset-thumbnail" onclick="addAssetToScene(${asset.id})">
+                                        <div>${asset.name}</div>
+                                        <small>${formatFileSize(asset.size)}</small>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                canvasArea.innerHTML = `
+                    <div class="canvas-placeholder">
+                        <h3>Selecione uma cena para editar</h3>
+                        <p>Use a lista de cenas à esquerda para selecionar uma cena</p>
+                    </div>
+                `;
+            }
+        }
+
+        function updateTimeline() {
+            const totalDuration = scenes.reduce((sum, scene) => sum + scene.duration, 0);
+            document.getElementById('timelineDuration').textContent = `Duração Total: ${totalDuration}s`;
+            
+            timelineTrack.innerHTML = scenes.map((scene, index) => {
+                const startTime = scenes.slice(0, index).reduce((sum, s) => sum + s.duration, 0);
+                const width = totalDuration > 0 ? (scene.duration / totalDuration) * 100 : 0;
+                const left = totalDuration > 0 ? (startTime / totalDuration) * 100 : 0;
+                
+                return `
+                    <div class="timeline-scene" 
+                         style="left: ${left}%; width: ${width}%;"
+                         onclick="selectScene(${JSON.stringify(scene).replace(/"/g, '&quot;')})"
+                         title="${scene.name} (${scene.duration}s)">
+                        ${scene.name}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function updateStats() {
+            document.getElementById('totalScenes').textContent = scenes.length;
+            document.getElementById('totalAssets').textContent = assets.length;
+            const totalDuration = scenes.reduce((sum, scene) => sum + scene.duration, 0);
+            document.getElementById('totalDuration').textContent = totalDuration + 's';
+            
+            const status = scenes.length > 0 ? 'Em Progresso' : 'Pronto';
+            document.getElementById('projectStatus').textContent = status;
+        }
+
+        function addElement() {
+            if (selectedScene) {
+                const element = {
+                    id: Date.now(),
+                    type: 'text',
+                    content: 'Novo elemento',
+                    position: { x: 100, y: 100 }
+                };
+                selectedScene.elements.push(element);
+                updateCanvas();
+                showNotification('Elemento adicionado à cena!', 'success');
+            }
+        }
+
+        function addAssetToScene(assetId) {
+            if (selectedScene) {
+                const asset = assets.find(a => a.id === assetId);
+                if (asset) {
+                    const element = {
+                        id: Date.now(),
+                        type: 'asset',
+                        content: asset.name,
+                        assetId: assetId,
+                        position: { x: 100, y: 100 }
+                    };
+                    selectedScene.elements.push(element);
+                    updateCanvas();
+                    showNotification(`Asset "${asset.name}" adicionado à cena!`, 'success');
+                }
+            }
+        }
+
+        // Funções de projeto
+        function saveProject() {
+            showLoading(true);
+            setTimeout(() => {
+                const projectData = {
+                    name: projectName,
+                    scenes: scenes,
+                    assets: assets,
+                    savedAt: new Date()
+                };
+                
+                // Simular salvamento
+                localStorage.setItem('tecnocursos_project', JSON.stringify(projectData));
+                
+                showLoading(false);
+                showNotification('Projeto salvo com sucesso!', 'success');
+            }, 1000);
+        }
+
+        function previewProject() {
+            if (scenes.length === 0) {
+                showNotification('Crie pelo menos uma cena para visualizar!', 'warning');
+                return;
+            }
+            
+            showLoading(true);
+            setTimeout(() => {
+                showLoading(false);
+                showNotification('Preview gerado! Abra o console para ver os detalhes.', 'success');
+                console.log('Preview do projeto:', { scenes, assets });
+            }, 2000);
+        }
+
+        function exportProject() {
+            if (scenes.length === 0) {
+                showNotification('Crie pelo menos uma cena para exportar!', 'warning');
+                return;
+            }
+            
+            showLoading(true);
+            setTimeout(() => {
+                showLoading(false);
+                showNotification('Projeto exportado com sucesso!', 'success');
+                
+                // Simular download
+                const dataStr = JSON.stringify({ scenes, assets }, null, 2);
+                const dataBlob = new Blob([dataStr], { type: 'application/json' });
+                const url = URL.createObjectURL(dataBlob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = 'tecnocursos_project.json';
+                link.click();
+            }, 3000);
+        }
+
+        function generateVideo() {
+            if (scenes.length === 0) {
+                showNotification('Crie pelo menos uma cena para gerar o vídeo!', 'warning');
+                return;
+            }
+            
+            if (isProcessing) {
+                showNotification('Já existe um processo em andamento!', 'warning');
+                return;
+            }
+            
+            isProcessing = true;
+            showLoading(true);
+            
+            // Simular geração de vídeo
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 10;
+                showNotification(`Gerando vídeo... ${progress}%`, 'info');
+                
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    showLoading(false);
+                    isProcessing = false;
+                    showNotification('Vídeo gerado com sucesso!', 'success');
+                    
+                    // Simular download do vídeo
+                    setTimeout(() => {
+                        const link = document.createElement('a');
+                        link.href = '#';
+                        link.download = 'tecnocursos_video.mp4';
+                        link.click();
+                    }, 1000);
+                }
+            }, 500);
+        }
+
+        // Funções auxiliares
+        function showLoading(show) {
+            loading.style.display = show ? 'block' : 'none';
+        }
+
+        function showNotification(message, type = 'info') {
+            notification.textContent = message;
+            notification.className = `notification ${type}`;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // Carregar projeto salvo
+        function loadSavedProject() {
+            const saved = localStorage.getItem('tecnocursos_project');
+            if (saved) {
+                try {
+                    const projectData = JSON.parse(saved);
+                    scenes = projectData.scenes || [];
+                    assets = projectData.assets || [];
+                    projectName = projectData.name || "Projeto TecnoCursos AI";
+                    
+                    updateScenesList();
+                    updateTimeline();
+                    updateStats();
+                    updateAssetsList();
+                    
+                    showNotification('Projeto carregado com sucesso!', 'success');
+                } catch (e) {
+                    console.error('Erro ao carregar projeto:', e);
+                }
+            }
+        }
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            loadSavedProject();
+            updateStats();
+            showNotification('TecnoCursos AI carregado com sucesso!', 'success');
+        });
+
+        // Atalhos de teclado
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey || e.metaKey) {
+                switch(e.key) {
+                    case 's':
+                        e.preventDefault();
+                        saveProject();
+                        break;
+                    case 'p':
+                        e.preventDefault();
+                        previewProject();
+                        break;
+                    case 'e':
+                        e.preventDefault();
+                        exportProject();
+                        break;
+                }
+            }
+        });
+    </script>
+</body>
+</html> 

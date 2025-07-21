@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Áudios Gerados - TecnoCursos AI</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .audio-card {
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        
+        .audio-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+        
+        .audio-player {
+            width: 100%;
+            margin: 10px 0;
+        }
+        
+        .text-snippet {
+            background: #f8f9fa;
+            border-left: 4px solid #007bff;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            font-style: italic;
+            max-height: 100px;
+            overflow: hidden;
+        }
+        
+        .stats-badge {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+        }
+        
+        .search-highlight {
+            background-color: yellow;
+            font-weight: bold;
+        }
+        
+        .loading-spinner {
+            display: none;
+        }
+        
+        .audio-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .provider-badge {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .voice-badge {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-microphone-alt"></i> TecnoCursos AI
+            </a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="/dashboard">
+                    <i class="fas fa-home"></i> Dashboard
+                </a>
+                <a class="nav-link" href="/files">
+                    <i class="fas fa-folder"></i> Arquivos
+                </a>
+                <a class="nav-link active" href="/audios">
+                    <i class="fas fa-volume-up"></i> Áudios
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <!-- Header com estatísticas -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <h1 class="card-title mb-0">
+                            <i class="fas fa-headphones text-primary"></i>
+                            Meus Áudios Gerados
+                        </h1>
+                        <p class="text-muted mb-3">Geração automática de narração a partir de PDFs e PPTXs</p>
+                        
+                        <!-- Estatísticas -->
+                        <div class="row text-center" id="stats-container">
+                            <div class="col-md-3">
+                                <div class="card bg-primary text-white">
+                                    <div class="card-body">
+                                        <h4 id="total-audios">0</h4>
+                                        <small>Total de Áudios</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card bg-success text-white">
+                                    <div class="card-body">
+                                        <h4 id="total-duration">0m</h4>
+                                        <small>Duração Total</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card bg-info text-white">
+                                    <div class="card-body">
+                                        <h4 id="total-downloads">0</h4>
+                                        <small>Downloads</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card bg-warning text-white">
+                                    <div class="card-body">
+                                        <h4 id="total-plays">0</h4>
+                                        <small>Reproduções</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filtros e Busca -->
+        <div class="row mb-4">
+            <div class="col-md-8">
+                <div class="input-group">
+                    <span class="input-group-text">
+                        <i class="fas fa-search"></i>
+                    </span>
+                    <input type="text" class="form-control" id="search-input" 
+                           placeholder="Buscar por título, descrição ou conteúdo do áudio..."
+                           autocomplete="off">
+                    <button class="btn btn-outline-secondary" type="button" id="clear-search">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <select class="form-select" id="project-filter">
+                    <option value="">Todos os Projetos</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Lista de Áudios -->
+        <div class="row" id="audios-container">
+            <!-- Os áudios serão carregados aqui via JavaScript -->
+        </div>
+
+        <!-- Loading Spinner -->
+        <div class="text-center my-5 loading-spinner" id="loading-spinner">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Carregando...</span>
+            </div>
+            <p class="mt-2">Carregando áudios...</p>
+        </div>
+
+        <!-- Paginação -->
+        <nav aria-label="Navegação de áudios" class="mt-4">
+            <ul class="pagination justify-content-center" id="pagination-container">
+                <!-- Paginação será gerada via JavaScript -->
+            </ul>
+        </nav>
+
+        <!-- Mensagem quando não há áudios -->
+        <div class="text-center my-5 d-none" id="no-audios-message">
+            <i class="fas fa-microphone-slash fa-3x text-muted mb-3"></i>
+            <h4 class="text-muted">Nenhum áudio encontrado</h4>
+            <p class="text-muted">
+                Faça upload de arquivos PDF ou PPTX para gerar narrações automaticamente
+            </p>
+            <a href="/files" class="btn btn-primary">
+                <i class="fas fa-upload"></i> Fazer Upload
+            </a>
+        </div>
+    </div>
+
+    <!-- Modal para Detalhes do Áudio -->
+    <div class="modal fade" id="audioModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="audioModalTitle">Detalhes do Áudio</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="audioModalBody">
+                    <!-- Conteúdo será carregado via JavaScript -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                    <button type="button" class="btn btn-primary" id="download-audio-btn">
+                        <i class="fas fa-download"></i> Download
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Estado da aplicação
+        let currentPage = 0;
+        let currentSearch = '';
+        let currentProject = '';
+        let audioModal = null;
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            audioModal = new bootstrap.Modal(document.getElementById('audioModal'));
+            loadAudios();
+            setupEventListeners();
+        });
+
+        // Event Listeners
+        function setupEventListeners() {
+            // Busca
+            const searchInput = document.getElementById('search-input');
+            let searchTimeout;
+            searchInput.addEventListener('input', function() {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(() => {
+                    currentSearch = this.value;
+                    currentPage = 0;
+                    if (currentSearch.length >= 3 || currentSearch.length === 0) {
+                        loadAudios();
+                    }
+                }, 500);
+            });
+
+            // Limpar busca
+            document.getElementById('clear-search').addEventListener('click', function() {
+                searchInput.value = '';
+                currentSearch = '';
+                currentPage = 0;
+                loadAudios();
+            });
+
+            // Filtro de projeto
+            document.getElementById('project-filter').addEventListener('change', function() {
+                currentProject = this.value;
+                currentPage = 0;
+                loadAudios();
+            });
+        }
+
+        // Carregar áudios
+        async function loadAudios() {
+            const container = document.getElementById('audios-container');
+            const spinner = document.getElementById('loading-spinner');
+            const noAudiosMsg = document.getElementById('no-audios-message');
+            
+            spinner.style.display = 'block';
+            container.innerHTML = '';
+            noAudiosMsg.classList.add('d-none');
+
+            try {
+                const url = new URL('/api/files/audios' + (currentSearch ? '/search' : ''), window.location.origin);
+                
+                if (currentSearch) {
+                    url.searchParams.append('q', currentSearch);
+                }
+                if (currentProject) {
+                    url.searchParams.append('project_id', currentProject);
+                }
+                url.searchParams.append('limit', '12');
+                url.searchParams.append('offset', currentPage * 12);
+
+                const response = await fetch(url, {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    displayAudios(data.audios);
+                    updateStats(data);
+                    updatePagination(data.pagination);
+                } else {
+                    throw new Error('Erro ao carregar áudios');
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                container.innerHTML = '<div class="col-12"><div class="alert alert-danger">Erro ao carregar áudios</div></div>';
+            } finally {
+                spinner.style.display = 'none';
+            }
+        }
+
+        // Exibir áudios
+        function displayAudios(audios) {
+            const container = document.getElementById('audios-container');
+            const noAudiosMsg = document.getElementById('no-audios-message');
+
+            if (!audios || audios.length === 0) {
+                noAudiosMsg.classList.remove('d-none');
+                return;
+            }
+
+            container.innerHTML = audios.map(audio => createAudioCard(audio)).join('');
+        }
+
+        // Criar card de áudio
+        function createAudioCard(audio) {
+            const duration = audio.duration ? formatDuration(audio.duration) : 'N/A';
+            const snippet = audio.text_snippet || (audio.extracted_text ? 
+                audio.extracted_text.substring(0, 150) + '...' : 'Sem texto extraído');
+            
+            return `
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card audio-card h-100">
+                        <div class="card-body">
+                            <h6 class="card-title text-truncate">${audio.title}</h6>
+                            
+                            <!-- Player de áudio -->
+                            <audio controls class="audio-player">
+                                <source src="${audio.audio_url}" type="audio/mpeg">
+                                Seu navegador não suporta reprodução de áudio.
+                            </audio>
+                            
+                            <!-- Snippet do texto -->
+                            <div class="text-snippet small">
+                                ${highlightSearchTerm(snippet, currentSearch)}
+                            </div>
+                            
+                            <!-- Badges e informações -->
+                            <div class="d-flex flex-wrap gap-1 mb-2">
+                                <span class="badge provider-badge">${audio.tts_provider}</span>
+                                <span class="badge voice-badge">${audio.voice_type}</span>
+                                <span class="badge bg-secondary">${duration}</span>
+                            </div>
+                            
+                            <!-- Estatísticas -->
+                            <div class="d-flex justify-content-between text-muted small mb-2">
+                                <span><i class="fas fa-play"></i> ${audio.play_count || 0}</span>
+                                <span><i class="fas fa-download"></i> ${audio.download_count || 0}</span>
+                                <span><i class="fas fa-file-alt"></i> ${formatFileSize(audio.text_length || 0)}</span>
+                            </div>
+                            
+                            <!-- Controles -->
+                            <div class="audio-controls">
+                                <button class="btn btn-sm btn-outline-primary" onclick="showAudioDetails(${audio.id})">
+                                    <i class="fas fa-info-circle"></i> Detalhes
+                                </button>
+                                <button class="btn btn-sm btn-outline-success" onclick="downloadAudio(${audio.id}, '${audio.filename}')">
+                                    <i class="fas fa-download"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger" onclick="deleteAudio(${audio.id})">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                            
+                            <!-- Data -->
+                            <div class="text-muted small mt-2">
+                                <i class="fas fa-calendar"></i> ${formatDate(audio.created_at)}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Utilitários
+        function formatDuration(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        function formatFileSize(chars) {
+            if (chars < 1000) return chars + ' chars';
+            if (chars < 1000000) return Math.round(chars / 1000) + 'K chars';
+            return Math.round(chars / 1000000) + 'M chars';
+        }
+
+        function formatDate(dateStr) {
+            return new Date(dateStr).toLocaleDateString('pt-BR');
+        }
+
+        function highlightSearchTerm(text, term) {
+            if (!term) return text;
+            const regex = new RegExp(`(${term})`, 'gi');
+            return text.replace(regex, '<span class="search-highlight">$1</span>');
+        }
+
+        // Ações
+        async function showAudioDetails(audioId) {
+            // Implementar modal com detalhes completos
+            try {
+                const response = await fetch(`/api/files/audios/${audioId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+                    }
+                });
+                
+                if (response.ok) {
+                    const audio = await response.json();
+                    displayAudioModal(audio);
+                }
+            } catch (error) {
+                console.error('Erro ao carregar detalhes:', error);
+            }
+        }
+
+        async function downloadAudio(audioId, filename) {
+            window.open(`/api/files/audios/${audioId}/download`, '_blank');
+        }
+
+        async function deleteAudio(audioId) {
+            if (confirm('Tem certeza que deseja deletar este áudio?')) {
+                try {
+                    const response = await fetch(`/api/files/audios/${audioId}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+                        }
+                    });
+                    
+                    if (response.ok) {
+                        loadAudios(); // Recarregar lista
+                        alert('Áudio deletado com sucesso!');
+                    }
+                } catch (error) {
+                    console.error('Erro ao deletar:', error);
+                    alert('Erro ao deletar áudio');
+                }
+            }
+        }
+
+        function displayAudioModal(audio) {
+            document.getElementById('audioModalTitle').textContent = audio.title;
+            document.getElementById('audioModalBody').innerHTML = `
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>Informações Gerais</h6>
+                        <p><strong>Duração:</strong> ${formatDuration(audio.duration || 0)}</p>
+                        <p><strong>Tamanho:</strong> ${(audio.file_size / 1024).toFixed(1)} KB</p>
+                        <p><strong>Provider:</strong> ${audio.tts_provider}</p>
+                        <p><strong>Voz:</strong> ${audio.voice_type}</p>
+                        <p><strong>Cache Hit:</strong> ${audio.cache_hit ? 'Sim' : 'Não'}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Estatísticas</h6>
+                        <p><strong>Reproduções:</strong> ${audio.play_count}</p>
+                        <p><strong>Downloads:</strong> ${audio.download_count}</p>
+                        <p><strong>Tempo de Processamento:</strong> ${audio.processing_time ? audio.processing_time.toFixed(1) + 's' : 'N/A'}</p>
+                        <p><strong>Criado em:</strong> ${formatDate(audio.created_at)}</p>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <h6>Texto Extraído</h6>
+                    <div class="text-snippet" style="max-height: 200px; overflow-y: auto;">
+                        ${audio.extracted_text || 'Nenhum texto disponível'}
+                    </div>
+                </div>
+            `;
+            
+            // Configurar botão de download
+            document.getElementById('download-audio-btn').onclick = () => downloadAudio(audio.id, audio.filename);
+            
+            audioModal.show();
+        }
+
+        function updateStats(data) {
+            // Atualizar estatísticas no header
+            const audios = data.audios || [];
+            const totalDuration = audios.reduce((sum, audio) => sum + (audio.duration || 0), 0);
+            const totalDownloads = audios.reduce((sum, audio) => sum + (audio.download_count || 0), 0);
+            const totalPlays = audios.reduce((sum, audio) => sum + (audio.play_count || 0), 0);
+            
+            document.getElementById('total-audios').textContent = data.pagination?.total || audios.length;
+            document.getElementById('total-duration').textContent = Math.round(totalDuration / 60) + 'm';
+            document.getElementById('total-downloads').textContent = totalDownloads;
+            document.getElementById('total-plays').textContent = totalPlays;
+        }
+
+        function updatePagination(pagination) {
+            const container = document.getElementById('pagination-container');
+            if (!pagination || pagination.total <= pagination.limit) {
+                container.innerHTML = '';
+                return;
+            }
+            
+            const totalPages = Math.ceil(pagination.total / pagination.limit);
+            const currentPageNum = Math.floor(pagination.offset / pagination.limit);
+            
+            let html = '';
+            
+            // Página anterior
+            if (currentPageNum > 0) {
+                html += `<li class="page-item"><a class="page-link" href="#" onclick="changePage(${currentPageNum - 1})">Anterior</a></li>`;
+            }
+            
+            // Páginas numeradas
+            for (let i = Math.max(0, currentPageNum - 2); i <= Math.min(totalPages - 1, currentPageNum + 2); i++) {
+                html += `<li class="page-item ${i === currentPageNum ? 'active' : ''}">
+                    <a class="page-link" href="#" onclick="changePage(${i})">${i + 1}</a>
+                </li>`;
+            }
+            
+            // Próxima página
+            if (currentPageNum < totalPages - 1) {
+                html += `<li class="page-item"><a class="page-link" href="#" onclick="changePage(${currentPageNum + 1})">Próxima</a></li>`;
+            }
+            
+            container.innerHTML = html;
+        }
+
+        function changePage(page) {
+            currentPage = page;
+            loadAudios();
+        }
+    </script>
+</body>
+</html> 

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="120" height="160" viewBox="0 0 120 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Estudante Avatar SVG -->
+  
+  <!-- Corpo -->
+  <rect x="35" y="80" width="50" height="70" rx="10" fill="#10B981" stroke="#059669" stroke-width="2"/>
+  
+  <!-- Cabeça -->
+  <circle cx="60" cy="50" r="25" fill="#FBBF24" stroke="#F59E0B" stroke-width="2"/>
+  
+  <!-- Cabelo -->
+  <path d="M35 35 Q60 20 85 35 Q85 25 80 20 Q60 15 40 20 Q35 25 35 35" fill="#4B5563"/>
+  
+  <!-- Olhos -->
+  <circle cx="52" cy="45" r="3" fill="#1F2937"/>
+  <circle cx="68" cy="45" r="3" fill="#1F2937"/>
+  
+  <!-- Sobrancelhas -->
+  <path d="M48 40 L56 40" stroke="#4B5563" stroke-width="2"/>
+  <path d="M64 40 L72 40" stroke="#4B5563" stroke-width="2"/>
+  
+  <!-- Nariz -->
+  <circle cx="60" cy="52" r="1.5" fill="#F59E0B"/>
+  
+  <!-- Boca (sorrindo) -->
+  <path d="M54 58 Q60 64 66 58" stroke="#1F2937" stroke-width="2" fill="none"/>
+  
+  <!-- Braços -->
+  <rect x="20" y="85" width="15" height="40" rx="7" fill="#FBBF24"/>
+  <rect x="85" y="85" width="15" height="40" rx="7" fill="#FBBF24"/>
+  
+  <!-- Mãos -->
+  <circle cx="27.5" cy="130" r="6" fill="#FBBF24"/>
+  <circle cx="92.5" cy="130" r="6" fill="#FBBF24"/>
+  
+  <!-- Pernas -->
+  <rect x="42" y="150" width="12" height="25" rx="6" fill="#1F2937"/>
+  <rect x="66" y="150" width="12" height="25" rx="6" fill="#1F2937"/>
+  
+  <!-- Pés -->
+  <ellipse cx="48" cy="180" rx="8" ry="4" fill="#7C3AED"/>
+  <ellipse cx="72" cy="180" rx="8" ry="4" fill="#7C3AED"/>
+  
+  <!-- Mochila -->
+  <rect x="75" y="75" width="20" height="30" rx="5" fill="#DC2626" stroke="#B91C1C" stroke-width="2"/>
+  <rect x="82" y="80" width="6" height="20" fill="#FEF3C7"/>
+  
+  <!-- Livro na mão -->
+  <rect x="15" y="120" width="8" height="15" fill="#3B82F6" stroke="#1E40AF" stroke-width="1"/>
+</svg> 

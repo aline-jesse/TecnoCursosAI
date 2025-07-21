@@ -1,0 +1,438 @@
+---
+# ConfigMap principal da aplicação
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: tecnocursos-config
+  namespace: tecnocursos-production
+  labels:
+    app: tecnocursos-ai
+    component: config
+    environment: production
+data:
+  # Configurações gerais
+  ENVIRONMENT: "production"
+  APP_NAME: "TecnoCursos AI"
+  APP_VERSION: "v2.0.0"
+  APP_DEBUG: "false"
+  
+  # Configurações de servidor
+  HOST: "0.0.0.0"
+  PORT: "8000"
+  WORKERS: "4"
+  RELOAD: "false"
+  
+  # Configurações de banco
+  DB_POOL_SIZE: "20"
+  DB_MAX_OVERFLOW: "30"
+  DB_POOL_TIMEOUT: "30"
+  DB_POOL_RECYCLE: "3600"
+  DB_ECHO: "false"
+  
+  # Configurações de Redis
+  REDIS_PORT: "6379"
+  REDIS_DB: "0"
+  CACHE_TTL_DEFAULT: "300"
+  CACHE_TTL_SHORT: "60"
+  CACHE_TTL_LONG: "3600"
+  
+  # Configurações de segurança
+  RATE_LIMIT_REQUESTS_PER_MINUTE: "60"
+  RATE_LIMIT_BURST_SIZE: "10"
+  PASSWORD_MIN_LENGTH: "8"
+  
+  # Configurações de mídia
+  MAX_FILE_SIZE_MB: "100"
+  VIDEO_DEFAULT_FPS: "30"
+  VIDEO_DEFAULT_QUALITY: "high"
+  VIDEO_MAX_DURATION_SECONDS: "600"
+  
+  # Configurações de logging
+  LOG_LEVEL: "INFO"
+  LOG_FORMAT: "json"
+  LOG_OUTPUT: "console"
+  
+  # Configurações de monitoramento
+  METRICS_ENABLED: "true"
+  HEALTH_CHECK_ENABLED: "true"
+  
+  # URLs de serviços
+  DOCS_URL: "/docs"
+  REDOC_URL: "/redoc"
+  OPENAPI_URL: "/openapi.json"
+
+---
+# ConfigMap para configuração do Nginx
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-config
+  namespace: tecnocursos-production
+  labels:
+    app: nginx
+    component: proxy
+data:
+  nginx.conf: |
+    user nginx;
+    worker_processes auto;
+    error_log /var/log/nginx/error.log warn;
+    pid /var/run/nginx.pid;
+    
+    events {
+        worker_connections 4096;
+        use epoll;
+        multi_accept on;
+    }
+    
+    http {
+        include /etc/nginx/mime.types;
+        default_type application/octet-stream;
+        
+        # Logging
+        log_format json_combined escape=json
+          '{'
+            '"timestamp":"$time_iso8601",'
+            '"remote_addr":"$remote_addr",'
+            '"request":"$request",'
+            '"status":$status,'
+            '"body_bytes_sent":$body_bytes_sent,'
+            '"request_time":$request_time,'
+            '"http_user_agent":"$http_user_agent"'
+          '}';
+        
+        access_log /var/log/nginx/access.log json_combined;
+        
+        # Performance
+        sendfile on;
+        tcp_nopush on;
+        tcp_nodelay on;
+        keepalive_timeout 65;
+        
+        # Security
+        server_tokens off;
+        add_header X-Frame-Options DENY always;
+        add_header X-Content-Type-Options nosniff always;
+        add_header X-XSS-Protection "1; mode=block" always;
+        
+        # Compression
+        gzip on;
+        gzip_vary on;
+        gzip_min_length 1024;
+        gzip_comp_level 6;
+        gzip_types text/plain text/css application/json application/javascript text/xml application/xml text/javascript;
+        
+        # Rate limiting
+        limit_req_zone $binary_remote_addr zone=api:10m rate=10r/s;
+        limit_req_zone $binary_remote_addr zone=auth:10m rate=5r/s;
+        
+        upstream fastapi {
+            least_conn;
+            server tecnocursos-fastapi-service:80;
+            keepalive 32;
+        }
+        
+        server {
+            listen 80;
+            server_name _;
+            
+            location /health {
+                access_log off;
+                return 200 "healthy\n";
+                add_header Content-Type text/plain;
+            }
+            
+            location / {
+                limit_req zone=api burst=20 nodelay;
+                
+                proxy_pass http://fastapi;
+                proxy_set_header Host $host;
+                proxy_set_header X-Real-IP $remote_addr;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header X-Forwarded-Proto $scheme;
+                
+                proxy_connect_timeout 60s;
+                proxy_send_timeout 60s;
+                proxy_read_timeout 60s;
+            }
+        }
+    }
+
+---
+# ConfigMap para Prometheus
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-config
+  namespace: tecnocursos-production
+  labels:
+    app: prometheus
+    component: monitoring
+data:
+  prometheus.yml: |
+    global:
+      scrape_interval: 15s
+      evaluation_interval: 15s
+    
+    rule_files:
+      - "/etc/prometheus/rules/*.yml"
+    
+    alerting:
+      alertmanagers:
+        - static_configs:
+            - targets:
+              - alertmanager:9093
+    
+    scrape_configs:
+      - job_name: 'prometheus'
+        static_configs:
+          - targets: ['localhost:9090']
+      
+      - job_name: 'tecnocursos-fastapi'
+        metrics_path: '/metrics'
+        static_configs:
+          - targets: ['tecnocursos-fastapi-service:8000']
+        scrape_interval: 30s
+        scrape_timeout: 10s
+      
+      - job_name: 'nginx'
+        static_configs:
+          - targets: ['nginx-service:9113']
+      
+      - job_name: 'mysql'
+        static_configs:
+          - targets: ['mysql-exporter:9104']
+      
+      - job_name: 'redis'
+        static_configs:
+          - targets: ['redis-exporter:9121']
+      
+      - job_name: 'kubernetes-pods'
+        kubernetes_sd_configs:
+          - role: pod
+            namespaces:
+              names:
+                - tecnocursos-production
+        relabel_configs:
+          - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+            action: keep
+            regex: true
+          - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_path]
+            action: replace
+            target_label: __metrics_path__
+            regex: (.+)
+
+---
+# ConfigMap para Grafana
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-config
+  namespace: tecnocursos-production
+  labels:
+    app: grafana
+    component: monitoring
+data:
+  grafana.ini: |
+    [server]
+    protocol = http
+    http_port = 3000
+    domain = monitoring.tecnocursos.ai
+    root_url = https://monitoring.tecnocursos.ai
+    
+    [security]
+    admin_user = admin
+    cookie_secure = true
+    cookie_samesite = strict
+    
+    [auth]
+    disable_login_form = false
+    disable_signout_menu = false
+    
+    [auth.anonymous]
+    enabled = false
+    
+    [analytics]
+    reporting_enabled = false
+    check_for_updates = false
+    
+    [log]
+    mode = console
+    level = info
+    
+    [alerting]
+    enabled = true
+    execute_alerts = true
+    
+    [unified_alerting]
+    enabled = true
+  
+  datasources.yml: |
+    apiVersion: 1
+    datasources:
+      - name: Prometheus
+        type: prometheus
+        access: proxy
+        url: http://prometheus-service:9090
+        isDefault: true
+        editable: true
+
+---
+# ConfigMap para alertas do Prometheus
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-rules
+  namespace: tecnocursos-production
+  labels:
+    app: prometheus
+    component: alerting
+data:
+  tecnocursos.yml: |
+    groups:
+      - name: tecnocursos.rules
+        rules:
+          - alert: HighErrorRate
+            expr: rate(http_requests_total{status=~"5.."}[5m]) > 0.1
+            for: 5m
+            labels:
+              severity: warning
+            annotations:
+              summary: "High error rate detected"
+              description: "Error rate is {{ $value }} errors per second"
+          
+          - alert: HighLatency
+            expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m])) > 0.5
+            for: 5m
+            labels:
+              severity: warning
+            annotations:
+              summary: "High latency detected"
+              description: "95th percentile latency is {{ $value }} seconds"
+          
+          - alert: PodCrashLooping
+            expr: rate(kube_pod_container_status_restarts_total[15m]) > 0
+            for: 5m
+            labels:
+              severity: critical
+            annotations:
+              summary: "Pod is crash looping"
+              description: "Pod {{ $labels.pod }} is restarting frequently"
+          
+          - alert: HighMemoryUsage
+            expr: container_memory_usage_bytes / container_spec_memory_limit_bytes > 0.9
+            for: 5m
+            labels:
+              severity: warning
+            annotations:
+              summary: "High memory usage"
+              description: "Memory usage is {{ $value | humanizePercentage }} of limit"
+          
+          - alert: HighCPUUsage
+            expr: rate(container_cpu_usage_seconds_total[5m]) > 0.8
+            for: 5m
+            labels:
+              severity: warning
+            annotations:
+              summary: "High CPU usage"
+              description: "CPU usage is {{ $value | humanizePercentage }}"
+
+---
+# Secret para credenciais (template - valores devem ser base64)
+apiVersion: v1
+kind: Secret
+metadata:
+  name: tecnocursos-secrets
+  namespace: tecnocursos-production
+  labels:
+    app: tecnocursos-ai
+    component: secrets
+type: Opaque
+data:
+  # ATENÇÃO: Estes são valores de exemplo - substitua por valores reais em base64
+  database-url: bXlzcWwrcHlteXNxbDovL3VzZXI6cGFzc0BteXNxbC1zZXJ2aWNlOjMzMDYvdGVjbm9jdXJzb3M=
+  secret-key: eW91ci1zdXBlci1zZWNyZXQta2V5LWNoYW5nZS1pbi1wcm9kdWN0aW9u
+  openai-api-key: c2stcHJvamVjdC1hYmMxMjM=
+  azure-speech-key: YWJjZGVmZ2hpams=
+  d-id-api-key: ZGlkX2FwaV9rZXlfZXhhbXBsZQ==
+  elevenlabs-api-key: ZWxldmVubGFic19hcGlfa2V5X2V4YW1wbGU=
+  sentry-dsn: aHR0cHM6Ly9leGFtcGxlQHNlbnRyeS5pbw==
+
+---
+# Secret para autenticação do Grafana
+apiVersion: v1
+kind: Secret
+metadata:
+  name: grafana-basic-auth
+  namespace: tecnocursos-production
+  labels:
+    app: grafana
+    component: auth
+type: Opaque
+data:
+  # admin:admin (base64) - MUDE EM PRODUÇÃO
+  auth: YWRtaW46JGFwcjEkSDY1NDRYM2UkMW9wdTNRVUQuenM4UnFaMFByOVhFMQ==
+
+---
+# Secret para registry do GitHub
+apiVersion: v1
+kind: Secret
+metadata:
+  name: github-registry-secret
+  namespace: tecnocursos-production
+  labels:
+    app: tecnocursos-ai
+    component: registry
+type: kubernetes.io/dockerconfigjson
+data:
+  # Configure com suas credenciais do GitHub
+  .dockerconfigjson: eyJhdXRocyI6eyJnaGNyLmlvIjp7InVzZXJuYW1lIjoiZ2l0aHViX3VzZXJuYW1lIiwicGFzc3dvcmQiOiJnaXRodWJfcGF0IiwiYXV0aCI6IloybDBhSFZpWDNWelpYSnVZVzFsT21kcGRHaDFZbDl3WVhRPSJ9fX0=
+
+---
+# ServiceAccount para os pods
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: tecnocursos-serviceaccount
+  namespace: tecnocursos-production
+  labels:
+    app: tecnocursos-ai
+    component: rbac
+imagePullSecrets:
+- name: github-registry-secret
+
+---
+# Role para permissões específicas
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: tecnocursos-role
+  namespace: tecnocursos-production
+  labels:
+    app: tecnocursos-ai
+    component: rbac
+rules:
+- apiGroups: [""]
+  resources: ["pods", "services", "configmaps"]
+  verbs: ["get", "list", "watch"]
+- apiGroups: ["apps"]
+  resources: ["deployments"]
+  verbs: ["get", "list", "watch"]
+
+---
+# RoleBinding para associar Role ao ServiceAccount
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: tecnocursos-rolebinding
+  namespace: tecnocursos-production
+  labels:
+    app: tecnocursos-ai
+    component: rbac
+subjects:
+- kind: ServiceAccount
+  name: tecnocursos-serviceaccount
+  namespace: tecnocursos-production
+roleRef:
+  kind: Role
+  name: tecnocursos-role
+  apiGroup: rbac.authorization.k8s.io 

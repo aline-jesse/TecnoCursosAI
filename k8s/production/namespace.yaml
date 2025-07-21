@@ -1,0 +1,54 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: tecnocursos-production
+  labels:
+    name: tecnocursos-production
+    environment: production
+    app: tecnocursos-ai
+    version: v2.0.0
+  annotations:
+    description: "TecnoCursos AI Production Environment"
+    contact: "devops@tecnocursos.ai"
+    created-by: "TecnoCursos AI System"
+---
+# Resource Quotas para controle de recursos
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: tecnocursos-production-quota
+  namespace: tecnocursos-production
+spec:
+  hard:
+    requests.cpu: "8"
+    requests.memory: 16Gi
+    limits.cpu: "16"
+    limits.memory: 32Gi
+    pods: "20"
+    services: "10"
+    persistentvolumeclaims: "5"
+    secrets: "10"
+    configmaps: "10"
+---
+# Network Policy para segurança
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: tecnocursos-production-netpol
+  namespace: tecnocursos-production
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          name: ingress-nginx
+    - namespaceSelector:
+        matchLabels:
+          name: monitoring
+  egress:
+  - to: [] 

@@ -1,0 +1,98 @@
+# Padrões de Desenvolvimento Backend - FastAPI
+
+## Estrutura de Arquivos
+- **Routers**: `/app/routers/` - Endpoints da API
+- **Models**: [app/models.py](mdc:app/models.py) - Modelos SQLAlchemy
+- **Schemas**: [app/schemas.py](mdc:app/schemas.py) - Schemas Pydantic
+- **Services**: `/app/services/` - Lógica de negócio
+- **Middleware**: `/app/middleware/` - Middlewares personalizados
+
+## Convenções de Código
+
+### Imports
+```python
+# Imports padrão
+from fastapi import FastAPI, HTTPException, Depends, status
+from sqlalchemy.orm import Session
+from pydantic import BaseModel, EmailStr
+import logging
+from typing import Optional, List
+from datetime import datetime
+
+# Imports locais
+from app.database import get_db
+from app.models import User, Project
+from app.schemas import UserResponse
+from app.auth import get_current_user
+```
+
+### Endpoints
+```python
+@app.post("/api/endpoint", response_model=ResponseSchema)
+async def endpoint_name(
+    request: RequestSchema,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """Docstring descritiva do endpoint"""
+    try:
+        # Lógica do endpoint
+        return {"message": "success"}
+    except Exception as e:
+        logger.error(f"Erro no endpoint: {e}")
+        raise HTTPException(status_code=500, detail="Erro interno")
+```
+
+### Modelos SQLAlchemy
+```python
+class ModelName(Base):
+    __tablename__ = "table_name"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    # Relacionamentos
+    user_id = Column(Integer, ForeignKey("users.id"))
+    user = relationship("User", back_populates="items")
+```
+
+### Schemas Pydantic
+```python
+class RequestSchema(BaseModel):
+    field_name: str
+    optional_field: Optional[str] = None
+    
+    class Config:
+        from_attributes = True
+
+class ResponseSchema(BaseModel):
+    id: int
+    field_name: str
+    created_at: datetime
+    
+    class Config:
+        from_attributes = True
+```
+
+## Tratamento de Erros
+- Sempre usar `HTTPException` com status codes apropriados
+- Logging estruturado com `logger.error()`
+- Validação de dados com Pydantic
+- Tratamento de exceções específicas
+
+## Autenticação
+- Usar `get_current_user` para endpoints protegidos
+- JWT tokens para autenticação
+- Refresh tokens para renovação automática
+- Middleware CORS configurado
+
+## Banco de Dados
+- Usar `get_db` dependency para sessões
+- Transações com `db.commit()` e `db.rollback()`
+- Queries otimizadas com `select()` e `join()`
+- Migrações com Alembic
+description:
+globs:
+alwaysApply: false
+---

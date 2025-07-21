@@ -63,6 +63,12 @@ export interface EditorState {
   // History
   history: CanvasObject[][]
   historyIndex: number
+
+  // Scenes and Assets
+  scenes: any[]
+  assets: any[]
+  activeScene: any | null
+  selection: { type: string; id?: string; sceneId?: string }
   
   // Actions
   setCanvas: (canvas: fabric.Canvas) => void
@@ -79,7 +85,39 @@ export interface EditorState {
   saveToHistory: () => void
   clearCanvas: () => void
   exportCanvas: () => string
+
+  // Scene and Asset Actions
+  addScene: (scene: any) => void
+  updateScene: (id: string, updates: any) => void
+  deleteScene: (id: string) => void
+  duplicateScene: (id: string) => void
+  setActiveScene: (id: string) => void
+  reorderScenes: (scenes: any[]) => void
+  addAsset: (asset: any) => void
+  deleteAsset: (id: string) => void
+  addAssetToScene: (assetId: string, sceneId: string) => void
+  removeAssetFromScene: (assetId: string, sceneId: string) => void
+  setSelection: (selection: { type: string; id?: string; sceneId?: string }) => void
 }
+
+// Seletores para facilitar o uso
+export const useScenes = () => useEditorStore(state => state.scenes || [])
+export const useAssets = () => useEditorStore(state => state.assets || [])
+export const useActiveScene = () => useEditorStore(state => state.activeScene)
+export const useSelection = () => useEditorStore(state => state.selection || { type: 'none' })
+export const useEditor = () => useEditorStore(state => ({
+  addScene: state.addScene,
+  updateScene: state.updateScene,
+  deleteScene: state.deleteScene,
+  duplicateScene: state.duplicateScene,
+  setActiveScene: state.setActiveScene,
+  reorderScenes: state.reorderScenes,
+  addAsset: state.addAsset,
+  deleteAsset: state.deleteAsset,
+  addAssetToScene: state.addAssetToScene,
+  removeAssetFromScene: state.removeAssetFromScene,
+  setSelection: state.setSelection
+}))
 
 export const useEditorStore = create<EditorState>((set, get) => ({
   // Initial state
@@ -95,6 +133,17 @@ export const useEditorStore = create<EditorState>((set, get) => ({
   zoom: 1,
   history: [],
   historyIndex: -1,
+
+  // Scenes and Assets initial state
+  scenes: [
+    { id: 'scene-1', name: 'Cena 1', duration: 30, assets: [], background: '#ffffff' },
+    { id: 'scene-2', name: 'Cena 2', duration: 45, assets: [], background: '#f0f0f0' }
+  ],
+  assets: [
+    { id: 'asset-1', name: 'Imagem Exemplo', type: 'image', url: '/placeholder-image.jpg', thumbnail: '/placeholder-image.jpg', size: 1024000 }
+  ],
+  activeScene: null,
+  selection: { type: 'none' },
 
   // Actions
   setCanvas: (canvas) => {
@@ -169,7 +218,7 @@ export const useEditorStore = create<EditorState>((set, get) => ({
       }
 
       // Atualizar objeto Fabric
-      const fabricObject = updatedObjects[objectIndex].fabricObject
+      const { fabricObject } = updatedObjects[objectIndex]
       Object.entries(properties).forEach(([key, value]) => {
         if (fabricObject && key in fabricObject) {
           ;(fabricObject as any)[key] = value
@@ -206,7 +255,7 @@ export const useEditorStore = create<EditorState>((set, get) => ({
     const { canvas } = get()
     if (canvas) {
       canvas.isDrawingMode = tool === 'draw'
-      canvas.freeDrawingBrush = tool === 'draw' ? new fabric.PencilBrush(canvas) : null
+      canvas.freeDrawingBrush = tool === 'draw' ? new fabric.PencilBrush(canvas) : undefined
       
       if (tool === 'eraser') {
         canvas.isDrawingMode = true
@@ -232,9 +281,8 @@ export const useEditorStore = create<EditorState>((set, get) => ({
     
     const { canvas } = get()
     if (canvas) {
-      canvas.setBackgroundColor(color, () => {
-        canvas.renderAll()
-      })
+      canvas.backgroundColor = color
+      canvas.renderAll()
     }
   },
 
@@ -259,7 +307,7 @@ export const useEditorStore = create<EditorState>((set, get) => ({
       const newIndex = historyIndex - 1
       const previousState = history[newIndex]
       
-      set((state) => ({
+      set(() => ({
         canvasObjects: previousState,
         historyIndex: newIndex
       }))
@@ -282,7 +330,7 @@ export const useEditorStore = create<EditorState>((set, get) => ({
       const newIndex = historyIndex + 1
       const nextState = history[newIndex]
       
-      set((state) => ({
+      set(() => ({
         canvasObjects: nextState,
         historyIndex: newIndex
       }))
@@ -327,9 +375,106 @@ export const useEditorStore = create<EditorState>((set, get) => ({
     if (canvas) {
       return canvas.toDataURL({
         format: 'png',
-        quality: 1
+        quality: 1,
+        multiplier: 1
       })
     }
     return ''
+  },
+
+  // Scene and Asset Actions Implementation
+  addScene: (scene) => {
+    set(state => ({
+      scenes: [...state.scenes, { ...scene, id: `scene-${Date.now()}` }]
+    }))
+  },
+
+  updateScene: (id, updates) => {
+    set(state => ({
+      scenes: state.scenes.map(scene => 
+        scene.id === id ? { ...scene, ...updates } : scene
+      )
+    }))
+  },
+
+  deleteScene: (id) => {
+    set(state => ({
+      scenes: state.scenes.filter(scene => scene.id !== id),
+      activeScene: state.activeScene?.id === id ? null : state.activeScene
+    }))
+  },
+
+  duplicateScene: (id) => {
+    set(state => {
+      const scene = state.scenes.find(s => s.id === id)
+      if (!scene) return state
+      
+      const duplicate = {
+        ...scene,
+        id: `scene-${Date.now()}`,
+        name: `${scene.name} (Cópia)`
+      }
+      
+      return {
+        scenes: [...state.scenes, duplicate]
+      }
+    })
+  },
+
+  setActiveScene: (id) => {
+    set(state => ({
+      activeScene: state.scenes.find(scene => scene.id === id) || null
+    }))
+  },
+
+  reorderScenes: (scenes) => {
+    set({ scenes })
+  },
+
+  addAsset: (asset) => {
+    set(state => ({
+      assets: [...state.assets, { ...asset, id: `asset-${Date.now()}` }]
+    }))
+  },
+
+  deleteAsset: (id) => {
+    set(state => ({
+      assets: state.assets.filter(asset => asset.id !== id)
+    }))
+  },
+
+  addAssetToScene: (assetId, sceneId) => {
+    set(state => ({
+      scenes: state.scenes.map(scene => {
+        if (scene.id === sceneId) {
+          const asset = state.assets.find(a => a.id === assetId)
+          if (asset && !scene.assets.find((a: any) => a.id === assetId)) {
+            return {
+              ...scene,
+              assets: [...scene.assets, asset]
+            }
+          }
+        }
+        return scene
+      })
+    }))
+  },
+
+  removeAssetFromScene: (assetId, sceneId) => {
+    set(state => ({
+      scenes: state.scenes.map(scene => {
+        if (scene.id === sceneId) {
+          return {
+            ...scene,
+            assets: scene.assets.filter((asset: any) => asset.id !== assetId)
+          }
+        }
+        return scene
+      })
+    }))
+  },
+
+  setSelection: (selection) => {
+    set({ selection })
   }
 }))

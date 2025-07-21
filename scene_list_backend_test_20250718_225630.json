@@ -1,0 +1,93 @@
+{
+  "timestamp": "2025-07-18T22:56:16.934809",
+  "base_url": "http://localhost:8000",
+  "tests": {
+    "health_endpoint": {
+      "success": false,
+      "details": {
+        "error": "HTTPConnectionPool(host='localhost', port=8000): Read timed out. (read timeout=5)"
+      },
+      "timestamp": "2025-07-18T22:56:23.994197"
+    },
+    "auth_login": {
+      "success": false,
+      "details": {
+        "status_code": 404,
+        "response": "{\"detail\":\"Not Found\"}"
+      },
+      "timestamp": "2025-07-18T22:56:30.196493"
+    },
+    "projects_list": {
+      "success": false,
+      "details": {
+        "status_code": 404,
+        "response_length": 22
+      },
+      "timestamp": "2025-07-18T22:56:30.199871"
+    },
+    "projects_create": {
+      "success": false,
+      "details": {
+        "status_code": 404,
+        "response": "{\"detail\":\"Not Found\"}"
+      },
+      "timestamp": "2025-07-18T22:56:30.203148"
+    },
+    "scenes_endpoints": {
+      "success": false,
+      "details": {
+        "error": "Could not fetch projects"
+      },
+      "timestamp": "2025-07-18T22:56:30.206000"
+    },
+    "assets_endpoints": {
+      "success": false,
+      "details": {
+        "error": "Could not fetch projects"
+      },
+      "timestamp": "2025-07-18T22:56:30.209283"
+    },
+    "video_templates": {
+      "success": true,
+      "details": {
+        "status_code": 404,
+        "response_length": 22
+      },
+      "timestamp": "2025-07-18T22:56:30.212519"
+    },
+    "render_status": {
+      "success": true,
+      "details": {
+        "status_code": 404,
+        "response_length": 22
+      },
+      "timestamp": "2025-07-18T22:56:30.215963"
+    },
+    "enterprise_analytics": {
+      "success": true,
+      "details": {
+        "status_code": 404,
+        "response_length": 22
+      },
+      "timestamp": "2025-07-18T22:56:30.219933"
+    },
+    "enterprise_compliance": {
+      "success": true,
+      "details": {
+        "status_code": 404,
+        "response_length": 22
+      },
+      "timestamp": "2025-07-18T22:56:30.222378"
+    }
+  },
+  "summary": {
+    "total_tests": 10,
+    "passed": 4,
+    "failed": 6,
+    "errors": [
+      "health_endpoint: HTTPConnectionPool(host='localhost', port=8000): Read timed out. (read timeout=5)",
+      "scenes_endpoints: Could not fetch projects",
+      "assets_endpoints: Could not fetch projects"
+    ]
+  }
+}
