@@ -3,68 +3,263 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ page_title or "Erro interno" }} - TecnoCursos AI</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', path='/css/style.css') }}">
+    <title>500 - Erro interno do servidor | TecnoCursos AI</title>
+    <link rel="stylesheet" href="/static/css/dashboard.css">
+    <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        .error-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+        
+        .error-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 1.5rem;
+            padding: 3rem 2rem;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+            border-left: 4px solid var(--error-color);
+        }
+        
+        .error-icon {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            display: block;
+        }
+        
+        .error-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--error-color);
+            margin-bottom: 1rem;
+        }
+        
+        .error-message {
+            font-size: 1.125rem;
+            color: var(--gray-600);
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+        
+        .error-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.875rem;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.3);
+        }
+        
+        .btn-danger {
+            background: var(--gradient-error);
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(239, 68, 68, 0.3);
+        }
+        
+        .btn-secondary {
+            background: var(--gray-100);
+            color: var(--gray-700);
+        }
+        
+        .btn-secondary:hover {
+            background: var(--gray-200);
+        }
+        
+        .error-details {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--gray-200);
+        }
+        
+        .error-details h3 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: 1rem;
+        }
+        
+        .error-code {
+            background: var(--gray-50);
+            border: 1px solid var(--gray-200);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.875rem;
+            color: var(--gray-700);
+            text-align: left;
+            margin-bottom: 1rem;
+        }
+        
+        .support-info {
+            background: var(--info-light);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-top: 1.5rem;
+        }
+        
+        .support-info h4 {
+            color: var(--info-color);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .support-info p {
+            color: var(--gray-700);
+            margin: 0;
+        }
+        
+        @media (max-width: 640px) {
+            .error-card {
+                padding: 2rem 1.5rem;
+                margin: 1rem;
+            }
+            
+            .error-title {
+                font-size: 2rem;
+            }
+            
+            .error-actions {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
 </head>
 <body>
-    <div class="container-fluid">
-        <div class="row min-vh-100">
-            <div class="col-12 d-flex align-items-center justify-content-center">
-                <div class="text-center">
-                    <div class="error-page">
-                        <div class="error-number">500</div>
-                        <div class="error-title">Erro interno do servidor</div>
-                        <div class="error-description">
-                            Ops! Algo deu errado em nossos servidores. Nossa equipe foi notificada e está trabalhando para resolver o problema.
-                        </div>
-                        <div class="error-actions mt-4">
-                            <a href="/" class="btn btn-primary me-3">
-                                <i class="fas fa-home"></i> Página Inicial
-                            </a>
-                            <a href="javascript:location.reload()" class="btn btn-outline-secondary">
-                                <i class="fas fa-redo"></i> Tentar Novamente
-                            </a>
-                        </div>
-                    </div>
+    <div class="error-container">
+        <div class="error-card">
+            <span class="error-icon">⚠️</span>
+            <h1 class="error-title">500</h1>
+            <p class="error-message">
+                Ops! Ocorreu um erro interno no servidor.<br>
+                Nossa equipe foi notificada e está trabalhando para resolver o problema.
+            </p>
+            
+            <div class="error-actions">
+                <a href="{{ back_url or '/' }}" class="btn btn-primary">
+                    🏠 Voltar ao Dashboard
+                </a>
+                <button onclick="window.location.reload()" class="btn btn-danger">
+                    🔄 Tentar Novamente
+                </button>
+                <button onclick="history.back()" class="btn btn-secondary">
+                    ← Página Anterior
+                </button>
+            </div>
+            
+            <div class="error-details">
+                <h3>Detalhes Técnicos</h3>
+                <div class="error-code">
+                    <strong>Código:</strong> {{ error_code or 500 }}<br>
+                    <strong>Timestamp:</strong> <span id="error-timestamp"></span><br>
+                    <strong>Referência:</strong> {{ request.headers.get('X-Request-ID', 'N/A') }}
+                </div>
+                
+                <div class="support-info">
+                    <h4>🆘 Precisa de ajuda?</h4>
+                    <p>
+                        Se o problema persistir, entre em contato com nossa equipe de suporte 
+                        informando o código de referência acima.
+                    </p>
                 </div>
             </div>
         </div>
     </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://kit.fontawesome.com/your-fontawesome-kit.js"></script>
+    
+    <script>
+        // Definir timestamp do erro
+        document.getElementById('error-timestamp').textContent = new Date().toLocaleString('pt-BR');
+        
+        // Auto-retry após 30 segundos (opcional)
+        let retryCountdown = 30;
+        const retryBtn = document.querySelector('.btn-danger');
+        
+        // Função para atualizar countdown (descomentado por padrão)
+        // const updateCountdown = () => {
+        //     if (retryCountdown > 0) {
+        //         retryBtn.innerHTML = `🔄 Tentar Novamente (${retryCountdown}s)`;
+        //         retryCountdown--;
+        //         setTimeout(updateCountdown, 1000);
+        //     } else {
+        //         window.location.reload();
+        //     }
+        // };
+        // updateCountdown();
+        
+        // Log do erro 500 (se analytics estiver configurado)
+        console.error('500 Error - Internal server error:', {
+            url: window.location.href,
+            timestamp: new Date().toISOString(),
+            userAgent: navigator.userAgent
+        });
+        
+        // Enviar erro para sistema de logging (se implementado)
+        if (window.dashboard && window.dashboard.logError) {
+            window.dashboard.logError('500', window.location.pathname);
+        }
+        
+        // Reportar erro via fetch (se endpoint estiver disponível)
+        try {
+            fetch('/api/errors/report', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    type: '500',
+                    url: window.location.href,
+                    timestamp: new Date().toISOString(),
+                    userAgent: navigator.userAgent,
+                    referrer: document.referrer
+                })
+            }).catch(() => {
+                // Silenciar erros de rede para não causar loop
+            });
+        } catch (e) {
+            // Silenciar erros
+        }
+    </script>
 </body>
-</html>
-
-<style>
-.error-page {
-    max-width: 500px;
-    margin: 0 auto;
-}
-
-.error-number {
-    font-size: 120px;
-    font-weight: bold;
-    color: #dc3545;
-    line-height: 1;
-}
-
-.error-title {
-    font-size: 28px;
-    font-weight: 600;
-    color: #495057;
-    margin: 20px 0 10px;
-}
-
-.error-description {
-    font-size: 16px;
-    color: #6c757d;
-    margin-bottom: 30px;
-}
-
-.error-actions .btn {
-    padding: 12px 24px;
-    font-weight: 500;
-}
-</style> 
+</html> 
