@@ -1,0 +1,239 @@
+/**
+ * Estilos para VideoScrubber - Componente de Scrubber de Vídeo Avançado
+ * TecnoCursos AI - Sistema de Preview
+ */
+
+.video-scrubber {
+  width: 100%;
+  padding: 16px 0;
+  user-select: none;
+}
+
+/* Timeline principal */
+.scrubber-timeline {
+  position: relative;
+  height: 80px;
+  background: #f3f4f6;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+/* Container de thumbnails */
+.thumbnails-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  display: flex;
+}
+
+.thumbnail-frame {
+  position: absolute;
+  width: 120px;
+  height: 60px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  border: 1px solid #e5e7eb;
+  border-radius: 4px;
+  transform: translateX(-50%);
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+}
+
+.thumbnail-frame:hover {
+  opacity: 1;
+  z-index: 2;
+}
+
+/* Barra de progresso */
+.progress-track {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: #e5e7eb;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+  transition: width 0.1s ease;
+}
+
+/* Playhead */
+.playhead {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: #ef4444;
+  transform: translateX(-50%);
+  z-index: 10;
+  pointer-events: none;
+}
+
+.playhead-handle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 16px;
+  height: 16px;
+  background: #ef4444;
+  border: 2px solid white;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  cursor: grab;
+  pointer-events: all;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.playhead-handle:active {
+  cursor: grabbing;
+  transform: translate(-50%, -50%) scale(1.2);
+}
+
+/* Tooltip de tempo */
+.time-tooltip {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1f2937;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+  margin-bottom: 8px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+}
+
+.playhead:hover .time-tooltip,
+.scrubber-timeline:active .time-tooltip {
+  opacity: 1;
+}
+
+/* Marcadores de tempo */
+.time-markers {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+}
+
+.time-marker {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  transform: translateX(-50%);
+}
+
+.marker-line {
+  width: 1px;
+  height: 100%;
+  background: #9ca3af;
+  opacity: 0.5;
+}
+
+.marker-label {
+  position: absolute;
+  top: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 10px;
+  color: #6b7280;
+  background: rgba(255, 255, 255, 0.8);
+  padding: 2px 4px;
+  border-radius: 2px;
+}
+
+/* Controles de frame */
+.frame-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 12px;
+  padding: 8px;
+  background: #f9fafb;
+  border-radius: 6px;
+}
+
+.frame-btn {
+  background: #4f46e5;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 6px 12px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.frame-btn:hover {
+  background: #4338ca;
+  transform: translateY(-1px);
+}
+
+.frame-btn:active {
+  transform: translateY(0);
+}
+
+.frame-info {
+  font-size: 12px;
+  color: #6b7280;
+  font-weight: 500;
+  min-width: 80px;
+  text-align: center;
+}
+
+/* Estados responsivos */
+@media (max-width: 768px) {
+  .scrubber-timeline {
+    height: 60px;
+  }
+  
+  .thumbnail-frame {
+    width: 80px;
+    height: 45px;
+  }
+  
+  .frame-controls {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .marker-label {
+    font-size: 8px;
+  }
+}
+
+/* Animações */
+@keyframes scrubberPulse {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); }
+  50% { transform: translate(-50%, -50%) scale(1.1); }
+}
+
+.playhead-handle:hover {
+  animation: scrubberPulse 1s infinite;
+}
+
+/* Estados de interação */
+.scrubber-timeline:active .playhead-handle {
+  transform: translate(-50%, -50%) scale(1.3);
+  box-shadow: 0 4px 8px rgba(239, 68, 68, 0.4);
+}
+
+.scrubber-timeline:active .progress-fill {
+  box-shadow: 0 0 8px rgba(59, 130, 246, 0.5);
+} 

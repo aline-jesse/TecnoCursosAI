@@ -13,6 +13,7 @@
 
 import { create } from 'zustand'
 import * as fabric from 'fabric'
+import { ScenePreviewConfig } from '../types/preview';
 
 // Declaração de tipos para Fabric.js
 declare global {
@@ -70,6 +71,10 @@ export interface EditorState {
   activeScene: any | null
   selection: { type: string; id?: string; sceneId?: string }
   
+  // Preview
+  previewConfig: Record<string, ScenePreviewConfig>;
+  updatePreviewConfig: (sceneId: string, config: ScenePreviewConfig) => void;
+
   // Actions
   setCanvas: (canvas: fabric.Canvas) => void
   addObject: (object: CanvasObject) => void
@@ -144,6 +149,16 @@ export const useEditorStore = create<EditorState>((set, get) => ({
   ],
   activeScene: null,
   selection: { type: 'none' },
+
+  // Preview
+  previewConfig: {},
+  
+  updatePreviewConfig: (sceneId, config) => set((state) => ({
+    previewConfig: {
+      ...state.previewConfig,
+      [sceneId]: config
+    }
+  })),
 
   // Actions
   setCanvas: (canvas) => {

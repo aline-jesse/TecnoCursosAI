@@ -14,11 +14,12 @@ import {
   SparklesIcon 
 } from '@heroicons/react/24/outline'
 import './SceneList.css'
+import { VideoPreviewModal } from './VideoPreviewModal';
 
 // Hooks personalizados do store
 const useScenes = () => useEditorStore(state => state.scenes)
 const useActiveScene = () => useEditorStore(state => state.activeScene)
-const SceneList: React.FC = () => {
+export const SceneList: React.FC = () => {
   // Estados locais para UI
   const [isAddingScene, setIsAddingScene] = useState(false);
   const [isEditingScene, setIsEditingScene] = useState<string | null>(null);
@@ -26,7 +27,8 @@ const SceneList: React.FC = () => {
   const [newSceneDuration, setNewSceneDuration] = useState(5);
   const [editSceneName, setEditSceneName] = useState('');
   const [editSceneDuration, setEditSceneDuration] = useState(5);
-
+  const [previewSceneId, setPreviewSceneId] = useState<string | null>(null);
+  
   // Hooks da store Zustand
   const scenes = useScenes();
   const activeScene = useActiveScene();
@@ -177,6 +179,31 @@ const SceneList: React.FC = () => {
       reorderScenes(newScenes);
     }
   }, [reorderScenes, scenes]);
+
+  // Handler para regenerar narração
+  const handleRegenerateNarration = useCallback(async (sceneId: string) => {
+    const scene = scenes.find(s => s.id === sceneId);
+    if (!scene) return '';
+    
+    try {
+      const response = await fetch('/api/regenerate-narration', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          text: scene.text,
+          sceneId
+        })
+      });
+      
+      const data = await response.json();
+      return data.narrationUrl;
+    } catch (error) {
+      console.error('Erro ao regenerar narração:', error);
+      return '';
+    }
+  }, [scenes]);
 
   return (
     <div className="scene-list">
@@ -332,6 +359,13 @@ const SceneList: React.FC = () => {
                     >
                       🗑️
                     </button>
+                    <button
+                      onClick={() => setPreviewSceneId(scene.id)}
+                      className="control-btn preview"
+                      title="Preview da cena"
+                    >
+                      <span className="material-icons">preview</span>
+                    </button>
                   </>
                 )}
               </div>
@@ -355,6 +389,27 @@ const SceneList: React.FC = () => {
         onSelectTemplate={handleSelectTemplate}
         showCategories={true}
       />
+
+      {/* Modal de Preview */}
+      {previewSceneId && (
+        <VideoPreviewModal
+          isOpen={true}
+          onClose={() => setPreviewSceneId(null)}
+          sceneId={previewSceneId}
+          onSave={(config) => {
+            // Atualizar configurações da cena
+            updateScene(previewSceneId, {
+              ...scenes.find(s => s.id === previewSceneId),
+              duration: config.duration,
+              transition: config.transition,
+              animations: config.animations,
+              audio: config.audio
+            });
+            setPreviewSceneId(null);
+          }}
+          onRegenerateNarration={handleRegenerateNarration}
+        />
+      )}
     </div>
   );
 };
