@@ -1,7 +1,7 @@
 import React from 'react';
 import './Icon.css';
 
-type IconName =
+export type IconName =
   | 'cursor'
   | 'hand'
   | 'text'
@@ -16,7 +16,8 @@ type IconName =
   | 'zoom-in'
   | 'zoom-out'
   | 'zoom-reset'
-  | 'chevron-down';
+  | 'chevron-down'
+  | 'loading';
 
 interface IconProps {
   name: IconName;

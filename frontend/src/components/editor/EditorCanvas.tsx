@@ -1,4 +1,5 @@
 // src/components/editor/EditorCanvas.tsx
+import { fabric } from 'fabric';
 import {
   forwardRef,
   useCallback,
@@ -20,6 +21,7 @@ import {
   CharacterElement,
   EditorCanvasProps,
   EditorElement,
+  ElementType,
   ImageElement,
   Scene,
   ShapeElement,
@@ -28,14 +30,8 @@ import {
 } from '../../types/editor';
 import './EditorCanvas.css';
 
-type FabricEventHandler = (e: fabric.IEvent) => void;
+type FabricEventHandler = (e: fabric.IEvent<Event>) => void;
 type FabricObject = fabric.Object & { data?: { id: string } };
-
-interface CanvasOptions extends fabric.ICanvasOptions {
-  width: number;
-  height: number;
-  backgroundColor: string;
-}
 
 const EditorCanvas = forwardRef<CanvasRef, EditorCanvasProps>((props, ref) => {
   const {
@@ -75,7 +71,7 @@ const EditorCanvas = forwardRef<CanvasRef, EditorCanvasProps>((props, ref) => {
   // Hooks personalizados para funcionalidades do canvas
   const { canvasRef: optimizedCanvasRef, optimizationConfig } =
     useCanvasOptimization(width, height);
-  const { layers, contexts, createLayer, destroyLayer } = useCanvasLayers();
+  const { layers, createLayer, destroyLayer } = useCanvasLayers();
   const {
     setTransform,
     resetTransform,
@@ -95,7 +91,7 @@ const EditorCanvas = forwardRef<CanvasRef, EditorCanvasProps>((props, ref) => {
   const initializeCanvas = useCallback(() => {
     if (!canvasRef.current || isInitialized) return;
 
-    const options: CanvasOptions = {
+    const options: fabric.ICanvasOptions = {
       width,
       height,
       backgroundColor,
@@ -103,13 +99,10 @@ const EditorCanvas = forwardRef<CanvasRef, EditorCanvasProps>((props, ref) => {
       preserveObjectStacking: true,
       renderOnAddRemove: true,
       skipTargetFind: readOnly,
-      selectable: !readOnly,
-      evented: !readOnly,
       fireRightClick: true,
       fireMiddleClick: true,
       stopContextMenu: true,
       enableRetinaScaling: true,
-      imageSmoothingEnabled: true,
     };
 
     const canvas = new fabric.Canvas(canvasRef.current, options);
@@ -123,10 +116,18 @@ const EditorCanvas = forwardRef<CanvasRef, EditorCanvasProps>((props, ref) => {
     canvas.on('object:moving', handleObjectMoving);
     canvas.on('object:scaling', handleObjectScaling);
     canvas.on('object:rotating', handleObjectRotating);
-    canvas.on('mouse:down', handleMouseDown);
-    canvas.on('mouse:up', handleMouseUp);
-    canvas.on('mouse:move', handleMouseMove);
-    canvas.on('mouse:wheel', handleWheel);
+    canvas.on('mouse:down', (e: fabric.IEvent<MouseEvent>) => {
+      handleMouseDown(e.e);
+    });
+    canvas.on('mouse:up', (e: fabric.IEvent<MouseEvent>) => {
+      handleMouseUp(e.e);
+    });
+    canvas.on('mouse:move', (e: fabric.IEvent<MouseEvent>) => {
+      handleMouseMove(e.e);
+    });
+    canvas.on('mouse:wheel', (e: fabric.IEvent<WheelEvent>) => {
+      handleWheel(e.e);
+    });
 
     // Criar camadas
     createLayer('background', { zIndex: 0 });
@@ -157,8 +158,6 @@ const EditorCanvas = forwardRef<CanvasRef, EditorCanvasProps>((props, ref) => {
     const canvas = fabricCanvasRef.current;
     canvas.selection = !readOnly;
     canvas.skipTargetFind = readOnly;
-    canvas.selectable = !readOnly;
-    canvas.evented = !readOnly;
 
     canvas.getObjects().forEach(obj => {
       obj.selectable = !readOnly;
@@ -191,29 +190,31 @@ const EditorCanvas = forwardRef<CanvasRef, EditorCanvasProps>((props, ref) => {
   // Renderização do fundo
   const renderBackground = useCallback(
     (background: Scene['background']) => {
-      if (!fabricCanvasRef.current || !contexts.background) return;
+      if (!fabricCanvasRef.current) return;
 
-      const ctx = contexts.background;
-      ctx.clearRect(0, 0, width, height);
+      const canvas = fabricCanvasRef.current;
 
       switch (background.type) {
         case 'color':
-          ctx.fillStyle = background.value;
-          ctx.fillRect(0, 0, width, height);
+          canvas.setBackgroundColor(
+            background.value,
+            canvas.renderAll.bind(canvas)
+          );
           break;
         case 'image':
-          loadImage(background.value).then(image => {
-            if (image) {
-              drawImage(ctx, image, 0, 0, width, height);
-            }
+          loadImage(background.value).then(img => {
+            if (!img) return;
+
+            canvas.setBackgroundImage(
+              new fabric.Image(img),
+              canvas.renderAll.bind(canvas)
+            );
           });
           break;
-        case 'video':
-          // TODO: Implementar renderização de vídeo como fundo
-          break;
+        // Adicione mais tipos de fundo conforme necessário
       }
     },
-    [width, height, contexts.background, loadImage, drawImage]
+    [loadImage]
   );
 
   // Renderização de elementos

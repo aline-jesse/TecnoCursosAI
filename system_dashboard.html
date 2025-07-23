@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TecnoCursosAI - Dashboard do Sistema</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            padding: 30px;
+            border-radius: 16px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.3);
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .card {
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid #334155;
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            border-color: #3b82f6;
+        }
+        
+        .card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            color: #3b82f6;
+        }
+        
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        
+        .status-dot.online {
+            background: #10b981;
+        }
+        
+        .status-dot.offline {
+            background: #ef4444;
+        }
+        
+        .status-dot.loading {
+            background: #f59e0b;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        
+        .button {
+            display: inline-block;
+            background: #3b82f6;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            margin-right: 10px;
+            margin-top: 10px;
+        }
+        
+        .button:hover {
+            background: #2563eb;
+            transform: translateY(-1px);
+        }
+        
+        .button.secondary {
+            background: #6366f1;
+        }
+        
+        .button.secondary:hover {
+            background: #4f46e5;
+        }
+        
+        .metrics {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .metric {
+            flex: 1;
+            min-width: 150px;
+        }
+        
+        .metric-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #3b82f6;
+        }
+        
+        .metric-label {
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+        
+        .service-list {
+            list-style: none;
+        }
+        
+        .service-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid #334155;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .service-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .badge {
+            background: #10b981;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+        }
+        
+        .badge.warning {
+            background: #f59e0b;
+        }
+        
+        .badge.error {
+            background: #ef4444;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #64748b;
+        }
+        
+        .error-message {
+            background: #ef444420;
+            border: 1px solid #ef4444;
+            color: #fca5a5;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 TecnoCursosAI</h1>
+            <p>Dashboard de Monitoramento do Sistema</p>
+        </div>
+        
+        <div id="error-container"></div>
+        
+        <div class="grid">
+            <!-- Status do Sistema -->
+            <div class="card">
+                <h3>💻 Status do Sistema</h3>
+                <div id="system-status" class="loading">
+                    <p>Carregando...</p>
+                </div>
+            </div>
+            
+            <!-- Serviços -->
+            <div class="card">
+                <h3>🔧 Serviços</h3>
+                <div id="services-status" class="loading">
+                    <p>Carregando...</p>
+                </div>
+            </div>
+            
+            <!-- Métricas -->
+            <div class="card">
+                <h3>📊 Métricas</h3>
+                <div id="metrics" class="loading">
+                    <p>Carregando...</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Links Rápidos -->
+        <div class="card">
+            <h3>🔗 Links Rápidos</h3>
+            <div>
+                <a href="http://localhost:3000" class="button" target="_blank">Frontend</a>
+                <a href="http://localhost:8000/docs" class="button secondary" target="_blank">API Docs</a>
+                <a href="http://localhost:8000/redoc" class="button secondary" target="_blank">ReDoc</a>
+                <a href="#" class="button secondary" onclick="refreshData()">Atualizar</a>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const API_BASE = 'http://localhost:8000';
+        
+        async function fetchSystemStatus() {
+            const systemDiv = document.getElementById('system-status');
+            const errorDiv = document.getElementById('error-container');
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/health`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                systemDiv.innerHTML = `
+                    <div class="status">
+                        <div class="status-dot online"></div>
+                        <span>Sistema Online</span>
+                    </div>
+                    <p>Versão: ${data.version}</p>
+                    <p>Uptime: ${formatUptime(data.uptime_seconds)}</p>
+                    <p>Banco de Dados: <span class="badge">${data.database_status}</span></p>
+                `;
+                
+                // Atualizar serviços
+                updateServices(data.services);
+                
+                // Limpar mensagens de erro
+                errorDiv.innerHTML = '';
+                
+            } catch (error) {
+                systemDiv.innerHTML = `
+                    <div class="status">
+                        <div class="status-dot offline"></div>
+                        <span>Sistema Offline</span>
+                    </div>
+                `;
+                
+                errorDiv.innerHTML = `
+                    <div class="error-message">
+                        <strong>Erro ao conectar com o servidor:</strong><br>
+                        ${error.message}<br>
+                        Verifique se o servidor está rodando em ${API_BASE}
+                    </div>
+                `;
+            }
+        }
+        
+        function updateServices(services) {
+            const servicesDiv = document.getElementById('services-status');
+            
+            if (!services) {
+                servicesDiv.innerHTML = '<p>Nenhum serviço disponível</p>';
+                return;
+            }
+            
+            let html = '<ul class="service-list">';
+            
+            for (const [service, status] of Object.entries(services)) {
+                const badgeClass = status === 'available' ? '' : 'error';
+                const serviceName = service.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                
+                html += `
+                    <li>
+                        <span>${serviceName}</span>
+                        <span class="badge ${badgeClass}">${status}</span>
+                    </li>
+                `;
+            }
+            
+            html += '</ul>';
+            servicesDiv.innerHTML = html;
+        }
+        
+        async function fetchMetrics() {
+            const metricsDiv = document.getElementById('metrics');
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/analytics/overview`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                metricsDiv.innerHTML = `
+                    <div class="metrics">
+                        <div class="metric">
+                            <div class="metric-value">${data.total_users || 0}</div>
+                            <div class="metric-label">Usuários</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-value">${data.total_projects || 0}</div>
+                            <div class="metric-label">Projetos</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-value">${data.total_videos || 0}</div>
+                            <div class="metric-label">Vídeos</div>
+                        </div>
+                    </div>
+                `;
+                
+            } catch (error) {
+                metricsDiv.innerHTML = '<p>Erro ao carregar métricas</p>';
+            }
+        }
+        
+        function formatUptime(seconds) {
+            const hours = Math.floor(seconds / 3600);
+            const minutes = Math.floor((seconds % 3600) / 60);
+            const secs = Math.floor(seconds % 60);
+            
+            if (hours > 0) {
+                return `${hours}h ${minutes}m ${secs}s`;
+            } else if (minutes > 0) {
+                return `${minutes}m ${secs}s`;
+            } else {
+                return `${secs}s`;
+            }
+        }
+        
+        function refreshData() {
+            fetchSystemStatus();
+            fetchMetrics();
+        }
+        
+        // Carregar dados iniciais
+        refreshData();
+        
+        // Atualizar a cada 5 segundos
+        setInterval(refreshData, 5000);
+    </script>
+</body>
+</html> 

@@ -176,7 +176,7 @@ const VideoPreviewModal: React.FC<VideoPreviewModalProps> = ({
   const handleElementUpdate = useCallback(
     (elementId: string, updates: Partial<AnimatedEditorElement>) => {
       const updatedElements = currentScene.elements.map(element =>
-        element.id === elementId ? { ...element, ...updates } : element
+        element.id === elementId ? { ...element, ...updates } as EditorElement : element
       );
 
       actions.updateSceneConfig(state.currentSceneIndex, {

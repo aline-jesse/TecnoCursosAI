@@ -119,10 +119,13 @@ const Timeline: React.FC = () => {
   const handleDurationChange = useCallback(
     (sceneId: string, newDuration: number) => {
       if (newDuration >= 1 && newDuration <= 60) {
-        updateScene(sceneId, { duration: newDuration });
+        const scene = scenes.find(s => s.id === sceneId);
+        if (scene) {
+          updateScene({ ...scene, duration: newDuration });
+        }
       }
     },
-    [updateScene]
+    [updateScene, scenes]
   );
 
   return (

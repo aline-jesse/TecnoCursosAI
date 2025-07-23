@@ -32,7 +32,7 @@ const createInitialState = (
   } = options;
 
   const totalDuration = initialScenes.reduce(
-    (acc, scene) => acc + scene.duration,
+    (acc, scene) => acc + (scene.duration || 5),
     0
   );
 
@@ -46,7 +46,7 @@ const createInitialState = (
       type: 'scene',
       color: '#3b82f6',
     });
-    currentTime += scene.duration;
+    currentTime += (scene.duration || 5);
   });
 
   return {
@@ -116,7 +116,7 @@ export const useVideoPreview = (
       let newSceneIndex = -1;
 
       for (let i = 0; i < scenes.length; i++) {
-        accumulatedTime += scenes[i].duration;
+        accumulatedTime += (scenes[i]?.duration || 5);
         if (currentTime < accumulatedTime) {
           newSceneIndex = i;
           break;
@@ -271,7 +271,7 @@ export const useVideoPreview = (
 
       const sceneStartTime = state.scenes
         .slice(0, clampedIndex)
-        .reduce((acc, scene) => acc + scene.duration, 0);
+        .reduce((acc, scene) => acc + (scene.duration || 5), 0);
 
       seek(sceneStartTime);
     },
@@ -329,13 +329,13 @@ export const useVideoPreview = (
         // Recalcula duração e marcadores se a duração da cena mudar
         if (config.duration !== undefined) {
           const newDuration = newScenes.reduce(
-            (acc, scene) => acc + scene.duration,
+            (acc, scene) => acc + (scene.duration || 5),
             0
           );
           let currentTime = 0;
           const newMarkers: Marker[] = newScenes.map((scene, index) => {
             const markerTime = currentTime;
-            currentTime += scene.duration;
+            currentTime += (scene.duration || 5);
             return {
               id: `scene-marker-${scene.id}`,
               time: markerTime,

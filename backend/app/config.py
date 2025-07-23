@@ -8,7 +8,7 @@ from __future__ import annotations
 import os
 from pathlib import Path
 from typing import List, Optional, Dict, Any
-from pydantic import validator
+from pydantic import field_validator
 from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
@@ -56,7 +56,8 @@ class Settings(BaseSettings):
         ".jpg", ".jpeg", ".png", ".gif", ".mp3", ".wav", ".m4a"
     ]
     
-    @validator('allowed_extensions', pre=True)
+    @field_validator('allowed_extensions', mode='before')
+    @classmethod
     def parse_allowed_extensions(cls, v):
         """Parse allowed extensions from environment variable string or list"""
         if isinstance(v, str):

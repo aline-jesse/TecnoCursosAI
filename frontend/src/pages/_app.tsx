@@ -1,6 +1,12 @@
 import '../styles/globals.css';
+import React from 'react';
 
-function MyApp({ Component, pageProps }) {
+interface AppProps {
+  Component: React.ComponentType<any>;
+  pageProps: any;
+}
+
+function MyApp({ Component, pageProps }: AppProps) {
   return <Component {...pageProps} />;
 }
 

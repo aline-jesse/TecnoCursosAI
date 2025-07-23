@@ -1,5 +1,5 @@
 import { renderHook, act } from '@testing-library/react';
-import { useEditorStore } from '../useEditorStore';
+import { useEditorStore } from '../../store/editorStore';
 
 describe('useEditorStore Hook', () => {
   beforeEach(() => {

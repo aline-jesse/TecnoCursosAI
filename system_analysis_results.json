@@ -1,0 +1,177 @@
+{
+  "timestamp": "2025-07-23T12:36:14.815862",
+  "analysis": {
+    "file_structure": {
+      "backend/app/main.py": {
+        "exists": true,
+        "size": 28563,
+        "description": "Servidor principal"
+      },
+      "server_simple_fase4.py": {
+        "exists": true,
+        "size": 20519,
+        "description": "Servidor Fase 4"
+      },
+      "system/monitoring_dashboard.py": {
+        "exists": true,
+        "size": 26256,
+        "description": "Dashboard de monitoramento"
+      },
+      "frontend/src/App.jsx": {
+        "exists": true,
+        "size": 2482,
+        "description": "Frontend React"
+      },
+      "docs/STATUS_FASES_PROJETO.md": {
+        "exists": true,
+        "size": 2892,
+        "description": "Status das fases"
+      },
+      "README.md": {
+        "exists": true,
+        "size": 0,
+        "description": "Documentação principal"
+      }
+    },
+    "python_compatibility": {
+      "python_info": {
+        "version": "3.13.4 (tags/v3.13.4:8a526ec, Jun  3 2025, 17:46:04) [MSC v.1943 64 bit (AMD64)]",
+        "version_info": [
+          3,
+          13,
+          4,
+          "final",
+          0
+        ],
+        "executable": "C:\\Python313\\python.exe"
+      },
+      "imports": {
+        "fastapi": {
+          "available": true,
+          "version": "0.104.1",
+          "description": "Framework web principal"
+        },
+        "sqlalchemy": {
+          "available": true,
+          "version": "2.0.41",
+          "description": "ORM para banco de dados"
+        },
+        "pydantic": {
+          "available": true,
+          "version": "2.11.7",
+          "description": "Validação de dados"
+        },
+        "uvicorn": {
+          "available": true,
+          "version": "0.24.0",
+          "description": "Servidor ASGI"
+        }
+      }
+    },
+    "servers": {
+      "main_server": {
+        "file_exists": true,
+        "port_available": true,
+        "can_import": true,
+        "errors": []
+      },
+      "fase4_server": {
+        "file_exists": true,
+        "port_available": true,
+        "can_import": true,
+        "errors": []
+      },
+      "monitoring": {
+        "file_exists": true,
+        "port_available": true,
+        "can_import": false,
+        "errors": []
+      }
+    },
+    "frontend": {
+      "directory_exists": true,
+      "package_json_exists": true,
+      "src_exists": true,
+      "node_modules_exists": false,
+      "components": {
+        "AssetPanel.tsx": true,
+        "EditorCanvas.tsx": true,
+        "SceneList.tsx": true,
+        "Timeline.tsx": true,
+        "Toolbar.tsx": true
+      }
+    }
+  },
+  "problems": [],
+  "recommendations": [],
+  "phase_status": {
+    "fase1": {
+      "name": "Arquitetura e Fundamentos",
+      "description": "Estrutura básica do backend",
+      "status": "completed",
+      "completion_percent": 100.0,
+      "files_exist": [
+        "backend/app/main.py",
+        "backend/app/database.py",
+        "backend/app/config.py"
+      ],
+      "files_missing": []
+    },
+    "fase2": {
+      "name": "Módulos Básicos do Editor",
+      "description": "Componentes básicos do editor",
+      "status": "completed",
+      "completion_percent": 100.0,
+      "files_exist": [
+        "frontend/src/components/AssetPanel.tsx",
+        "frontend/src/components/EditorCanvas.tsx"
+      ],
+      "files_missing": []
+    },
+    "fase3": {
+      "name": "Funcionalidades Avançadas",
+      "description": "Funcionalidades avançadas do editor",
+      "status": "partial",
+      "completion_percent": 50.0,
+      "files_exist": [
+        "frontend/src/store/editorStore.ts"
+      ],
+      "files_missing": [
+        "frontend/src/components/PropertyPanel.tsx"
+      ]
+    },
+    "fase4": {
+      "name": "Integrações e Exportação",
+      "description": "APIs de exportação e TTS",
+      "status": "completed",
+      "completion_percent": 100.0,
+      "files_exist": [
+        "server_simple_fase4.py",
+        "backend/app/routers/video_export.py"
+      ],
+      "files_missing": []
+    },
+    "fase5": {
+      "name": "Testes e Produção",
+      "description": "Testes e configuração de produção",
+      "status": "completed",
+      "completion_percent": 100.0,
+      "files_exist": [
+        "tests/",
+        "backend/tests/"
+      ],
+      "files_missing": []
+    },
+    "fase6": {
+      "name": "Funcionalidades Premium",
+      "description": "Recursos enterprise e IA avançada",
+      "status": "completed",
+      "completion_percent": 100.0,
+      "files_exist": [
+        "system/monitoring_dashboard.py",
+        "backend/app/services/modern_ai_service.py"
+      ],
+      "files_missing": []
+    }
+  }
+}

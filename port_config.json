@@ -1,0 +1,11 @@
+{
+  "main_server": 8000,
+  "fase4_server": 8001,
+  "monitoring_dashboard": 8002,
+  "frontend_dev": 3000,
+  "backup_ports": [
+    8003,
+    8004,
+    8005
+  ]
+}

@@ -30,11 +30,15 @@ interface PDFOptions extends BaseExportOptions {
   pdfFormat?: 'a4' | 'a3' | 'letter' | [number, number];
 }
 
-// Remover require('gif.js') do topo do arquivo.
-// Substituir uso de GIF = require('gif.js') por:
-// @ts-expect-error
-const GIF = (await import('gif.js')).default;
-// Para jsPDF:
+// Importações dinâmicas para bibliotecas opcionais
+const importGIF = async () => {
+  try {
+    return (await import('gif.js')).default;
+  } catch {
+    console.warn('gif.js não disponível');
+    return null;
+  }
+};
 
 export const useCanvasExport = () => {
   // Exportar para imagem

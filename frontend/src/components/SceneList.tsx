@@ -21,6 +21,7 @@ const SceneList: React.FC = () => {
     addScene,
     deleteScene,
     reorderScenes,
+    updateScene,
   } = useEditorStore();
   const scenes = history.present;
 
@@ -31,6 +32,10 @@ const SceneList: React.FC = () => {
       duration: 5,
       elements: [],
       thumbnail: 'https://via.placeholder.com/150',
+      background: {
+        type: 'color',
+        value: '#ffffff',
+      },
     };
     addScene(newScene);
   };
@@ -43,7 +48,10 @@ const SceneList: React.FC = () => {
     const [reorderedItem] = items.splice(result.source.index, 1);
     items.splice(result.destination.index, 0, reorderedItem);
 
-    reorderScenes(items);
+    // Atualizar as cenas reordenadas no store
+    items.forEach((scene, index) => {
+      updateScene(scene.id, { ...scene });
+    });
   };
 
   return (

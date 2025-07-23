@@ -39,7 +39,7 @@ export interface BaseElement {
   scaleY?: number;
   opacity?: number;
   zIndex?: number;
-  content: string;
+  content?: string;
   fill?: string;
   stroke?: string;
   strokeWidth?: number;
@@ -51,6 +51,7 @@ export interface BaseElement {
 export interface TextElement extends BaseElement {
   type: 'text';
   text: string;
+  content?: string; // Para compatibilidade
   fontSize: number;
   fontFamily: string;
   fill: string;
@@ -99,6 +100,7 @@ export interface VideoElement extends BaseElement {
 export interface AudioElement extends BaseElement {
   type: 'audio';
   src: string;
+  content?: string; // Para compatibilidade
   currentTime?: number;
   duration?: number;
   volume?: number;
@@ -115,6 +117,7 @@ export interface ShapeElement extends BaseElement {
   fill: string;
   stroke: string;
   strokeWidth: number;
+  content?: string; // Para compatibilidade
   cornerRadius?: number;
   dashArray?: number[];
   lineCap?: 'butt' | 'round' | 'square';
@@ -134,7 +137,7 @@ export type EditorElement =
 // ============================================================================
 
 export interface SceneBackground {
-  type: 'color' | 'image' | 'video';
+  type: 'color' | 'image' | 'video' | 'gradient';
   value: string;
 }
 
@@ -144,6 +147,8 @@ export interface Scene {
   background: SceneBackground;
   elements: EditorElement[];
   duration?: number;
+  thumbnail?: string;
+  selectedElementId?: string;
   transitions?: {
     in?: string;
     out?: string;
@@ -154,9 +159,30 @@ export interface Scene {
 // ASSETS
 // ============================================================================
 
+export type AssetType = 'image' | 'character' | 'audio' | 'video';
+
+export type ToolType = 
+  | 'select' 
+  | 'hand'
+  | 'text' 
+  | 'rectangle' 
+  | 'circle' 
+  | 'line' 
+  | 'image' 
+  | 'video' 
+  | 'audio'
+  | 'draw'
+  | 'erase';
+
+export interface ToolConfig {
+  id: string;
+  name: string;
+  icon: string;
+}
+
 export interface Asset {
   id: string;
-  type: string;
+  type: AssetType;
   name: string;
   src: string;
   thumbnail?: string;
@@ -187,7 +213,10 @@ export interface HistoryUpdate {
 export interface EditorState {
   scenes: Scene[];
   currentScene: Scene | null;
+  currentSceneId: string | null;
   selectedElement: EditorElement | null;
+  selectedElementId: string | null;
+  draggedAsset: Asset | null;
   clipboard: EditorElement | null;
   history: History;
   assets: Asset[];
@@ -195,6 +224,21 @@ export interface EditorState {
   isDragging: boolean;
   isPlaying: boolean;
   currentTime: number;
+  canvasWidth: number;
+  canvasHeight: number;
+
+  // Scene ID management
+  setCurrentSceneId: (sceneId: string | null) => void;
+  
+  // Element selection management
+  setSelectedElementId: (id: string | null) => void;
+
+  // Canvas management
+  setCanvasSize: (width: number, height: number) => void;
+
+  // Project management
+  loadProject: (projectId: string) => Promise<void>;
+  saveProject: (projectId?: string) => Promise<any>;
 
   // Métodos de manipulação de elementos
   addElement: (element: EditorElement) => void;
@@ -220,6 +264,7 @@ export interface EditorState {
   addAsset: (asset: Asset) => void;
   deleteAsset: (assetId: string) => void;
   updateAsset: (asset: Asset) => void;
+  setDraggedAsset: (asset: Asset | null) => void;
 }
 
 // ============================================================================
@@ -266,24 +311,25 @@ export interface CanvasObject {
 // FABRIC.JS TYPES
 // ============================================================================
 
-export interface FabricObject extends fabric.Object {
+// Fabric.js types - usando any para compatibilidade
+export interface FabricObject extends Record<string, any> {
   data?: {
     id: string;
   };
 }
 
-export interface FabricEvent extends fabric.IEvent {
+export interface FabricEvent extends Record<string, any> {
   target: FabricObject;
 }
 
-export interface FabricCanvas extends fabric.Canvas {
+export interface FabricCanvas extends Record<string, any> {
   selection: boolean;
   skipTargetFind: boolean;
   selectable: boolean;
   evented: boolean;
 }
 
-export interface FabricCanvasOptions extends fabric.ICanvasOptions {
+export interface FabricCanvasOptions extends Record<string, any> {
   width: number;
   height: number;
   backgroundColor: string;
@@ -293,7 +339,7 @@ export interface FabricCanvasOptions extends fabric.ICanvasOptions {
   evented: boolean;
 }
 
-export interface FabricPoint extends fabric.Point {
+export interface FabricPoint extends Record<string, any> {
   x: number;
   y: number;
 }

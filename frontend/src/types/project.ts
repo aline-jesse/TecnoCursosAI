@@ -37,6 +37,21 @@ export interface RenderStats {
 }
 
 /**
+ * Representa estatísticas de projetos.
+ */
+export interface ProjectStatistics {
+  totalProjects: number;
+  completedProjects: number;
+  processingProjects: number;
+  errorProjects: number;
+  projectsByStatus: Record<ProjectStatus, number>;
+  projectsByType: Record<ProjectType, number>;
+  averageScenes: number;
+  totalDuration: number;
+  recentProjects: any[]; // Deveria ser Project[], mas usamos any para evitar problemas com ciclos
+}
+
+/**
  * Estrutura principal de um projeto.
  */
 export interface Project {

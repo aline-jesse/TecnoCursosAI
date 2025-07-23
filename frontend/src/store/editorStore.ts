@@ -12,7 +12,9 @@ import {
 const INITIAL_STATE: Partial<EditorState> = {
   scenes: [],
   currentScene: null,
+  currentSceneId: null,
   selectedElement: null,
+  draggedAsset: null,
   clipboard: null,
   history: {
     past: [],
@@ -24,6 +26,8 @@ const INITIAL_STATE: Partial<EditorState> = {
   isDragging: false,
   isPlaying: false,
   currentTime: 0,
+  canvasWidth: 1920,
+  canvasHeight: 1080,
 };
 
 // Helper para atualizar o histórico
@@ -39,6 +43,60 @@ const updateHistory = (state: EditorState, _update: HistoryUpdate): History => {
 
 export const useEditorStore = create<EditorState>((set, get) => ({
   ...(INITIAL_STATE as EditorState),
+
+  // Scene ID management
+  currentSceneId: null,
+  setCurrentSceneId: (sceneId: string | null) =>
+    set(state => {
+      const scene = sceneId ? state.scenes.find(s => s.id === sceneId) : null;
+      return {
+        ...state,
+        currentSceneId: sceneId,
+        currentScene: scene || null,
+      };
+    }),
+
+  // Project management
+  loadProject: async (projectId: string) => {
+    try {
+      // Mock implementation - replace with actual API call
+      const response = await fetch(`/api/projects/${projectId}`);
+      const project = await response.json();
+      
+      set(state => ({
+        ...state,
+        scenes: project.scenes || [],
+        currentSceneId: project.scenes?.[0]?.id || null,
+        currentScene: project.scenes?.[0] || null,
+        assets: project.assets || [],
+      }));
+    } catch (error) {
+      console.error('Error loading project:', error);
+    }
+  },
+
+  saveProject: async (projectId?: string) => {
+    try {
+      const state = get();
+      const projectData = {
+        scenes: state.scenes,
+        assets: state.assets,
+      };
+      
+      // Mock implementation - replace with actual API call
+      const response = await fetch(`/api/projects/${projectId || 'new'}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(projectData),
+      });
+      
+      const result = await response.json();
+      return result;
+    } catch (error) {
+      console.error('Error saving project:', error);
+      throw error;
+    }
+  },
 
   // Métodos de manipulação de elementos
   addElement: (element: EditorElement) =>
@@ -430,4 +488,19 @@ export const useEditorStore = create<EditorState>((set, get) => ({
         assets: updatedAssets,
       };
     }),
+
+
+
+  setDraggedAsset: (asset: Asset | null) =>
+    set(state => ({
+      ...state,
+      draggedAsset: asset,
+    })),
+
+  setCanvasSize: (width: number, height: number) =>
+    set(state => ({
+      ...state,
+      canvasWidth: width,
+      canvasHeight: height,
+    })),
 }));

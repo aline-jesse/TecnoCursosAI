@@ -68,7 +68,7 @@ export const useImageCache = (options: ImageCacheOptions = {}) => {
     const now = Date.now();
 
     // Remover imagens antigas
-    for (const [src, { timestamp, lastUsed }] of cache.current.entries()) {
+    for (const [src, { timestamp, lastUsed }] of Array.from(cache.current.entries())) {
       if (now - timestamp > maxAge || now - lastUsed > maxAge) {
         cache.current.delete(src);
       }

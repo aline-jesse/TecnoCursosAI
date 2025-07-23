@@ -4,7 +4,6 @@ Usando SQLite para simplicidade e portabilidade
 """
 
 from sqlalchemy import create_engine, MetaData, text
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, Session
 from sqlalchemy.pool import StaticPool
 from typing import Generator
@@ -36,8 +35,12 @@ SessionLocal = sessionmaker(
     bind=engine
 )
 
-# Base para modelos
-Base = declarative_base()
+# Base para modelos - Usando SQLAlchemy 2.0 compatible
+from sqlalchemy.orm import DeclarativeBase
+
+class Base(DeclarativeBase):
+    pass
+
 metadata = MetaData()
 
 def get_db() -> Generator[Session, None, None]:

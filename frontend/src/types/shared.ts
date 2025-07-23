@@ -28,6 +28,35 @@ export interface ToolConfig {
 }
 
 // ============================================================================
+// API
+// ============================================================================
+
+export interface ApiResponse<T = any> {
+  data: T;
+  status: number;
+  message?: string;
+  error?: ApiError;
+}
+
+export interface ApiError {
+  code: string;
+  message: string;
+  details?: any;
+}
+
+export interface PaginationConfig {
+  page: number;
+  limit: number;
+  total?: number;
+  totalPages?: number;
+}
+
+export interface SortConfig {
+  field: string;
+  order: 'asc' | 'desc';
+}
+
+// ============================================================================
 // ESTILOS
 // ============================================================================
 

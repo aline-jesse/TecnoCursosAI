@@ -4,4 +4,4 @@ export { EditorControls } from './EditorControls';
 
 // Exportações do store
 export { useEditorStore } from '../../store/editorStore';
-export type { EditorState, CanvasObject } from '../../store/editorStore';
+export type { EditorState } from '../../types/editor';

@@ -13,8 +13,8 @@ interface AccordionProps {
   headerClassName?: string;
   contentClassName?: string;
   icon?: React.ReactNode;
-  expandIcon?: string;
-  collapseIcon?: string;
+  expandIcon?: 'chevron-down';
+  collapseIcon?: 'chevron-down';
   animationDuration?: number;
 }
 

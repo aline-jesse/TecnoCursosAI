@@ -1,5 +1,5 @@
 import React from 'react';
-import { Icon } from './Icon';
+import { Icon, IconName } from './Icon';
 import './IconButton.css';
 
 type IconButtonSize = 'small' | 'medium' | 'large';
@@ -11,7 +11,7 @@ type IconButtonVariant =
   | 'ghost';
 
 interface IconButtonProps {
-  icon: string;
+  icon: IconName;
   active?: boolean;
   disabled?: boolean;
   onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;

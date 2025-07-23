@@ -10,7 +10,7 @@ gunicorn==21.2.0
 
 # === BANCO DE DADOS PRODUÇÃO ===
 sqlalchemy==2.0.23
-psycopg2-binary==2.9.7  # PostgreSQL production
+# psycopg2-binary==2.9.7  # PostgreSQL production
 pymysql==1.1.0  # MySQL fallback
 alembic==1.12.1
 
@@ -35,7 +35,7 @@ aiofiles==23.2.1
 # === PROCESSAMENTO DE DOCUMENTOS ===
 PyPDF2==3.0.1
 python-pptx==0.6.23
-PyMuPDF==1.23.8
+# PyMuPDF==1.23.8
 python-docx==1.1.0
 
 # === PROCESSAMENTO DE VÍDEO E ÁUDIO ===
@@ -45,21 +45,21 @@ pydub==0.25.1
 gtts==2.4.0
 
 # === TTS PREMIUM PRODUCTION ===
-torch==2.1.1+cpu  # CPU optimized for production
-torchaudio==2.1.1+cpu
-transformers==4.35.2
-scipy==1.11.4
-librosa==0.10.1
-soundfile==0.12.1
-ffmpeg-python==0.2.0
+# torch==2.1.1+cpu  # CPU optimized for production
+# torchaudio==2.1.1+cpu
+# transformers==4.35.2
+# scipy==1.11.4
+# librosa==0.10.1
+# soundfile==0.12.1
+# ffmpeg-python==0.2.0
 
 # === PROCESSAMENTO DE IMAGENS ===
-Pillow==10.1.0
+Pillow==9.5.0
 numpy==1.24.4
 
 # === IA AVANÇADA PRODUCTION ===
-openai==1.3.7
-sentence-transformers==2.2.2
+# openai==1.3.7
+# sentence-transformers==2.2.2
 
 # === AUTENTICAÇÃO E SEGURANÇA ===
 python-jose[cryptography]==3.3.0

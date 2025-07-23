@@ -323,7 +323,7 @@ export const useCanvasResize = (
       }
 
       // Manter proporção se necessário
-      if (aspectRatio !== null) {
+      if (aspectRatio !== null && resizeHandle !== null) {
         const ratio = aspectRatio;
         if (resizeHandle.includes('left') || resizeHandle.includes('right')) {
           newHeight = newWidth / ratio;

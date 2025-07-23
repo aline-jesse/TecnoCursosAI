@@ -1,27 +1,17 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import VideoPreviewModal from '../VideoPreviewModal';
-import { ScenePreviewConfig } from '../../types/preview';
+import { Scene } from '../../types/editor';
 import userEvent from '@testing-library/user-event';
 
 describe('VideoPreviewModal', () => {
-  const scenes: ScenePreviewConfig[] = [
+  const scenes: Scene[] = [
     {
       id: '1',
       name: 'Cena Teste',
       duration: 5,
       background: { type: 'color', value: '#fff' },
       elements: [],
-      audio: {
-        url: '',
-        volume: 1,
-        isNarration: true,
-        text: 'Texto de teste',
-        fadeIn: 0,
-        fadeOut: 0,
-        startTime: 0,
-      },
-      transition: { type: 'fade', duration: 1, easing: 'ease-in-out' },
       thumbnail: '',
     },
   ];
@@ -33,7 +23,7 @@ describe('VideoPreviewModal', () => {
         scenes={scenes}
         initialSceneIndex={0}
         onClose={() => {}}
-        onSave={() => {}}
+        onSave={async () => {}}
         onExport={() => {}}
         onRegenerateNarration={async () => ''}
       />
@@ -49,7 +39,7 @@ describe('VideoPreviewModal', () => {
         scenes={scenes}
         initialSceneIndex={0}
         onClose={() => {}}
-        onSave={() => {}}
+        onSave={async () => {}}
         onExport={() => {}}
         onRegenerateNarration={async () => ''}
       />
@@ -70,7 +60,7 @@ describe('VideoPreviewModal', () => {
         scenes={scenes}
         initialSceneIndex={0}
         onClose={() => {}}
-        onSave={() => {}}
+        onSave={async () => {}}
         onExport={onExport}
         onRegenerateNarration={async () => ''}
       />
@@ -90,7 +80,7 @@ describe('VideoPreviewModal', () => {
         scenes={scenes}
         initialSceneIndex={0}
         onClose={() => {}}
-        onSave={() => {}}
+        onSave={async () => {}}
         onExport={() => {}}
         onRegenerateNarration={onRegenerateNarration}
       />
@@ -111,7 +101,7 @@ describe('VideoPreviewModal', () => {
         scenes={scenes}
         initialSceneIndex={0}
         onClose={() => {}}
-        onSave={() => {}}
+        onSave={async () => {}}
         onExport={() => {}}
         onRegenerateNarration={async () => ''}
       />

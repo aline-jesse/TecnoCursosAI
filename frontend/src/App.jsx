@@ -1,63 +1,144 @@
 // src/App.jsx
 import React, { useState } from 'react';
-import { Link, Route, BrowserRouter as Router, Routes } from 'react-router-dom';
-import ScenePreview from './components/editor/ScenePreview';
-import ExportButton from './components/ExportButton';
-import ProjectHistory from './components/ProjectHistory';
+import './App.css';
 
-// Exemplo de cenas para preview
-const exampleScenes = [
-  {
-    texto: 'Bem-vindo ao editor!',
-    imagens: ['/static/uploads/slides/project_1_arquivo1/slide_1_img_1.png'],
-    background: '#f5f5f5',
-  },
-  {
-    texto: 'Adicione seus slides e exporte!',
-    imagens: [],
-    background: '#e3f2fd',
-  },
-];
+// Componente principal simplificado
+function App() {
+  const [message, setMessage] = useState('');
+  const [projects, setProjects] = useState([]);
 
-const App = () => {
-  const [selectedScene, setSelectedScene] = useState(0);
-  const projectId = 1; // Exemplo fixo, pode ser dinâmico
+  const testBackend = async () => {
+    try {
+      const response = await fetch('http://localhost:8000/api/health');
+      const data = await response.json();
+      setMessage(`Backend funcionando! Status: ${data.status}`);
+    } catch (error) {
+      setMessage(`Erro: ${error.message}`);
+    }
+  };
+
+  const loadProjects = async () => {
+    try {
+      const response = await fetch('http://localhost:8000/api/projects/');
+      const data = await response.json();
+      setProjects(data);
+      setMessage('Projetos carregados com sucesso!');
+    } catch (error) {
+      setMessage(`Erro ao carregar projetos: ${error.message}`);
+    }
+  };
 
   return (
-    <Router>
-      <div style={{ minHeight: '100vh', background: '#f7f9fa' }}>
-        <nav style={{ background: '#1976d2', color: '#fff', padding: 16, display: 'flex', gap: 24 }}>
-          <Link to="/" style={{ color: '#fff', fontWeight: 600, textDecoration: 'none' }}>Editor</Link>
-          <Link to="/historico" style={{ color: '#fff', fontWeight: 600, textDecoration: 'none' }}>Histórico</Link>
-        </nav>
-        <Routes>
-          <Route path="/" element={
-            <div style={{ maxWidth: 900, margin: '0 auto', padding: 24 }}>
-              <h1>Editor de Vídeo</h1>
-              <div style={{ display: 'flex', gap: 32, flexWrap: 'wrap' }}>
-                <div style={{ flex: '1 1 320px', minWidth: 320 }}>
-                  <h3>Preview da Cena</h3>
-                  <ScenePreview scene={exampleScenes[selectedScene]} />
-                  <div style={{ marginTop: 12, display: 'flex', gap: 8 }}>
-                    {exampleScenes.map((_, idx) => (
-                      <button key={idx} onClick={() => setSelectedScene(idx)} style={{ padding: 4, borderRadius: 4, background: selectedScene === idx ? '#1976d2' : '#eee', color: selectedScene === idx ? '#fff' : '#333' }}>
-                        {idx + 1}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-                <div style={{ flex: '1 1 320px', minWidth: 320 }}>
-                  <h3>Exportação</h3>
-                  <ExportButton projectId={projectId} />
-                </div>
-              </div>
-            </div>
-          } />
-          <Route path="/historico" element={<ProjectHistory />} />
-        </Routes>
-      </div>
-    </Router>
+    <div className="min-h-screen bg-gradient-to-br from-indigo-500 to-purple-600 text-white text-center">
+      <header className="max-w-4xl mx-auto px-6 py-12">
+        <h1 className="text-5xl font-bold mb-4 drop-shadow-lg">
+          🎬 TecnoCursos AI
+        </h1>
+        <p className="text-xl mb-8 opacity-90">
+          Sistema de Criação de Vídeos Educacionais com IA
+        </p>
+
+        <div className="flex flex-wrap justify-center gap-4 mb-8">
+          <button
+            onClick={testBackend}
+            className="px-6 py-3 bg-green-500 hover:bg-green-600 rounded-lg font-semibold min-w-[180px] transition-all transform hover:-translate-y-1 hover:shadow-lg"
+          >
+            Testar Backend
+          </button>
+          <button
+            onClick={loadProjects}
+            className="px-6 py-3 bg-blue-500 hover:bg-blue-600 rounded-lg font-semibold min-w-[180px] transition-all transform hover:-translate-y-1 hover:shadow-lg"
+          >
+            Carregar Projetos
+          </button>
+        </div>
+
+        {message && (
+          <div className="bg-white/20 backdrop-blur-md p-4 rounded-lg mb-6 border border-white/30">
+            {message}
+          </div>
+        )}
+
+        {projects.length > 0 && (
+          <div className="bg-white/10 backdrop-blur-md p-6 rounded-xl mb-8 border border-white/20">
+            <h3 className="text-xl font-semibold mb-4">Projetos:</h3>
+            <ul className="text-left">
+              {projects.map((project, index) => (
+                <li
+                  key={index}
+                  className="py-2 border-b border-white/10 last:border-0"
+                >
+                  {project.name || project.title || `Projeto ${index + 1}`}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        <div className="bg-white/10 backdrop-blur-md p-6 rounded-xl mb-8 border border-white/20">
+          <h3 className="text-xl font-semibold mb-4">
+            Funcionalidades Disponíveis:
+          </h3>
+          <ul className="text-left">
+            <li className="py-2 border-b border-white/10">
+              ✅ Backend FastAPI funcionando
+            </li>
+            <li className="py-2 border-b border-white/10">
+              ✅ Frontend React operacional
+            </li>
+            <li className="py-2 border-b border-white/10">
+              ✅ Sistema de autenticação
+            </li>
+            <li className="py-2 border-b border-white/10">
+              ✅ Upload de arquivos
+            </li>
+            <li className="py-2 border-b border-white/10">
+              ✅ Geração de vídeos
+            </li>
+            <li className="py-2 border-b border-white/10 last:border-0">
+              ✅ APIs RESTful completas
+            </li>
+          </ul>
+        </div>
+
+        <div className="bg-white/10 backdrop-blur-md p-6 rounded-xl mb-8 border border-white/20">
+          <h3 className="text-xl font-semibold mb-4">Links Úteis:</h3>
+          <ul className="text-left">
+            <li className="py-2 border-b border-white/10">
+              <a
+                href="http://localhost:8000/docs"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-white hover:text-yellow-300 hover:underline font-medium"
+              >
+                📖 API Documentation
+              </a>
+            </li>
+            <li className="py-2 border-b border-white/10">
+              <a
+                href="http://localhost:8000/api/health"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-white hover:text-yellow-300 hover:underline font-medium"
+              >
+                ❤️ Health Check
+              </a>
+            </li>
+            <li className="py-2 border-b border-white/10 last:border-0">
+              <a
+                href="http://localhost:8000/api/status"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-white hover:text-yellow-300 hover:underline font-medium"
+              >
+                📊 System Status
+              </a>
+            </li>
+          </ul>
+        </div>
+      </header>
+    </div>
   );
-};
+}
 
 export default App;

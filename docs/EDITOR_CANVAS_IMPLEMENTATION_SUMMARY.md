@@ -1,3 +1,5 @@
+
+
 # EditorCanvas.jsx - Implementação Completa
 
 ## 📋 Resumo da Implementação

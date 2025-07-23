@@ -1,0 +1,92 @@
+{
+  "Server Health Check": {
+    "status": "PASSOU",
+    "details": "Status: healthy",
+    "timestamp": "2025-07-23T12:08:45.132404"
+  },
+  "Video Export /api/video/export/formats": {
+    "status": "PASSOU",
+    "details": "Status: 200",
+    "timestamp": "2025-07-23T12:08:45.133911"
+  },
+  "Video Export /api/video/export/quality-options": {
+    "status": "PASSOU",
+    "details": "Status: 200",
+    "timestamp": "2025-07-23T12:08:45.136451"
+  },
+  "Video Export /api/video/export/templates": {
+    "status": "PASSOU",
+    "details": "Status: 200",
+    "timestamp": "2025-07-23T12:08:45.397744"
+  },
+  "TTS Generate": {
+    "status": "PASSOU",
+    "details": "Status: 200",
+    "timestamp": "2025-07-23T12:08:45.401454"
+  },
+  "TTS Advanced Voices": {
+    "status": "PASSOU",
+    "details": "Status: 200",
+    "timestamp": "2025-07-23T12:08:45.666377"
+  },
+  "Avatar /api/avatar/styles": {
+    "status": "PASSOU",
+    "details": "Status: 200",
+    "timestamp": "2025-07-23T12:08:45.669028"
+  },
+  "Avatar /api/avatar/generate": {
+    "status": "PASSOU",
+    "details": "Status: 200",
+    "timestamp": "2025-07-23T12:08:45.934423"
+  },
+  "Avatar /api/avatar/status": {
+    "status": "PASSOU",
+    "details": "Status: 404",
+    "timestamp": "2025-07-23T12:08:45.937024"
+  },
+  "Files List": {
+    "status": "PASSOU",
+    "details": "Status: 200",
+    "timestamp": "2025-07-23T12:08:46.202177"
+  },
+  "Upload Endpoint": {
+    "status": "FALHOU",
+    "details": "Status HTTP: 200",
+    "timestamp": "2025-07-23T12:08:46.204550"
+  },
+  "Notifications REST": {
+    "status": "PASSOU",
+    "details": "Status: 200",
+    "timestamp": "2025-07-23T12:08:46.472071"
+  },
+  "Notifications WebSocket": {
+    "status": "PASSOU",
+    "details": "Endpoint WebSocket disponível",
+    "timestamp": "2025-07-23T12:08:46.474800"
+  },
+  "Integration /api/analytics": {
+    "status": "PASSOU",
+    "details": "Endpoint ativo - Status: 200",
+    "timestamp": "2025-07-23T12:08:46.737766"
+  },
+  "Integration /api/batch": {
+    "status": "PASSOU",
+    "details": "Endpoint ativo - Status: 200",
+    "timestamp": "2025-07-23T12:08:46.740265"
+  },
+  "Integration /api/websocket": {
+    "status": "PASSOU",
+    "details": "Endpoint ativo - Status: 200",
+    "timestamp": "2025-07-23T12:08:47.003864"
+  },
+  "Integration /api/scenes": {
+    "status": "PASSOU",
+    "details": "Endpoint ativo - Status: 200",
+    "timestamp": "2025-07-23T12:08:47.006434"
+  },
+  "Integration /enterprise": {
+    "status": "PASSOU",
+    "details": "Endpoint ativo - Status: 200",
+    "timestamp": "2025-07-23T12:08:47.271854"
+  }
+}

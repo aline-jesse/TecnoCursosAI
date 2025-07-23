@@ -15,6 +15,7 @@ interface TouchState {
   startAngle: number | null;
   lastAngle: number | null;
   touchCount: number;
+  startTime: number;
 }
 
 interface TouchHandlers {
@@ -56,6 +57,7 @@ export const useCanvasTouch = (handlers: TouchHandlers = {}) => {
     startAngle: null,
     lastAngle: null,
     touchCount: 0,
+    startTime: 0,
   });
 
   // Converter coordenadas do toque para coordenadas do canvas
@@ -107,6 +109,7 @@ export const useCanvasTouch = (handlers: TouchHandlers = {}) => {
         lastPoint: point,
         currentPoint: point,
         touchCount: event.touches.length,
+        startTime: performance.now(),
       };
 
       if (event.touches.length === 2) {
@@ -229,6 +232,7 @@ export const useCanvasTouch = (handlers: TouchHandlers = {}) => {
           startAngle: null,
           lastAngle: null,
           touchCount: 0,
+          startTime: 0,
         };
       } else {
         touchState.current.touchCount = remainingTouches;

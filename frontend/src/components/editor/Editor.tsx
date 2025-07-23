@@ -1,7 +1,7 @@
 import React from 'react';
 import { EditorProvider } from '../../contexts/EditorContext';
 import { useEditorStore } from '../../store/editorStore';
-import { EditorElement, Scene, ToolType } from '../../types';
+import { EditorElement, Scene, ToolType } from '../../types/editor';
 import './Editor.css';
 import EditorCanvas from './EditorCanvas';
 import { Sidebar } from './Sidebar';

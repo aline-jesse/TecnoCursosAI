@@ -1,0 +1,128 @@
+{
+  "unit_tests": {
+    "health_endpoint": {
+      "status": "PASSED",
+      "response_time": "N/A",
+      "data": {
+        "status": "healthy",
+        "timestamp": "2025-07-23T12:11:38.748304",
+        "uptime": 394.518408536911,
+        "version": "1.0.0",
+        "phase": "Fase 4 - Integrações e Exportação",
+        "endpoints": {
+          "video_export": true,
+          "tts": true,
+          "avatar": true,
+          "files": true,
+          "notifications": true
+        }
+      }
+    },
+    "video_export_formats": {
+      "status": "PASSED",
+      "formats_count": 4
+    },
+    "tts_voices": {
+      "status": "PASSED",
+      "voices_count": 4
+    },
+    "avatar_styles": {
+      "status": "PASSED",
+      "styles_count": 4
+    }
+  },
+  "integration_tests": {
+    "video_export_flow": {
+      "status": "PASSED",
+      "job_id": "fade6682-c6b1-4ce1-965d-a28dc86e0b00"
+    },
+    "tts_generation_flow": {
+      "status": "PASSED",
+      "basic_audio_id": "f4205690-f113-4400-b527-9288bb9e14df",
+      "advanced_audio_id": "9f3df8d3-107b-46b4-98bd-0c3cae2c8ace"
+    },
+    "avatar_generation_flow": {
+      "status": "PASSED",
+      "avatar_id": "efe18f27-a7fe-42ec-be3c-5792bfbabd9d"
+    },
+    "notifications_flow": {
+      "status": "PASSED",
+      "notification_id": "008d6cd9-b84d-4923-9efd-5c681b17801b",
+      "user_id": "test_user_integration"
+    }
+  },
+  "performance_tests": {
+    "response_times": {
+      "status": "PASSED",
+      "response_times": {
+        "/api/health": {
+          "avg": 0.001123356819152832,
+          "min": 0.0010614395141601562,
+          "max": 0.001194000244140625,
+          "median": 0.0011175870895385742
+        },
+        "/api/video/export/formats": {
+          "avg": 0.0011572837829589844,
+          "min": 0.0010776519775390625,
+          "max": 0.0012350082397460938,
+          "median": 0.001147150993347168
+        },
+        "/api/tts/voices": {
+          "avg": 0.0012336015701293946,
+          "min": 0.0010824203491210938,
+          "max": 0.0017054080963134766,
+          "median": 0.0011969804763793945
+        },
+        "/api/avatar/styles": {
+          "avg": 0.0012008428573608398,
+          "min": 0.00109100341796875,
+          "max": 0.0015797615051269531,
+          "median": 0.0011298656463623047
+        }
+      },
+      "threshold": 2.0
+    },
+    "concurrent_requests": {
+      "status": "PASSED",
+      "total_requests": 100,
+      "successful_requests": 100,
+      "success_rate": 1.0,
+      "requests_per_second": 311.7343033012901,
+      "total_time": 0.3207859992980957,
+      "concurrent_users": 20
+    }
+  },
+  "security_tests": {
+    "sql_injection": {
+      "status": "FAILED",
+      "vulnerabilities_found": 5,
+      "payloads_tested": 5,
+      "vulnerable_payloads": [
+        "' OR '1'='1",
+        "'; DROP TABLE users; --",
+        "1' UNION SELECT NULL--",
+        "admin'--",
+        "' OR 1=1--"
+      ]
+    },
+    "xss_protection": {
+      "status": "FAILED",
+      "vulnerabilities_found": 4,
+      "payloads_tested": 5,
+      "vulnerable_payloads": [
+        "<script>alert('xss')</script>",
+        "javascript:alert('xss')",
+        "<img src=x onerror=alert('xss')>",
+        "';alert(String.fromCharCode(88,83,83))//';alert(String.fromCharCode(88,83,83))//"
+      ]
+    }
+  },
+  "summary": {
+    "total_tests": 12,
+    "passed_tests": 10,
+    "failed_tests": 2,
+    "success_rate": 83.33333333333334,
+    "timestamp": "2025-07-23T12:11:39.152621",
+    "status": "APPROVED"
+  }
+}

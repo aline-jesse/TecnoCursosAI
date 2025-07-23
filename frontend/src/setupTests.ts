@@ -109,4 +109,4 @@ const getContextMock = jest.fn((contextId: string) => {
   return null;
 });
 
-HTMLCanvasElement.prototype.getContext = getContextMock;
+HTMLCanvasElement.prototype.getContext = getContextMock as any;

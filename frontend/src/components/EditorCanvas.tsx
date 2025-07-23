@@ -254,7 +254,7 @@ const EditorCanvas: React.FC<EditorCanvasProps> = ({
         opacity: fabricObject.opacity || 1,
       };
 
-      updateElement(currentSceneId, elementId, updatedElement);
+      updateElement(updatedElement);
     },
     [currentSceneId, updateElement]
   );
@@ -460,7 +460,7 @@ const EditorCanvas: React.FC<EditorCanvasProps> = ({
         src: draggedAsset.src,
       };
 
-      addElement(currentSceneId, newElement);
+      addElement(newElement);
       setDraggedAsset(null);
     };
 
@@ -503,7 +503,7 @@ const EditorCanvas: React.FC<EditorCanvasProps> = ({
       fill: '#000000',
     };
 
-    addElement(currentSceneId, newElement);
+    addElement(newElement);
   }, [currentSceneId, addElement]);
 
   // Adicionar forma
@@ -526,7 +526,7 @@ const EditorCanvas: React.FC<EditorCanvasProps> = ({
         strokeWidth: 2,
       };
 
-      addElement(currentSceneId, newElement);
+      addElement(newElement);
     },
     [currentSceneId, addElement]
   );
@@ -535,7 +535,7 @@ const EditorCanvas: React.FC<EditorCanvasProps> = ({
   const deleteSelectedElement = useCallback(() => {
     if (!currentSceneId || !selectedElementId) return;
 
-    deleteElement(currentSceneId, selectedElementId);
+    deleteElement(selectedElementId);
 
     if (fabricCanvasRef.current) {
       const canvas = fabricCanvasRef.current;

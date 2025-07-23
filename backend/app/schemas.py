@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from datetime import datetime
 from typing import Optional, List, Union, Dict, Any
-from pydantic import BaseModel, EmailStr, Field, validator
+from pydantic import BaseModel, EmailStr, Field, field_validator
 import re
 
 # ========================= BASE SCHEMAS =========================
@@ -33,13 +33,15 @@ class UserCreate(UserBase):
     password: str = Field(..., min_length=8, max_length=100)
     confirm_password: str = Field(..., min_length=8, max_length=100)
     
-    @validator('username')
+    @field_validator('username')
+    @classmethod
     def validate_username(cls, v):
         if not re.match(r'^[a-zA-Z0-9_]+$', v):
             raise ValueError('Username deve conter apenas letras, números e underscore')
         return v
     
-    @validator('password')
+    @field_validator('password')
+    @classmethod
     def validate_password(cls, v):
         if len(v) < 8:
             raise ValueError('Senha deve ter pelo menos 8 caracteres')
@@ -51,9 +53,10 @@ class UserCreate(UserBase):
             raise ValueError('Senha deve ter pelo menos um número')
         return v
     
-    @validator('confirm_password')
-    def passwords_match(cls, v, values):
-        if 'password' in values and v != values['password']:
+    @field_validator('confirm_password')
+    @classmethod
+    def passwords_match(cls, v, info):
+        if 'password' in info.data and v != info.data['password']:
             raise ValueError('Senhas não coincidem')
         return v
 
@@ -111,7 +114,8 @@ class ProjectBase(BaseModel):
     estimated_duration: Optional[int] = Field(None, gt=0)
     is_public: bool = Field(default=False)
     
-    @validator('difficulty_level')
+    @field_validator('difficulty_level')
+    @classmethod
     def validate_difficulty(cls, v):
         valid_levels = ['beginner', 'intermediate', 'advanced']
         if v not in valid_levels:
@@ -296,7 +300,8 @@ class PasswordChange(BaseModel):
     new_password: str = Field(..., min_length=8, max_length=100)
     confirm_password: str = Field(..., min_length=8, max_length=100)
     
-    @validator('new_password')
+    @field_validator('new_password')
+    @classmethod
     def validate_new_password(cls, v):
         if len(v) < 8:
             raise ValueError('Nova senha deve ter pelo menos 8 caracteres')
@@ -308,9 +313,10 @@ class PasswordChange(BaseModel):
             raise ValueError('Nova senha deve ter pelo menos um número')
         return v
     
-    @validator('confirm_password')
-    def passwords_match(cls, v, values):
-        if 'new_password' in values and v != values['new_password']:
+    @field_validator('confirm_password')
+    @classmethod
+    def passwords_match(cls, v, info):
+        if 'new_password' in info.data and v != info.data['new_password']:
             raise ValueError('Senhas não coincidem')
         return v
 
