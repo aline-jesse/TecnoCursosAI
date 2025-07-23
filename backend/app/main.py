@@ -96,6 +96,16 @@ except ImportError:
     _audio_admin_available = False
     print("⚠️ Router de admin de áudios não disponível")
 
+# Tentar importar router de notificações
+try:
+    from app.routers.notifications import router as notifications_router
+    _notifications_available = True
+    print("✅ Router de notificações disponível")
+except ImportError:
+    notifications_router = None
+    _notifications_available = False
+    print("⚠️ Router de notificações não disponível")
+
 # Tentar importar routers avançados
 try:
     from app.routers import batch_upload, websocket_router, analytics
@@ -340,6 +350,14 @@ if _audio_admin_available and audio_admin:
         logger.info("✅ Audio Admin Router incluído")
     except Exception as e:
         logger.error(f"❌ Erro ao incluir Audio Admin router: {e}")
+
+# Router de notificações
+if _notifications_available and notifications_router:
+    try:
+        app.include_router(notifications_router, prefix="/api", tags=["Notificações"])
+        logger.info("✅ Router de notificações incluído")
+    except Exception as e:
+        logger.error(f"❌ Erro ao incluir router de notificações: {e}")
 
 # Routers avançados
 if _advanced_routers_available:
