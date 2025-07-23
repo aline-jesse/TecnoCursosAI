@@ -1,44 +1,72 @@
-# Estrutura do Projeto TecnoCursos AI
+# Estrutura do Projeto
 
-## Visão Geral
-O TecnoCursos AI é um sistema SaaS completo para geração de vídeos educacionais com IA, combinando backend FastAPI e frontend React.
+## Organização de Diretórios
 
-## Arquitetura Principal
+1. `/src/components/editor/` - Componentes específicos do editor
+   - `EditorCanvas.tsx` - Canvas principal do editor
+   - `ScenePreview.tsx` - Preview de cenas
+   - Outros componentes relacionados ao editor
 
-### Backend (FastAPI)
-- **Ponto de entrada**: [app/main.py](mdc:app/main.py) - Aplicação principal FastAPI
-- **Configuração**: [app/config.py](mdc:app/config.py) - Configurações do sistema
-- **Banco de dados**: [app/database.py](mdc:app/database.py) - Configuração SQLAlchemy
-- **Modelos**: [app/models.py](mdc:app/models.py) - Modelos SQLAlchemy (User, Project, FileUpload, Video)
-- **Autenticação**: [app/auth.py](mdc:app/auth.py) - Sistema JWT e autenticação
-- **Schemas**: [app/schemas.py](mdc:app/schemas.py) - Schemas Pydantic para validação
+2. `/src/store/` - Gerenciamento de estado
+   - `editorStore.ts` - Store principal do editor
+   - Outros stores relacionados
 
-### Frontend (React)
-- **Ponto de entrada**: [src/index.js](mdc:src/index.js) - Aplicação React principal
-- **Componente principal**: [src/App.jsx](mdc:src/App.jsx) - Componente raiz
-- **Serviços API**: [src/services/apiService.ts](mdc:src/services/apiService.ts) - Cliente HTTP
-- **Store**: [src/store/editorStore.ts](mdc:src/store/editorStore.ts) - Gerenciamento de estado (Zustand)
+3. `/src/types/` - Definições de tipos
+   - `editor.ts` - Tipos principais do editor
+   - Outros arquivos de tipos
 
-### Configuração
-- **Dependências**: [package.json](mdc:package.json) - Dependências Node.js/React
-- **Configuração Tailwind**: [tailwind.config.js](mdc:tailwind.config.js) - Estilização CSS
-- **ESLint**: [.eslintrc.js](mdc:.eslintrc.js) - Linting JavaScript/TypeScript
+4. `/src/services/` - Serviços e APIs
+   - `apiService.ts` - Serviço principal de API
+   - Outros serviços
 
-## Diretórios Principais
-- `/app/` - Backend FastAPI completo
-- `/src/` - Frontend React
-- `/static/` - Arquivos estáticos
-- `/uploads/` - Uploads de usuários
-- `/cache/` - Cache do sistema
-- `/logs/` - Logs da aplicação
+5. `/src/hooks/` - Hooks customizados
+   - `useTemplates.ts` - Hook para templates
+   - Outros hooks
 
-## Padrões de Desenvolvimento
-- **Backend**: FastAPI com SQLAlchemy, JWT, Pydantic
-- **Frontend**: React 18+ com TypeScript, TailwindCSS, Zustand
-- **Autenticação**: JWT tokens (access + refresh)
-- **Banco**: SQLite para desenvolvimento, PostgreSQL para produção
-- **Deploy**: Docker + Docker Compose
-description:
-globs:
-alwaysApply: false
----
+6. `/src/data/` - Dados estáticos
+   - `initialData.ts` - Dados iniciais
+   - `sceneTemplates.ts` - Templates de cena
+
+## Convenções de Código
+
+1. Nomes de arquivos:
+   - Componentes: PascalCase (ex: EditorCanvas.tsx)
+   - Hooks: camelCase começando com 'use' (ex: useTemplates.ts)
+   - Serviços: camelCase terminando com 'Service' (ex: apiService.ts)
+   - Tipos: camelCase (ex: editor.ts)
+
+2. Estrutura de componentes:
+   - Props interface no topo
+   - Hooks e refs logo após
+   - Funções auxiliares
+   - Renderização
+
+3. Importações:
+   - React primeiro
+   - Bibliotecas externas
+   - Componentes internos
+   - Hooks
+   - Tipos
+   - Estilos por último
+
+## Padrões de Implementação
+
+1. Componentes:
+   - Use TypeScript e interfaces para props
+   - Evite props drilling, use context ou stores
+   - Mantenha componentes pequenos e focados
+
+2. Estado:
+   - Use Zustand para estado global
+   - Use hooks para lógica reutilizável
+   - Mantenha estado local quando possível
+
+3. Tipos:
+   - Defina interfaces para todas as estruturas de dados
+   - Use union types para variações
+   - Evite `any`
+
+4. Estilização:
+   - Use CSS Modules ou Tailwind
+   - Mantenha estilos próximos aos componentes
+   - Use variáveis CSS para temas

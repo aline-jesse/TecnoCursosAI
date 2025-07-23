@@ -1,0 +1,32 @@
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  [data-theme='reduced-motion'] {
+    --transition-duration-fast: 0.01ms;
+    --transition-duration-normal: 0.01ms;
+    --transition-duration-slow: 0.01ms;
+    --animation-duration-fast: 0.01ms;
+    --animation-duration-normal: 0.01ms;
+    --animation-duration-slow: 0.01ms;
+  }
+
+  .fade-in,
+  .slide-in-up,
+  .slide-in-down,
+  .slide-in-left,
+  .slide-in-right {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .spin {
+    animation: none !important;
+    transform: none !important;
+  }
+}

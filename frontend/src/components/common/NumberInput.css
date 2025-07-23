@@ -1,0 +1,196 @@
+@import url('../../styles/variables.css');
+
+.number-input {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
+  width: 100%;
+}
+
+.number-input-label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--text-primary);
+}
+
+.number-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.number-input-field {
+  width: 100%;
+  padding: var(--spacing-2);
+  padding-right: calc(var(--spacing-2) * 2 + 2em);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-base);
+  color: var(--text-primary);
+  background-color: var(--surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  transition: all 200ms ease;
+  appearance: textfield;
+}
+
+.number-input-field::-webkit-inner-spin-button,
+.number-input-field::-webkit-outer-spin-button {
+  appearance: none;
+  margin: 0;
+}
+
+.number-input-field:hover {
+  border-color: var(--border-hover);
+}
+
+.number-input-field:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px var(--primary-light);
+}
+
+.number-input-controls {
+  position: absolute;
+  right: var(--spacing-1);
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.number-input-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  padding: 0;
+  border: none;
+  background-color: var(--surface-hover);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 200ms ease;
+  border-radius: 2px;
+}
+
+.number-input-button:hover {
+  background-color: var(--surface-active);
+  color: var(--text-primary);
+}
+
+.number-input-button:active {
+  transform: scale(0.95);
+}
+
+/* Input sizes */
+.number-input-sm .number-input-field {
+  padding: var(--spacing-1) var(--spacing-2);
+  padding-right: calc(var(--spacing-2) * 2 + 2em);
+  font-size: var(--font-size-sm);
+}
+
+.number-input-sm .number-input-button {
+  width: 14px;
+  height: 14px;
+}
+
+.number-input-lg .number-input-field {
+  padding: var(--spacing-3) var(--spacing-4);
+  padding-right: calc(var(--spacing-4) * 2 + 2em);
+  font-size: var(--font-size-lg);
+}
+
+.number-input-lg .number-input-button {
+  width: 18px;
+  height: 18px;
+}
+
+/* Input states */
+.number-input-disabled .number-input-field {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background-color: var(--surface-disabled);
+}
+
+.number-input-disabled .number-input-button {
+  opacity: 0.6;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.number-input-error .number-input-field {
+  border-color: var(--error);
+}
+
+.number-input-error .number-input-field:focus {
+  box-shadow: 0 0 0 2px var(--error-light);
+}
+
+.number-input-success .number-input-field {
+  border-color: var(--success);
+}
+
+.number-input-success .number-input-field:focus {
+  box-shadow: 0 0 0 2px var(--success-light);
+}
+
+/* Input helper text */
+.number-input-helper {
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  margin-top: var(--spacing-1);
+}
+
+.number-input-error .number-input-helper {
+  color: var(--error);
+}
+
+.number-input-success .number-input-helper {
+  color: var(--success);
+}
+
+/* Input with prefix/suffix */
+.number-input-prefix,
+.number-input-suffix {
+  display: flex;
+  align-items: center;
+  padding: 0 var(--spacing-2);
+  color: var(--text-secondary);
+  background-color: var(--surface-hover);
+  border: 1px solid var(--border-color);
+  font-size: var(--font-size-base);
+}
+
+.number-input-prefix {
+  border-right: none;
+  border-top-left-radius: var(--border-radius);
+  border-bottom-left-radius: var(--border-radius);
+}
+
+.number-input-suffix {
+  border-left: none;
+  border-top-right-radius: var(--border-radius);
+  border-bottom-right-radius: var(--border-radius);
+}
+
+.number-input-with-prefix .number-input-field {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.number-input-with-suffix .number-input-field {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+/* Input group */
+.number-input-group {
+  display: flex;
+  gap: var(--spacing-2);
+}
+
+.number-input-group > .number-input {
+  flex: 1;
+}

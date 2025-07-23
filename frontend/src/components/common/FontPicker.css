@@ -1,0 +1,23 @@
+.font-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.font-picker-preview {
+  font-size: 16px;
+  line-height: 1.5;
+  padding: 8px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background-color: var(--surface-color);
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.font-picker-preview[data-disabled='true'] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

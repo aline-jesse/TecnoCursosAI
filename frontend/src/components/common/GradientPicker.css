@@ -1,0 +1,83 @@
+.gradient-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.gradient-picker-header {
+  display: flex;
+  gap: 16px;
+  align-items: flex-end;
+}
+
+.gradient-preview {
+  height: 80px;
+  border-radius: 4px;
+  border: 1px solid var(--border-color);
+}
+
+.gradient-stops {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.gradient-stop {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr auto;
+  gap: 8px;
+  align-items: flex-end;
+  padding: 8px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background-color: var(--surface-color);
+}
+
+.gradient-stop-remove {
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--error-color);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.gradient-stop-remove:hover {
+  background-color: var(--error-color-light);
+}
+
+.gradient-stop-remove:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.gradient-stop-add {
+  width: 100%;
+  height: 32px;
+  border: 1px dashed var(--border-color);
+  background: none;
+  color: var(--text-color);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.gradient-stop-add:hover {
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+  background-color: var(--primary-color-light);
+}
+
+.gradient-stop-add:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

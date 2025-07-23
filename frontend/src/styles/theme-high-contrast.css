@@ -1,0 +1,46 @@
+[data-theme='high-contrast'] {
+  /* Cores */
+  --primary-color: #ffff00;
+  --primary-color-light: rgba(255, 255, 0, 0.1);
+  --secondary-color: #ffffff;
+  --success-color: #00ff00;
+  --warning-color: #ffff00;
+  --error-color: #ff0000;
+  --error-color-light: rgba(255, 0, 0, 0.1);
+  --info-color: #00ffff;
+
+  /* Cores de fundo */
+  --background-color: #000000;
+  --surface-color: #000000;
+  --surface-color-hover: #1a1a1a;
+  --surface-color-active: #333333;
+
+  /* Cores de texto */
+  --text-color: #ffffff;
+  --text-color-secondary: #ffffff;
+  --text-color-disabled: #808080;
+
+  /* Cores de borda */
+  --border-color: #ffffff;
+  --border-color-hover: #ffff00;
+  --border-color-focus: #ffff00;
+
+  /* Sombras */
+  --shadow-sm: none;
+  --shadow-md: none;
+  --shadow-lg: none;
+  --shadow-xl: none;
+
+  /* Ajustes de acessibilidade */
+  --border-width: 2px;
+  --border-radius-sm: 0;
+  --border-radius-md: 0;
+  --border-radius-lg: 0;
+  --border-radius-xl: 0;
+  --border-radius-circle: 0;
+  --focus-ring-width: 4px;
+  --focus-ring-color: #ffff00;
+  --outline-width: 4px;
+  --outline-color: #ffff00;
+  --outline-offset: 2px;
+}

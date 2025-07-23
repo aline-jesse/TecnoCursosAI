@@ -1,0 +1,173 @@
+@import url('../../styles/variables.css');
+
+.divider {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  margin: var(--spacing-4) 0;
+}
+
+.divider-horizontal {
+  flex-direction: row;
+}
+
+.divider-vertical {
+  flex-direction: column;
+  height: 100%;
+  margin: 0 var(--spacing-4);
+}
+
+.divider-line {
+  flex: 1;
+  height: 1px;
+  background-color: var(--border-color);
+  transition: all 200ms ease;
+}
+
+.divider-vertical .divider-line {
+  width: 1px;
+  height: 100%;
+}
+
+.divider-content {
+  padding: 0 var(--spacing-2);
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+  white-space: nowrap;
+}
+
+.divider-vertical .divider-content {
+  padding: var(--spacing-2) 0;
+}
+
+/* Divider sizes */
+.divider-sm {
+  margin: var(--spacing-2) 0;
+}
+
+.divider-sm.divider-vertical {
+  margin: 0 var(--spacing-2);
+}
+
+.divider-lg {
+  margin: var(--spacing-6) 0;
+}
+
+.divider-lg.divider-vertical {
+  margin: 0 var(--spacing-6);
+}
+
+/* Divider variants */
+.divider-dashed .divider-line {
+  background: repeating-linear-gradient(
+    to right,
+    var(--border-color) 0,
+    var(--border-color) 4px,
+    transparent 4px,
+    transparent 8px
+  );
+}
+
+.divider-vertical.divider-dashed .divider-line {
+  background: repeating-linear-gradient(
+    to bottom,
+    var(--border-color) 0,
+    var(--border-color) 4px,
+    transparent 4px,
+    transparent 8px
+  );
+}
+
+.divider-dotted .divider-line {
+  background: repeating-linear-gradient(
+    to right,
+    var(--border-color) 0,
+    var(--border-color) 1px,
+    transparent 1px,
+    transparent 4px
+  );
+}
+
+.divider-vertical.divider-dotted .divider-line {
+  background: repeating-linear-gradient(
+    to bottom,
+    var(--border-color) 0,
+    var(--border-color) 1px,
+    transparent 1px,
+    transparent 4px
+  );
+}
+
+/* Divider colors */
+.divider-primary .divider-line {
+  background-color: var(--primary);
+}
+
+.divider-primary .divider-content {
+  color: var(--primary);
+}
+
+.divider-secondary .divider-line {
+  background-color: var(--secondary);
+}
+
+.divider-secondary .divider-content {
+  color: var(--secondary);
+}
+
+.divider-success .divider-line {
+  background-color: var(--success);
+}
+
+.divider-success .divider-content {
+  color: var(--success);
+}
+
+.divider-error .divider-line {
+  background-color: var(--error);
+}
+
+.divider-error .divider-content {
+  color: var(--error);
+}
+
+/* Divider alignment */
+.divider-left .divider-content {
+  padding-left: 0;
+}
+
+.divider-right .divider-content {
+  padding-right: 0;
+}
+
+.divider-center {
+  justify-content: center;
+}
+
+/* Divider with icon */
+.divider-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: var(--surface);
+  color: var(--text-secondary);
+}
+
+.divider-primary .divider-icon {
+  color: var(--primary);
+}
+
+.divider-secondary .divider-icon {
+  color: var(--secondary);
+}
+
+.divider-success .divider-icon {
+  color: var(--success);
+}
+
+.divider-error .divider-icon {
+  color: var(--error);
+}

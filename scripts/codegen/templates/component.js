@@ -4,13 +4,15 @@
  */
 
 const componentTemplate = (componentName, props = [], imports = []) => {
-  const propsInterface = props.length > 0 
-    ? `interface ${componentName}Props {\n  ${props.map(p => `${p.name}: ${p.type}`).join('\n  ')}\n}`
-    : '';
+  const propsInterface =
+    props.length > 0
+      ? `interface ${componentName}Props {\n  ${props.map(p => `${p.name}: ${p.type}`).join('\n  ')}\n}`
+      : '';
 
-  const propsDestructuring = props.length > 0 
-    ? `{ ${props.map(p => p.name).join(', ') } }: ${componentName}Props`
-    : '';
+  const propsDestructuring =
+    props.length > 0
+      ? `{ ${props.map(p => p.name).join(', ')} }: ${componentName}Props`
+      : '';
 
   return `import React from 'react';
 import './${componentName}.css';
@@ -80,7 +82,7 @@ const ${componentName}: React.FC<${props.length > 0 ? `${componentName}Props` : 
 export default ${componentName};`;
 };
 
-const cssTemplate = (componentName) => {
+const cssTemplate = componentName => {
   return `.${componentName.toLowerCase()}-container {
   @apply p-4 border border-gray-200 rounded-lg bg-white shadow-soft;
 }
@@ -119,7 +121,7 @@ const cssTemplate = (componentName) => {
 }`;
 };
 
-const testTemplate = (componentName) => {
+const testTemplate = componentName => {
   return `import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
@@ -180,7 +182,7 @@ describe('${componentName} Component', () => {
 });`;
 };
 
-const storyTemplate = (componentName) => {
+const storyTemplate = componentName => {
   return `import type { Meta, StoryObj } from '@storybook/react';
 import ${componentName} from './${componentName}';
 
@@ -223,4 +225,4 @@ module.exports = {
   cssTemplate,
   testTemplate,
   storyTemplate,
-}; 
+};

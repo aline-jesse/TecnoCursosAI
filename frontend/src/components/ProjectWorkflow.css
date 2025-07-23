@@ -1,0 +1,238 @@
+@import url('../../styles/variables.css');
+
+.project-workflow {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+  padding: var(--spacing-4);
+  background-color: var(--surface);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-sm);
+}
+
+.project-workflow-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-4);
+}
+
+.project-workflow-title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.project-workflow-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+
+.project-workflow-button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-2) var(--spacing-4);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  color: white;
+  background-color: var(--primary);
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: all 200ms ease;
+}
+
+.project-workflow-button:hover {
+  background-color: var(--primary-dark);
+}
+
+.project-workflow-button:active {
+  transform: scale(0.98);
+}
+
+.project-workflow-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.project-workflow-button-secondary {
+  color: var(--text-primary);
+  background-color: var(--surface-hover);
+}
+
+.project-workflow-button-secondary:hover {
+  background-color: var(--surface-active);
+}
+
+.project-workflow-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+}
+
+.project-workflow-step {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-4);
+  padding: var(--spacing-4);
+  background-color: var(--surface-hover);
+  border-radius: var(--border-radius);
+  transition: all 200ms ease;
+}
+
+.project-workflow-step:hover {
+  background-color: var(--surface-active);
+}
+
+.project-workflow-step-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  color: var(--text-secondary);
+  background-color: var(--surface);
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.project-workflow-step-content {
+  flex: 1;
+}
+
+.project-workflow-step-title {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  color: var(--text-primary);
+  margin: 0 0 var(--spacing-1);
+}
+
+.project-workflow-step-description {
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.project-workflow-step-status {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  margin-top: var(--spacing-2);
+}
+
+.project-workflow-step-progress {
+  flex: 1;
+  height: 4px;
+  background-color: var(--surface);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.project-workflow-step-progress-bar {
+  height: 100%;
+  background-color: var(--primary);
+  transition: width 200ms ease;
+}
+
+.project-workflow-step-time {
+  font-size: var(--font-size-sm);
+  color: var(--text-tertiary);
+  white-space: nowrap;
+}
+
+/* Step states */
+.project-workflow-step-pending {
+  opacity: 0.6;
+}
+
+.project-workflow-step-pending .project-workflow-step-icon {
+  color: var(--text-tertiary);
+}
+
+.project-workflow-step-active {
+  background-color: var(--primary-light);
+}
+
+.project-workflow-step-active .project-workflow-step-icon {
+  color: var(--primary);
+  background-color: white;
+}
+
+.project-workflow-step-completed {
+  background-color: var(--success-light);
+}
+
+.project-workflow-step-completed .project-workflow-step-icon {
+  color: var(--success);
+  background-color: white;
+}
+
+.project-workflow-step-error {
+  background-color: var(--error-light);
+}
+
+.project-workflow-step-error .project-workflow-step-icon {
+  color: var(--error);
+  background-color: white;
+}
+
+/* Step animations */
+.project-workflow-step-enter {
+  opacity: 0;
+  transform: translateX(-20px);
+}
+
+.project-workflow-step-enter-active {
+  opacity: 1;
+  transform: translateX(0);
+  transition: all 300ms ease;
+}
+
+.project-workflow-step-exit {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.project-workflow-step-exit-active {
+  opacity: 0;
+  transform: translateX(20px);
+  transition: all 300ms ease;
+}
+
+/* Responsive */
+@media (width <= 768px) {
+  .project-workflow {
+    padding: var(--spacing-3);
+  }
+
+  .project-workflow-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-2);
+  }
+
+  .project-workflow-actions {
+    width: 100%;
+    flex-direction: column;
+    gap: var(--spacing-2);
+  }
+
+  .project-workflow-button {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .project-workflow-step {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-2);
+    padding: var(--spacing-3);
+  }
+
+  .project-workflow-step-status {
+    width: 100%;
+  }
+}

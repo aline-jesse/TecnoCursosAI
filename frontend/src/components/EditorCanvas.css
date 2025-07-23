@@ -1,0 +1,311 @@
+/* EditorCanvas.css - Estilos para o canvas do editor */
+.editor-canvas-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: #f8fafc;
+  position: relative;
+}
+
+/* Controles do canvas */
+.canvas-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: #fff;
+  border-bottom: 1px solid #e5e7eb;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.control-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.control-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: #f3f4f6;
+  color: #374151;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 14px;
+}
+
+.control-btn:hover {
+  background: #e5e7eb;
+  color: #111827;
+  transform: translateY(-1px);
+}
+
+.control-btn.active {
+  background: #3b82f6;
+  color: white;
+  border-color: #3b82f6;
+}
+
+.control-btn.danger {
+  background: #ef4444;
+  color: white;
+  border-color: #ef4444;
+}
+
+.control-btn.danger:hover {
+  background: #dc2626;
+  border-color: #dc2626;
+}
+
+.control-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.zoom-display {
+  font-size: 12px;
+  font-weight: 500;
+  color: #6b7280;
+  min-width: 40px;
+  text-align: center;
+}
+
+/* Wrapper do canvas */
+.canvas-wrapper {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  background: #f1f5f9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.editor-canvas {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 10%), 0 2px 4px -1px rgb(0 0 0 / 6%);
+  cursor: crosshair;
+  transition: transform 0.2s ease;
+}
+
+.editor-canvas:hover {
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 10%), 0 4px 6px -2px rgb(0 0 0 / 5%);
+}
+
+/* Overlay de informações */
+.canvas-overlay {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  z-index: 10;
+}
+
+.canvas-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgb(0 0 0 / 80%);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  backdrop-filter: blur(8px);
+}
+
+.scene-name {
+  font-weight: 600;
+}
+
+.scene-duration {
+  color: #9ca3af;
+}
+
+.no-scene {
+  color: #9ca3af;
+  font-style: italic;
+}
+
+/* Estados do canvas */
+.editor-canvas.dragging {
+  cursor: grabbing;
+}
+
+.editor-canvas.selecting {
+  cursor: crosshair;
+}
+
+.editor-canvas.moving {
+  cursor: move;
+}
+
+.editor-canvas.resizing {
+  cursor: nw-resize;
+}
+
+.editor-canvas.rotating {
+  cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6" fill="none" stroke="%23000" stroke-width="2"/><path d="M8 2 L8 6 M6 4 L8 6 L10 4" stroke="%23000" stroke-width="2" fill="none"/></svg>') 8 8, auto;
+}
+
+/* Grid e regras */
+.editor-canvas.show-grid {
+  background-image: 
+    linear-gradient(rgb(229 231 235 / 30%) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(229 231 235 / 30%) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+.editor-canvas.show-rulers {
+  border-left: 20px solid #f3f4f6;
+  border-top: 20px solid #f3f4f6;
+}
+
+/* Área de drop */
+.canvas-wrapper.drag-over {
+  background: #eff6ff;
+  border: 2px dashed #3b82f6;
+}
+
+.canvas-wrapper.drag-over .editor-canvas {
+  opacity: 0.7;
+}
+
+/* Responsividade */
+@media (width <= 1024px) {
+  .canvas-controls {
+    padding: 8px 12px;
+    gap: 12px;
+  }
+  
+  .control-btn {
+    width: 32px;
+    height: 32px;
+  }
+  
+  .canvas-wrapper {
+    padding: 12px;
+  }
+}
+
+@media (width <= 768px) {
+  .canvas-controls {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+  
+  .control-group {
+    justify-content: center;
+  }
+  
+  .editor-canvas {
+    max-width: 100%;
+    max-height: 100%;
+  }
+}
+
+@media (width <= 480px) {
+  .canvas-controls {
+    padding: 6px 8px;
+  }
+  
+  .control-btn {
+    width: 28px;
+    height: 28px;
+  }
+  
+  .canvas-wrapper {
+    padding: 8px;
+  }
+  
+  .canvas-info {
+    font-size: 11px;
+    padding: 6px 8px;
+  }
+}
+
+/* Animações */
+@keyframes canvasFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.editor-canvas {
+  animation: canvasFadeIn 0.3s ease-out;
+}
+
+/* Estados de loading */
+.canvas-wrapper.loading {
+  position: relative;
+}
+
+.canvas-wrapper.loading::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 40px;
+  height: 40px;
+  margin: -20px 0 0 -20px;
+  border: 3px solid #e5e7eb;
+  border-top: 3px solid #3b82f6;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Tooltips */
+.control-btn[title]:hover::after {
+  content: attr(title);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgb(0 0 0 / 80%);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  white-space: nowrap;
+  z-index: 1000;
+  margin-bottom: 4px;
+}
+
+/* Scrollbars personalizadas */
+.canvas-wrapper::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.canvas-wrapper::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+.canvas-wrapper::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+.canvas-wrapper::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}

@@ -1,0 +1,62 @@
+============================= test session starts =============================
+platform win32 -- Python 3.13.4, pytest-8.4.1, pluggy-1.6.0 -- C:\Python313\python.exe
+cachedir: .pytest_cache
+rootdir: C:\xampp\htdocs\TecnoCursosAI
+configfile: pytest.ini
+plugins: anyio-3.7.1, asyncio-1.1.0, cov-6.2.1, mock-3.14.1
+asyncio: mode=Mode.STRICT, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 5 items
+
+tests\test_basic_imports.py::test_basic_imports PASSED                   [ 20%]
+tests\test_basic_imports.py::test_app_startup PASSED                     [ 40%]
+tests\test_basic_imports.py::test_database_connection PASSED             [ 60%]
+tests\test_basic_imports.py::test_utils_imports PASSED                   [ 80%]
+tests\test_basic_imports.py::test_services_imports PASSED                [100%]
+
+============================== warnings summary ===============================
+backend/tests/test_basic_imports.py::test_basic_imports
+  C:\xampp\htdocs\TecnoCursosAI\backend\app\config.py:59: PydanticDeprecatedSince20: Pydantic V1 style `@validator` validators are deprecated. You should migrate to Pydantic V2 style `@field_validator` validators, see the migration guide for more details. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.11/migration/
+    @validator('allowed_extensions', pre=True)
+
+backend/tests/test_basic_imports.py: 18 warnings
+  C:\Users\Servidor\AppData\Roaming\Python\Python313\site-packages\pydantic\_internal\_config.py:323: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.11/migration/
+    warnings.warn(DEPRECATION_MESSAGE, DeprecationWarning)
+
+backend/tests/test_basic_imports.py::test_basic_imports
+  C:\xampp\htdocs\TecnoCursosAI\backend\app\database.py:40: MovedIn20Warning: The ``declarative_base()`` function is now available as sqlalchemy.orm.declarative_base(). (deprecated since: 2.0) (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+    Base = declarative_base()
+
+backend/tests/test_basic_imports.py::test_basic_imports
+  C:\xampp\htdocs\TecnoCursosAI\backend\app\schemas.py:36: PydanticDeprecatedSince20: Pydantic V1 style `@validator` validators are deprecated. You should migrate to Pydantic V2 style `@field_validator` validators, see the migration guide for more details. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.11/migration/
+    @validator('username')
+
+backend/tests/test_basic_imports.py::test_basic_imports
+  C:\xampp\htdocs\TecnoCursosAI\backend\app\schemas.py:42: PydanticDeprecatedSince20: Pydantic V1 style `@validator` validators are deprecated. You should migrate to Pydantic V2 style `@field_validator` validators, see the migration guide for more details. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.11/migration/
+    @validator('password')
+
+backend/tests/test_basic_imports.py::test_basic_imports
+  C:\xampp\htdocs\TecnoCursosAI\backend\app\schemas.py:54: PydanticDeprecatedSince20: Pydantic V1 style `@validator` validators are deprecated. You should migrate to Pydantic V2 style `@field_validator` validators, see the migration guide for more details. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.11/migration/
+    @validator('confirm_password')
+
+backend/tests/test_basic_imports.py::test_basic_imports
+  C:\xampp\htdocs\TecnoCursosAI\backend\app\schemas.py:114: PydanticDeprecatedSince20: Pydantic V1 style `@validator` validators are deprecated. You should migrate to Pydantic V2 style `@field_validator` validators, see the migration guide for more details. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.11/migration/
+    @validator('difficulty_level')
+
+backend/tests/test_basic_imports.py::test_basic_imports
+  C:\xampp\htdocs\TecnoCursosAI\backend\app\schemas.py:299: PydanticDeprecatedSince20: Pydantic V1 style `@validator` validators are deprecated. You should migrate to Pydantic V2 style `@field_validator` validators, see the migration guide for more details. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.11/migration/
+    @validator('new_password')
+
+backend/tests/test_basic_imports.py::test_basic_imports
+  C:\xampp\htdocs\TecnoCursosAI\backend\app\schemas.py:311: PydanticDeprecatedSince20: Pydantic V1 style `@validator` validators are deprecated. You should migrate to Pydantic V2 style `@field_validator` validators, see the migration guide for more details. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.11/migration/
+    @validator('confirm_password')
+
+backend/tests/test_basic_imports.py::test_basic_imports
+  C:\Users\Servidor\AppData\Roaming\Python\Python313\site-packages\pydantic\fields.py:1062: PydanticDeprecatedSince20: `min_items` is deprecated and will be removed, use `min_length` instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.11/migration/
+    warn('`min_items` is deprecated and will be removed, use `min_length` instead', DeprecationWarning)
+
+backend/tests/test_basic_imports.py::test_basic_imports
+  C:\Users\Servidor\AppData\Roaming\Python\Python313\site-packages\pydantic\fields.py:1068: PydanticDeprecatedSince20: `max_items` is deprecated and will be removed, use `max_length` instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.11/migration/
+    warn('`max_items` is deprecated and will be removed, use `max_length` instead', DeprecationWarning)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======================= 5 passed, 28 warnings in 20.33s =======================

@@ -1,0 +1,33 @@
+[data-theme='dark'] {
+  /* Cores */
+  --primary-color: #0095ff;
+  --primary-color-light: rgba(0, 149, 255, 0.1);
+  --secondary-color: #6c757d;
+  --success-color: #28a745;
+  --warning-color: #ffc107;
+  --error-color: #dc3545;
+  --error-color-light: rgba(220, 53, 69, 0.1);
+  --info-color: #17a2b8;
+
+  /* Cores de fundo */
+  --background-color: #1a1a1a;
+  --surface-color: #2d2d2d;
+  --surface-color-hover: #3d3d3d;
+  --surface-color-active: #4d4d4d;
+
+  /* Cores de texto */
+  --text-color: #ffffff;
+  --text-color-secondary: #a0a0a0;
+  --text-color-disabled: #666666;
+
+  /* Cores de borda */
+  --border-color: #404040;
+  --border-color-hover: #505050;
+  --border-color-focus: #0095ff;
+
+  /* Sombras */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.3);
+  --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.3);
+}

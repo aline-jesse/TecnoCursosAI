@@ -3,7 +3,7 @@
 /**
  * Gerador de Código para Testes Automatizados
  * TecnoCursos AI - Test Code Generation System
- * 
+ *
  * Baseado nas melhores práticas de code generation:
  * - Geração determinística de testes
  * - Cobertura completa
@@ -21,29 +21,30 @@ const prettier = require('prettier');
 const CONFIG = {
   testsDir: path.resolve(__dirname, '../../tests'),
   outputDir: path.resolve(__dirname, '../../tests/generated'),
-  prettierConfig: path.resolve(__dirname, '../../.prettierrc')
+  prettierConfig: path.resolve(__dirname, '../../.prettierrc'),
 };
 
 /**
  * Template para testes unitários React
  */
 const generateReactTests = (componentName, props = []) => {
-  const propsTests = props.map(prop => {
-    switch (prop.type) {
-      case 'string':
-        return `
+  const propsTests = props
+    .map(prop => {
+      switch (prop.type) {
+        case 'string':
+          return `
   test('renderiza com prop ${prop.name}', () => {
     render(<${componentName} ${prop.name}="test value" />);
     expect(screen.getByText('test value')).toBeInTheDocument();
   });`;
-      case 'boolean':
-        return `
+        case 'boolean':
+          return `
   test('renderiza com prop ${prop.name}', () => {
     render(<${componentName} ${prop.name}={true} />);
     expect(screen.getByTestId('${componentName.toLowerCase()}-${prop.name}')).toBeInTheDocument();
   });`;
-      case 'function':
-        return `
+        case 'function':
+          return `
   test('chama ${prop.name} quando clicado', () => {
     const mock${prop.name.charAt(0).toUpperCase() + prop.name.slice(1)} = jest.fn();
     render(<${componentName} ${prop.name}={mock${prop.name.charAt(0).toUpperCase() + prop.name.slice(1)}} />);
@@ -53,14 +54,15 @@ const generateReactTests = (componentName, props = []) => {
     
     expect(mock${prop.name.charAt(0).toUpperCase() + prop.name.slice(1)}).toHaveBeenCalledTimes(1);
   });`;
-      default:
-        return `
+        default:
+          return `
   test('renderiza com prop ${prop.name}', () => {
     render(<${componentName} ${prop.name}="test" />);
     expect(screen.getByTestId('${componentName.toLowerCase()}-${prop.name}')).toBeInTheDocument();
   });`;
-    }
-  }).join('');
+      }
+    })
+    .join('');
 
   return `import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
@@ -92,25 +94,26 @@ ${propsTests}
  * Template para testes de API
  */
 const generateAPITests = (apiName, endpoints = []) => {
-  const endpointTests = endpoints.map(endpoint => {
-    switch (endpoint.method) {
-      case 'GET':
-        return `
+  const endpointTests = endpoints
+    .map(endpoint => {
+      switch (endpoint.method) {
+        case 'GET':
+          return `
   def test_get_${endpoint.name}(self):
       """Testa endpoint GET ${endpoint.path}"""
       response = self.client.get('${endpoint.path}')
       self.assertEqual(response.status_code, ${endpoint.expectedStatus || 200})
       self.assertIsInstance(response.json(), ${endpoint.expectedType || 'dict'})`;
-      case 'POST':
-        return `
+        case 'POST':
+          return `
   def test_post_${endpoint.name}(self):
       """Testa endpoint POST ${endpoint.path}"""
       data = ${JSON.stringify(endpoint.sampleData || {})}
       response = self.client.post('${endpoint.path}', json=data)
       self.assertEqual(response.status_code, ${endpoint.expectedStatus || 201})
       self.assertIn('id', response.json())`;
-      case 'PUT':
-        return `
+        case 'PUT':
+          return `
   def test_put_${endpoint.name}(self):
       """Testa endpoint PUT ${endpoint.path}"""
       # Criar item primeiro
@@ -122,8 +125,8 @@ const generateAPITests = (apiName, endpoints = []) => {
       update_data = ${JSON.stringify(endpoint.updateData || {})}
       response = self.client.put(f'${endpoint.path}', json=update_data)
       self.assertEqual(response.status_code, ${endpoint.expectedStatus || 200})`;
-      case 'DELETE':
-        return `
+        case 'DELETE':
+          return `
   def test_delete_${endpoint.name}(self):
       """Testa endpoint DELETE ${endpoint.path}"""
       # Criar item primeiro
@@ -134,10 +137,11 @@ const generateAPITests = (apiName, endpoints = []) => {
       # Deletar item
       response = self.client.delete(f'${endpoint.path}')
       self.assertEqual(response.status_code, ${endpoint.expectedStatus || 204})`;
-      default:
-        return '';
-    }
-  }).join('\n');
+        default:
+          return '';
+      }
+    })
+    .join('\n');
 
   return `import unittest
 from fastapi.testclient import TestClient
@@ -165,34 +169,36 @@ ${endpointTests}
  * Template para testes de banco de dados
  */
 const generateDatabaseTests = (modelName, fields = []) => {
-  const fieldTests = fields.map(field => {
-    switch (field.type) {
-      case 'string':
-        return `
+  const fieldTests = fields
+    .map(field => {
+      switch (field.type) {
+        case 'string':
+          return `
     def test_${field.name}_field(self):
         """Testa campo ${field.name}"""
         ${modelNameLower} = ${modelName}Model(${field.name}="test value")
         self.assertEqual(${modelNameLower}.${field.name}, "test value")`;
-      case 'integer':
-        return `
+        case 'integer':
+          return `
     def test_${field.name}_field(self):
         """Testa campo ${field.name}"""
         ${modelNameLower} = ${modelName}Model(${field.name}=123)
         self.assertEqual(${modelNameLower}.${field.name}, 123)`;
-      case 'boolean':
-        return `
+        case 'boolean':
+          return `
     def test_${field.name}_field(self):
         """Testa campo ${field.name}"""
         ${modelNameLower} = ${modelName}Model(${field.name}=True)
         self.assertTrue(${modelNameLower}.${field.name})`;
-      default:
-        return `
+        default:
+          return `
     def test_${field.name}_field(self):
         """Testa campo ${field.name}"""
         ${modelNameLower} = ${modelName}Model(${field.name}="test")
         self.assertEqual(${modelNameLower}.${field.name}, "test")`;
-    }
-  }).join('');
+      }
+    })
+    .join('');
 
   return `import unittest
 from sqlalchemy import create_engine
@@ -241,8 +247,9 @@ ${fields.map(field => `            ${field.name}="${field.type === 'string' ? 'T
  * Template para testes de integração
  */
 const generateIntegrationTests = (testName, scenarios = []) => {
-  const scenarioTests = scenarios.map(scenario => {
-    return `
+  const scenarioTests = scenarios
+    .map(scenario => {
+      return `
   def test_${scenario.name}(self):
       """Testa cenário: ${scenario.description}"""
       # Setup
@@ -253,7 +260,8 @@ ${scenario.execute.map(step => `      ${step}`).join('\n')}
       
       # Assert
 ${scenario.assert.map(assertion => `      ${assertion}`).join('\n')}`;
-  }).join('');
+    })
+    .join('');
 
   return `import unittest
 from fastapi.testclient import TestClient
@@ -293,7 +301,7 @@ ${scenarioTests}
 /**
  * Gerador de testes baseado em configuração
  */
-const generateTests = async (config) => {
+const generateTests = async config => {
   const {
     name,
     type,
@@ -301,14 +309,14 @@ const generateTests = async (config) => {
     endpoints = [],
     fields = [],
     scenarios = [],
-    description = ''
+    description = '',
   } = config;
 
   const testDir = path.join(CONFIG.outputDir, type, name);
-  
+
   let testContent = '';
   let extension = 'js';
-  
+
   switch (type) {
     case 'react':
       testContent = generateReactTests(name, props);
@@ -336,7 +344,7 @@ const generateTests = async (config) => {
     fileName: `test_${name.toLowerCase()}`,
     content: testContent,
     extension,
-    generatedBy: 'scripts/codegen/generateTests.js'
+    generatedBy: 'scripts/codegen/generateTests.js',
   });
 
   // Gerar arquivo de configuração de teste
@@ -355,7 +363,7 @@ const generateTests = async (config) => {
     fileName: 'test.config',
     content: configContent,
     extension: 'json',
-    generatedBy: 'scripts/codegen/generateTests.js'
+    generatedBy: 'scripts/codegen/generateTests.js',
   });
 
   // Gerar README
@@ -398,20 +406,20 @@ python -m pytest tests/generated/integration/${name}/ -v
     fileName: 'README',
     content: readmeContent,
     extension: 'md',
-    generatedBy: 'scripts/codegen/generateTests.js'
+    generatedBy: 'scripts/codegen/generateTests.js',
   });
 };
 
 /**
  * Utilitário para criar arquivos
  */
-const createTsFile = async (params) => {
+const createTsFile = async params => {
   const {
     directory,
     fileName,
     content,
     extension = 'js',
-    generatedBy
+    generatedBy,
   } = params;
 
   // Criar diretório se não existir
@@ -425,7 +433,8 @@ const createTsFile = async (params) => {
       `// Este arquivo foi gerado automaticamente por ${generatedBy}\n// Não edite manualmente - use o sistema de geração\n\n${content}`,
       {
         ...config,
-        parser: extension === 'js' ? 'babel' : extension === 'py' ? 'python' : 'json'
+        parser:
+          extension === 'js' ? 'babel' : extension === 'py' ? 'python' : 'json',
       }
     );
   } catch (error) {
@@ -435,7 +444,7 @@ const createTsFile = async (params) => {
 
   const filePath = `${directory}/${fileName}.${extension}`;
   fs.writeFileSync(filePath, formattedContent);
-  
+
   console.log(`✅ Arquivo gerado: ${filePath}`);
   return filePath;
 };
@@ -449,23 +458,66 @@ const TEST_CONFIGS = [
     type: 'react',
     description: 'Testes para componente Toolbar',
     props: [
-      { name: 'onUndo', type: 'function', description: 'Callback para desfazer' },
-      { name: 'onRedo', type: 'function', description: 'Callback para refazer' },
-      { name: 'canUndo', type: 'boolean', description: 'Estado de habilitação desfazer' },
-      { name: 'canRedo', type: 'boolean', description: 'Estado de habilitação refazer' }
-    ]
+      {
+        name: 'onUndo',
+        type: 'function',
+        description: 'Callback para desfazer',
+      },
+      {
+        name: 'onRedo',
+        type: 'function',
+        description: 'Callback para refazer',
+      },
+      {
+        name: 'canUndo',
+        type: 'boolean',
+        description: 'Estado de habilitação desfazer',
+      },
+      {
+        name: 'canRedo',
+        type: 'boolean',
+        description: 'Estado de habilitação refazer',
+      },
+    ],
   },
   {
     name: 'VideoAPI',
     type: 'api',
     description: 'Testes para API de vídeos',
     endpoints: [
-      { method: 'GET', name: 'list_videos', path: '/api/videos', expectedStatus: 200 },
-      { method: 'POST', name: 'create_video', path: '/api/videos', expectedStatus: 201, sampleData: { title: 'Test Video', description: 'Test Description' } },
-      { method: 'GET', name: 'get_video', path: '/api/videos/{id}', expectedStatus: 200 },
-      { method: 'PUT', name: 'update_video', path: '/api/videos/{id}', expectedStatus: 200, updateData: { title: 'Updated Video' } },
-      { method: 'DELETE', name: 'delete_video', path: '/api/videos/{id}', expectedStatus: 204 }
-    ]
+      {
+        method: 'GET',
+        name: 'list_videos',
+        path: '/api/videos',
+        expectedStatus: 200,
+      },
+      {
+        method: 'POST',
+        name: 'create_video',
+        path: '/api/videos',
+        expectedStatus: 201,
+        sampleData: { title: 'Test Video', description: 'Test Description' },
+      },
+      {
+        method: 'GET',
+        name: 'get_video',
+        path: '/api/videos/{id}',
+        expectedStatus: 200,
+      },
+      {
+        method: 'PUT',
+        name: 'update_video',
+        path: '/api/videos/{id}',
+        expectedStatus: 200,
+        updateData: { title: 'Updated Video' },
+      },
+      {
+        method: 'DELETE',
+        name: 'delete_video',
+        path: '/api/videos/{id}',
+        expectedStatus: 204,
+      },
+    ],
   },
   {
     name: 'VideoModel',
@@ -473,10 +525,14 @@ const TEST_CONFIGS = [
     description: 'Testes para modelo de vídeo',
     fields: [
       { name: 'title', type: 'string', description: 'Título do vídeo' },
-      { name: 'description', type: 'string', description: 'Descrição do vídeo' },
+      {
+        name: 'description',
+        type: 'string',
+        description: 'Descrição do vídeo',
+      },
       { name: 'duration', type: 'integer', description: 'Duração em segundos' },
-      { name: 'is_active', type: 'boolean', description: 'Vídeo ativo' }
-    ]
+      { name: 'is_active', type: 'boolean', description: 'Vídeo ativo' },
+    ],
   },
   {
     name: 'VideoWorkflow',
@@ -488,22 +544,22 @@ const TEST_CONFIGS = [
         description: 'Criar e processar um vídeo completo',
         setup: [
           'video_data = {"title": "Test Video", "description": "Test Description"}',
-          'project_data = {"name": "Test Project", "description": "Test Project Description"}'
+          'project_data = {"name": "Test Project", "description": "Test Project Description"}',
         ],
         execute: [
           'project_response = self.client.post("/api/projects", json=project_data)',
           'project_id = project_response.json()["id"]',
           'video_data["project_id"] = project_id',
-          'video_response = self.client.post("/api/videos", json=video_data)'
+          'video_response = self.client.post("/api/videos", json=video_data)',
         ],
         assert: [
           'self.assertEqual(video_response.status_code, 201)',
           'self.assertIn("id", video_response.json())',
-          'self.assertEqual(video_response.json()["title"], "Test Video")'
-        ]
-      }
-    ]
-  }
+          'self.assertEqual(video_response.json()["title"], "Test Video")',
+        ],
+      },
+    ],
+  },
 ];
 
 /**
@@ -511,33 +567,33 @@ const TEST_CONFIGS = [
  */
 const main = async () => {
   console.log('🚀 Iniciando geração de testes...');
-  
+
   try {
     // Criar diretório de saída
     fs.mkdirSync(CONFIG.outputDir, { recursive: true });
-    
+
     // Gerar cada teste
     for (const config of TEST_CONFIGS) {
       console.log(`📦 Gerando teste: ${config.name} (${config.type})`);
       await generateTests(config);
     }
-    
+
     // Gerar arquivo de índice
-    const indexContent = TEST_CONFIGS.map(config => 
-      `export { default as ${config.name}Test } from './${config.type}/${config.name}/test_${config.name.toLowerCase()}.${config.type === 'react' ? 'js' : 'py'}';`
+    const indexContent = TEST_CONFIGS.map(
+      config =>
+        `export { default as ${config.name}Test } from './${config.type}/${config.name}/test_${config.name.toLowerCase()}.${config.type === 'react' ? 'js' : 'py'}';`
     ).join('\n');
-    
+
     await createTsFile({
       directory: CONFIG.outputDir,
       fileName: 'index',
       content: indexContent,
       extension: 'js',
-      generatedBy: 'scripts/codegen/generateTests.js'
+      generatedBy: 'scripts/codegen/generateTests.js',
     });
-    
+
     console.log('✅ Geração de testes concluída com sucesso!');
     console.log(`📁 Testes gerados em: ${CONFIG.outputDir}`);
-    
   } catch (error) {
     console.error('❌ Erro durante a geração:', error);
     process.exit(1);
@@ -552,5 +608,5 @@ if (require.main === module) {
 module.exports = {
   generateTests,
   createTsFile,
-  CONFIG
-}; 
+  CONFIG,
+};

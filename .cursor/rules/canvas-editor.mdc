@@ -1,0 +1,135 @@
+# Canvas Editor Patterns
+
+## Estrutura de Cenas
+
+1. Toda cena deve ter uma estrutura base:
+
+```typescript
+interface Scene {
+  id: string;
+  name: string;
+  background: SceneBackground;
+  duration: number;
+  elements: EditorElement[];
+  thumbnail?: string;
+}
+
+interface SceneBackground {
+  type: 'color' | 'gradient' | 'image';
+  value: string;
+}
+```
+
+2. Elementos devem seguir a estrutura base:
+
+```typescript
+interface BaseElement {
+  id: string;
+  type: ElementType;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  rotation: number;
+  opacity: number;
+  content: string;
+}
+```
+
+## Gerenciamento de Estado
+
+1. Use o padrão de histórico para desfazer/refazer:
+
+```typescript
+interface History {
+  past: Scene[][];
+  present: Scene[];
+  future: Scene[][];
+}
+```
+
+2. Atualizações de estado devem preservar o histórico:
+
+```typescript
+const updateHistory = (
+  state: EditorState,
+  newScenes: Scene[]
+): HistoryUpdate => ({
+  history: {
+    past: [...state.history.past, [state.history.present]],
+    present: newScenes,
+    future: [],
+  },
+  scenes: newScenes,
+});
+```
+
+## Manipulação de Canvas
+
+1. Sempre limpe o canvas antes de desenhar:
+
+```typescript
+ctx.clearRect(0, 0, canvas.width, canvas.height);
+```
+
+2. Use transformações para posicionar elementos:
+
+```typescript
+ctx.save();
+ctx.translate(element.x, element.y);
+ctx.rotate((element.rotation * Math.PI) / 180);
+ctx.globalAlpha = element.opacity;
+// Desenhar elemento
+ctx.restore();
+```
+
+3. Para elementos de texto, configure o contexto corretamente:
+
+```typescript
+ctx.font = `${fontSize}px ${fontFamily}`;
+ctx.fillStyle = fill;
+ctx.textAlign = textAlign;
+```
+
+## Eventos e Interações
+
+1. Use refs para acessar elementos do canvas:
+
+```typescript
+const canvasRef = useRef<HTMLCanvasElement>(null);
+const stageRef = useRef<Konva.Stage | null>(null);
+```
+
+2. Manipule eventos de arrastar e soltar:
+
+```typescript
+const handleDragOver = (e: React.DragEvent) => {
+  e.preventDefault();
+};
+
+const handleDrop = (e: React.DragEvent) => {
+  e.preventDefault();
+  // Lógica de drop
+};
+```
+
+3. Para transformações, use o componente Transformer:
+
+```typescript
+<Transformer
+  ref={trRef}
+  boundBoxFunc={(oldBox, newBox) => {
+    if (newBox.width < 5 || newBox.height < 5) {
+      return oldBox;
+    }
+    return newBox;
+  }}
+  onTransformEnd={handleTransformEnd}
+/>
+```
+
+description:
+globs:
+alwaysApply: false
+
+---

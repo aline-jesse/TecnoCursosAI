@@ -1,0 +1,394 @@
+/* Toolbar.css - Estilos para a barra de ferramentas do editor */
+.toolbar {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 8px 16px;
+  gap: 8px;
+  height: 56px;
+  min-height: 56px;
+  overflow: auto hidden;
+}
+
+/* Grupos de botões */
+.toolbar-group {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+/* Botões da toolbar */
+.toolbar-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: #f3f4f6;
+  color: #374151;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 14px;
+}
+
+.toolbar-btn:hover:not(:disabled) {
+  background: #e5e7eb;
+  color: #111827;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgb(0 0 0 / 10%);
+}
+
+.toolbar-btn:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 10%);
+}
+
+.toolbar-btn.active {
+  background: #3b82f6;
+  color: white;
+  border-color: #3b82f6;
+}
+
+.toolbar-btn.danger {
+  background: #fef2f2;
+  color: #dc2626;
+  border-color: #fecaca;
+}
+
+.toolbar-btn.danger:hover:not(:disabled) {
+  background: #fee2e2;
+  color: #b91c1c;
+  border-color: #fca5a5;
+}
+
+.toolbar-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Separadores */
+.toolbar-separator {
+  width: 1px;
+  height: 24px;
+  background: #e5e7eb;
+  margin: 0 4px;
+  flex-shrink: 0;
+}
+
+/* Display de zoom */
+.zoom-display {
+  font-size: 12px;
+  font-weight: 500;
+  color: #6b7280;
+  min-width: 40px;
+  text-align: center;
+  padding: 0 8px;
+}
+
+/* Status da toolbar */
+.toolbar-status {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.status-text {
+  font-size: 12px;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.selection-indicator {
+  font-size: 11px;
+  color: #3b82f6;
+  background: #eff6ff;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-weight: 500;
+}
+
+/* Tooltips */
+.toolbar-btn[title]:hover::after {
+  content: attr(title);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgb(0 0 0 / 80%);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  white-space: nowrap;
+  z-index: 1000;
+  margin-bottom: 4px;
+}
+
+/* Scrollbar personalizada */
+.toolbar::-webkit-scrollbar {
+  height: 4px;
+}
+
+.toolbar::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+.toolbar::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 2px;
+}
+
+.toolbar::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Animações */
+.toolbar-btn {
+  animation: fadeInUp 0.2s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Estados de loading */
+.toolbar.loading {
+  position: relative;
+}
+
+.toolbar.loading::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  margin: -10px 0 0 -10px;
+  border: 2px solid #e5e7eb;
+  border-top: 2px solid #3b82f6;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  z-index: 100;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Responsividade */
+@media (width <= 1024px) {
+  .toolbar {
+    padding: 6px 12px;
+    gap: 6px;
+  }
+  
+  .toolbar-btn {
+    width: 32px;
+    height: 32px;
+  }
+  
+  .toolbar-separator {
+    height: 20px;
+  }
+}
+
+@media (width <= 768px) {
+  .toolbar {
+    padding: 4px 8px;
+    gap: 4px;
+    height: 48px;
+  }
+  
+  .toolbar-btn {
+    width: 28px;
+    height: 28px;
+  }
+  
+  .toolbar-group {
+    gap: 2px;
+  }
+  
+  .toolbar-separator {
+    height: 16px;
+    margin: 0 2px;
+  }
+  
+  .zoom-display {
+    font-size: 11px;
+    min-width: 32px;
+    padding: 0 4px;
+  }
+  
+  .toolbar-status {
+    gap: 8px;
+  }
+  
+  .status-text {
+    font-size: 11px;
+  }
+  
+  .selection-indicator {
+    font-size: 10px;
+    padding: 1px 6px;
+  }
+}
+
+@media (width <= 480px) {
+  .toolbar {
+    padding: 4px 6px;
+    height: 44px;
+  }
+  
+  .toolbar-btn {
+    width: 24px;
+    height: 24px;
+  }
+  
+  .toolbar-btn svg {
+    width: 14px;
+    height: 14px;
+  }
+  
+  .toolbar-separator {
+    height: 14px;
+    margin: 0 1px;
+  }
+  
+  .zoom-display {
+    font-size: 10px;
+    min-width: 28px;
+    padding: 0 2px;
+  }
+  
+  .toolbar-status {
+    gap: 4px;
+  }
+  
+  .status-text {
+    font-size: 10px;
+  }
+  
+  .selection-indicator {
+    font-size: 9px;
+    padding: 1px 4px;
+  }
+}
+
+/* Melhorias de acessibilidade */
+@media (prefers-reduced-motion: reduce) {
+  .toolbar-btn {
+    transition: none;
+    animation: none;
+  }
+}
+
+/* Estados de foco */
+.toolbar-btn:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* Modo escuro (se implementado) */
+@media (prefers-color-scheme: dark) {
+  .toolbar {
+    background: #1f2937;
+    border-bottom-color: #374151;
+  }
+  
+  .toolbar-btn {
+    background: #374151;
+    color: #e5e7eb;
+    border-color: #4b5563;
+  }
+  
+  .toolbar-btn:hover:not(:disabled) {
+    background: #4b5563;
+    color: #f9fafb;
+  }
+  
+  .toolbar-btn.active {
+    background: #3b82f6;
+    color: white;
+    border-color: #3b82f6;
+  }
+  
+  .toolbar-btn.danger {
+    background: #7f1d1d;
+    color: #fca5a5;
+    border-color: #991b1b;
+  }
+  
+  .toolbar-btn.danger:hover:not(:disabled) {
+    background: #991b1b;
+    color: #fecaca;
+    border-color: #b91c1c;
+  }
+  
+  .toolbar-separator {
+    background: #374151;
+  }
+  
+  .zoom-display {
+    color: #9ca3af;
+  }
+  
+  .status-text {
+    color: #9ca3af;
+  }
+  
+  .selection-indicator {
+    color: #93c5fd;
+    background: #1e3a8a;
+  }
+}
+
+/* Estados especiais */
+.toolbar-btn.primary {
+  background: #3b82f6;
+  color: white;
+  border-color: #3b82f6;
+}
+
+.toolbar-btn.primary:hover:not(:disabled) {
+  background: #2563eb;
+  border-color: #2563eb;
+}
+
+.toolbar-btn.success {
+  background: #10b981;
+  color: white;
+  border-color: #10b981;
+}
+
+.toolbar-btn.success:hover:not(:disabled) {
+  background: #059669;
+  border-color: #059669;
+}
+
+.toolbar-btn.warning {
+  background: #f59e0b;
+  color: white;
+  border-color: #f59e0b;
+}
+
+.toolbar-btn.warning:hover:not(:disabled) {
+  background: #d97706;
+  border-color: #d97706;
+} 

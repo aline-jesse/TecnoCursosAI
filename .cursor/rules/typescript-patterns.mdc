@@ -1,0 +1,104 @@
+# TypeScript Patterns
+
+## Type Safety
+
+1. Sempre use tipos explícitos para props de componentes React:
+
+```typescript
+interface MyComponentProps {
+  prop1: string;
+  prop2?: number;
+}
+
+const MyComponent: React.FC<MyComponentProps> = ({ prop1, prop2 }) => {
+  // ...
+};
+```
+
+2. Para refs do Canvas, use tipos específicos:
+
+```typescript
+const canvasRef = useRef<HTMLCanvasElement>(null);
+const contextRef = useRef<CanvasRenderingContext2D | null>(null);
+```
+
+3. Para histórico de estados, use arrays tipados:
+
+```typescript
+interface History<T> {
+  past: T[][];
+  present: T[];
+  future: T[][];
+}
+```
+
+## Boas Práticas
+
+1. Evite usar `any`. Em vez disso, use tipos específicos ou `unknown` se necessário.
+
+2. Use discriminated unions para tipos que podem variar:
+
+```typescript
+interface BaseElement {
+  id: string;
+  type: string;
+}
+
+interface TextElement extends BaseElement {
+  type: 'text';
+  text: string;
+}
+
+interface ImageElement extends BaseElement {
+  type: 'image';
+  src: string;
+}
+
+type Element = TextElement | ImageElement;
+```
+
+3. Para atualizações parciais, use Partial<T>:
+
+```typescript
+function updateElement(id: string, updates: Partial<Element>) {
+  // ...
+}
+```
+
+4. Para propriedades opcionais, use o operador `?`:
+
+```typescript
+interface Asset {
+  id: string;
+  name: string;
+  thumbnail?: string;
+}
+```
+
+## Validação de Tipos
+
+1. Use type guards para validar tipos em runtime:
+
+```typescript
+function isTextElement(element: Element): element is TextElement {
+  return element.type === 'text';
+}
+```
+
+2. Para conversões seguras, use type assertions com `as`:
+
+```typescript
+const element = elements.find(e => e.id === id) as TextElement;
+```
+
+3. Para valores que podem ser null/undefined, use operadores de coalescência:
+
+```typescript
+const value = maybeNull ?? defaultValue;
+```
+
+description:
+globs:
+alwaysApply: false
+
+---

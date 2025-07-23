@@ -1,0 +1,39 @@
+{
+  "timestamp": "2025-07-22T01:44:15.068Z",
+  "summary": {
+    "totalSteps": 4,
+    "successfulSteps": 1,
+    "failedSteps": 3,
+    "successRate": 25
+  },
+  "details": [
+    {
+      "step": "Verificação de tipos TypeScript",
+      "command": "npm run typecheck",
+      "success": false,
+      "error": "Command failed: npm run typecheck"
+    },
+    {
+      "step": "Correção automática com ESLint",
+      "command": "npm run lint",
+      "success": false,
+      "error": "Command failed: npm run lint"
+    },
+    {
+      "step": "Formatação com Prettier",
+      "command": "npm run format",
+      "success": true,
+      "output": null
+    },
+    {
+      "step": "Correção automática de CSS com Stylelint",
+      "command": "npm run stylelint",
+      "success": false,
+      "error": "Command failed: npm run stylelint"
+    }
+  ],
+  "recommendations": [
+    "🔧 Considere executar correções manuais nos arquivos problemáticos",
+    "📚 Revise a documentação em README_AUTOMACAO.md"
+  ]
+}

@@ -3,7 +3,7 @@
 /**
  * Gerador de Código para Modelos de Banco de Dados
  * TecnoCursos AI - Database Code Generation System
- * 
+ *
  * Baseado nas melhores práticas de code generation:
  * - Geração determinística de modelos
  * - Migrações automáticas
@@ -22,7 +22,7 @@ const CONFIG = {
   modelsDir: path.resolve(__dirname, '../../app/models'),
   migrationsDir: path.resolve(__dirname, '../../alembic/versions'),
   outputDir: path.resolve(__dirname, '../../app/models/generated'),
-  prettierConfig: path.resolve(__dirname, '../../.prettierrc')
+  prettierConfig: path.resolve(__dirname, '../../.prettierrc'),
 };
 
 /**
@@ -30,39 +30,44 @@ const CONFIG = {
  */
 const generateSQLAlchemyModel = (entityName, fields = []) => {
   const entityNameLower = entityName.toLowerCase();
-  
+
   const imports = [
     'from sqlalchemy import Column, Integer, String, Boolean, DateTime, Text, ForeignKey, Float',
     'from sqlalchemy.orm import relationship',
     'from sqlalchemy.ext.declarative import declarative_base',
     'from datetime import datetime',
-    'from typing import Optional'
+    'from typing import Optional',
   ];
 
-  const fieldsCode = fields.map(field => {
-    switch (field.type) {
-      case 'string':
-        return `    ${field.name} = Column(String(${field.length || 255}), nullable=${field.nullable !== false}, index=${field.index || false})`;
-      case 'text':
-        return `    ${field.name} = Column(Text, nullable=${field.nullable !== false})`;
-      case 'integer':
-        return `    ${field.name} = Column(Integer, nullable=${field.nullable !== false}, index=${field.index || false})`;
-      case 'float':
-        return `    ${field.name} = Column(Float, nullable=${field.nullable !== false})`;
-      case 'boolean':
-        return `    ${field.name} = Column(Boolean, default=${field.default || false}, nullable=${field.nullable !== false})`;
-      case 'datetime':
-        return `    ${field.name} = Column(DateTime, default=datetime.utcnow, nullable=${field.nullable !== false})`;
-      case 'foreign_key':
-        return `    ${field.name}_id = Column(Integer, ForeignKey('${field.reference_table}.id'), nullable=${field.nullable !== false})`;
-      default:
-        return `    ${field.name} = Column(String(255), nullable=${field.nullable !== false})`;
-    }
-  }).join('\n');
+  const fieldsCode = fields
+    .map(field => {
+      switch (field.type) {
+        case 'string':
+          return `    ${field.name} = Column(String(${field.length || 255}), nullable=${field.nullable !== false}, index=${field.index || false})`;
+        case 'text':
+          return `    ${field.name} = Column(Text, nullable=${field.nullable !== false})`;
+        case 'integer':
+          return `    ${field.name} = Column(Integer, nullable=${field.nullable !== false}, index=${field.index || false})`;
+        case 'float':
+          return `    ${field.name} = Column(Float, nullable=${field.nullable !== false})`;
+        case 'boolean':
+          return `    ${field.name} = Column(Boolean, default=${field.default || false}, nullable=${field.nullable !== false})`;
+        case 'datetime':
+          return `    ${field.name} = Column(DateTime, default=datetime.utcnow, nullable=${field.nullable !== false})`;
+        case 'foreign_key':
+          return `    ${field.name}_id = Column(Integer, ForeignKey('${field.reference_table}.id'), nullable=${field.nullable !== false})`;
+        default:
+          return `    ${field.name} = Column(String(255), nullable=${field.nullable !== false})`;
+      }
+    })
+    .join('\n');
 
   const relationships = fields
     .filter(field => field.type === 'foreign_key')
-    .map(field => `    ${field.name} = relationship("${field.reference_model}", back_populates="${entityNameLower}s")`)
+    .map(
+      field =>
+        `    ${field.name} = relationship("${field.reference_model}", back_populates="${entityNameLower}s")`
+    )
     .join('\n');
 
   return `${imports.join('\n')}
@@ -98,27 +103,29 @@ ${fields.map(field => `            '${field.name}': self.${field.name},`).join('
  */
 const generatePydanticModel = (entityName, fields = []) => {
   const entityNameLower = entityName.toLowerCase();
-  
-  const fieldsCode = fields.map(field => {
-    switch (field.type) {
-      case 'string':
-        return `    ${field.name}: str`;
-      case 'text':
-        return `    ${field.name}: Optional[str] = None`;
-      case 'integer':
-        return `    ${field.name}: int`;
-      case 'float':
-        return `    ${field.name}: float`;
-      case 'boolean':
-        return `    ${field.name}: bool = ${field.default || false}`;
-      case 'datetime':
-        return `    ${field.name}: Optional[datetime] = None`;
-      case 'foreign_key':
-        return `    ${field.name}_id: int`;
-      default:
-        return `    ${field.name}: str`;
-    }
-  }).join('\n');
+
+  const fieldsCode = fields
+    .map(field => {
+      switch (field.type) {
+        case 'string':
+          return `    ${field.name}: str`;
+        case 'text':
+          return `    ${field.name}: Optional[str] = None`;
+        case 'integer':
+          return `    ${field.name}: int`;
+        case 'float':
+          return `    ${field.name}: float`;
+        case 'boolean':
+          return `    ${field.name}: bool = ${field.default || false}`;
+        case 'datetime':
+          return `    ${field.name}: Optional[datetime] = None`;
+        case 'foreign_key':
+          return `    ${field.name}_id: int`;
+        default:
+          return `    ${field.name}: str`;
+      }
+    })
+    .join('\n');
 
   return `from pydantic import BaseModel
 from datetime import datetime
@@ -153,31 +160,36 @@ class ${entityName}Response(${entityName}Base):
 const generateMigration = (entityName, fields = []) => {
   const entityNameLower = entityName.toLowerCase();
   const tableName = `${entityNameLower}s`;
-  
-  const columns = fields.map(field => {
-    switch (field.type) {
-      case 'string':
-        return `        sa.Column('${field.name}', sa.String(${field.length || 255}), nullable=${field.nullable !== false})`;
-      case 'text':
-        return `        sa.Column('${field.name}', sa.Text(), nullable=${field.nullable !== false})`;
-      case 'integer':
-        return `        sa.Column('${field.name}', sa.Integer(), nullable=${field.nullable !== false})`;
-      case 'float':
-        return `        sa.Column('${field.name}', sa.Float(), nullable=${field.nullable !== false})`;
-      case 'boolean':
-        return `        sa.Column('${field.name}', sa.Boolean(), default=${field.default || false}, nullable=${field.nullable !== false})`;
-      case 'datetime':
-        return `        sa.Column('${field.name}', sa.DateTime(), nullable=${field.nullable !== false})`;
-      case 'foreign_key':
-        return `        sa.Column('${field.name}_id', sa.Integer(), sa.ForeignKey('${field.reference_table}.id'), nullable=${field.nullable !== false})`;
-      default:
-        return `        sa.Column('${field.name}', sa.String(255), nullable=${field.nullable !== false})`;
-    }
-  }).join(',\n');
+
+  const columns = fields
+    .map(field => {
+      switch (field.type) {
+        case 'string':
+          return `        sa.Column('${field.name}', sa.String(${field.length || 255}), nullable=${field.nullable !== false})`;
+        case 'text':
+          return `        sa.Column('${field.name}', sa.Text(), nullable=${field.nullable !== false})`;
+        case 'integer':
+          return `        sa.Column('${field.name}', sa.Integer(), nullable=${field.nullable !== false})`;
+        case 'float':
+          return `        sa.Column('${field.name}', sa.Float(), nullable=${field.nullable !== false})`;
+        case 'boolean':
+          return `        sa.Column('${field.name}', sa.Boolean(), default=${field.default || false}, nullable=${field.nullable !== false})`;
+        case 'datetime':
+          return `        sa.Column('${field.name}', sa.DateTime(), nullable=${field.nullable !== false})`;
+        case 'foreign_key':
+          return `        sa.Column('${field.name}_id', sa.Integer(), sa.ForeignKey('${field.reference_table}.id'), nullable=${field.nullable !== false})`;
+        default:
+          return `        sa.Column('${field.name}', sa.String(255), nullable=${field.nullable !== false})`;
+      }
+    })
+    .join(',\n');
 
   const indexes = fields
     .filter(field => field.index)
-    .map(field => `        sa.Index('ix_${tableName}_${field.name}', '${field.name}')`)
+    .map(
+      field =>
+        `        sa.Index('ix_${tableName}_${field.name}', '${field.name}')`
+    )
     .join(',\n');
 
   return `"""Create ${tableName} table
@@ -208,7 +220,17 @@ ${indexes ? `    op.create_index(op.f('ix_${tableName}_id'), '${tableName}', ['i
 
 def downgrade():
     op.drop_index(op.f('ix_${tableName}_id'), table_name='${tableName}')
-${indexes ? `${indexes.split('\n').map(idx => `    op.drop_index(op.f('${idx.split("'")[1]}'), table_name='${tableName}')`).join('\n')}\n` : ''}    op.drop_table('${tableName}')
+${
+  indexes
+    ? `${indexes
+        .split('\n')
+        .map(
+          idx =>
+            `    op.drop_index(op.f('${idx.split("'")[1]}'), table_name='${tableName}')`
+        )
+        .join('\n')}\n`
+    : ''
+}    op.drop_table('${tableName}')
 `;
 };
 
@@ -224,22 +246,18 @@ const generateRevisionId = () => {
 /**
  * Gerador de modelo baseado em configuração
  */
-const generateModel = async (config) => {
-  const {
-    name,
-    fields = [],
-    description = ''
-  } = config;
+const generateModel = async config => {
+  const { name, fields = [], description = '' } = config;
 
   const modelDir = path.join(CONFIG.outputDir, name);
-  
+
   // Gerar modelo SQLAlchemy
   await createTsFile({
     directory: modelDir,
     fileName: 'model',
     content: generateSQLAlchemyModel(name, fields),
     extension: 'py',
-    generatedBy: 'scripts/codegen/generateDatabase.js'
+    generatedBy: 'scripts/codegen/generateDatabase.js',
   });
 
   // Gerar modelo Pydantic
@@ -248,7 +266,7 @@ const generateModel = async (config) => {
     fileName: 'schema',
     content: generatePydanticModel(name, fields),
     extension: 'py',
-    generatedBy: 'scripts/codegen/generateDatabase.js'
+    generatedBy: 'scripts/codegen/generateDatabase.js',
   });
 
   // Gerar migração
@@ -257,7 +275,7 @@ const generateModel = async (config) => {
     fileName: `${generateRevisionId()}_create_${name.toLowerCase()}_table`,
     content: generateMigration(name, fields),
     extension: 'py',
-    generatedBy: 'scripts/codegen/generateDatabase.js'
+    generatedBy: 'scripts/codegen/generateDatabase.js',
   });
 
   // Gerar testes
@@ -266,7 +284,7 @@ const generateModel = async (config) => {
     fileName: `test_${name.toLowerCase()}`,
     content: generateModelTests(name, fields),
     extension: 'py',
-    generatedBy: 'scripts/codegen/generateDatabase.js'
+    generatedBy: 'scripts/codegen/generateDatabase.js',
   });
 
   // Gerar README
@@ -315,7 +333,7 @@ python -m pytest app/models/generated/${name.toLowerCase()}/tests/ -v
     fileName: 'README',
     content: readmeContent,
     extension: 'md',
-    generatedBy: 'scripts/codegen/generateDatabase.js'
+    generatedBy: 'scripts/codegen/generateDatabase.js',
   });
 };
 
@@ -324,7 +342,7 @@ python -m pytest app/models/generated/${name.toLowerCase()}/tests/ -v
  */
 const generateModelTests = (entityName, fields = []) => {
   const entityNameLower = entityName.toLowerCase();
-  
+
   return `import unittest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -372,13 +390,13 @@ ${fields.map(field => `            ${field.name}="${field.type === 'string' ? 'T
 /**
  * Utilitário para criar arquivos Python
  */
-const createTsFile = async (params) => {
+const createTsFile = async params => {
   const {
     directory,
     fileName,
     content,
     extension = 'py',
-    generatedBy
+    generatedBy,
   } = params;
 
   // Criar diretório se não existir
@@ -392,7 +410,7 @@ const createTsFile = async (params) => {
       `# Este arquivo foi gerado automaticamente por ${generatedBy}\n# Não edite manualmente - use o sistema de geração\n\n${content}`,
       {
         ...config,
-        parser: 'python'
+        parser: 'python',
       }
     );
   } catch (error) {
@@ -402,7 +420,7 @@ const createTsFile = async (params) => {
 
   const filePath = `${directory}/${fileName}.${extension}`;
   fs.writeFileSync(filePath, formattedContent);
-  
+
   console.log(`✅ Arquivo gerado: ${filePath}`);
   return filePath;
 };
@@ -415,55 +433,142 @@ const MODEL_CONFIGS = [
     name: 'Project',
     description: 'Modelo para projetos de vídeo',
     fields: [
-      { name: 'name', type: 'string', length: 255, description: 'Nome do projeto' },
-      { name: 'description', type: 'text', description: 'Descrição do projeto' },
-      { name: 'status', type: 'string', length: 50, description: 'Status do projeto' },
-      { name: 'is_active', type: 'boolean', default: true, description: 'Projeto ativo' }
-    ]
+      {
+        name: 'name',
+        type: 'string',
+        length: 255,
+        description: 'Nome do projeto',
+      },
+      {
+        name: 'description',
+        type: 'text',
+        description: 'Descrição do projeto',
+      },
+      {
+        name: 'status',
+        type: 'string',
+        length: 50,
+        description: 'Status do projeto',
+      },
+      {
+        name: 'is_active',
+        type: 'boolean',
+        default: true,
+        description: 'Projeto ativo',
+      },
+    ],
   },
   {
     name: 'Video',
     description: 'Modelo para vídeos',
     fields: [
-      { name: 'title', type: 'string', length: 255, description: 'Título do vídeo' },
+      {
+        name: 'title',
+        type: 'string',
+        length: 255,
+        description: 'Título do vídeo',
+      },
       { name: 'description', type: 'text', description: 'Descrição do vídeo' },
       { name: 'duration', type: 'float', description: 'Duração em segundos' },
-      { name: 'file_path', type: 'string', length: 500, description: 'Caminho do arquivo' },
-      { name: 'project_id', type: 'foreign_key', reference_table: 'projects', reference_model: 'Project', description: 'Projeto relacionado' }
-    ]
+      {
+        name: 'file_path',
+        type: 'string',
+        length: 500,
+        description: 'Caminho do arquivo',
+      },
+      {
+        name: 'project_id',
+        type: 'foreign_key',
+        reference_table: 'projects',
+        reference_model: 'Project',
+        description: 'Projeto relacionado',
+      },
+    ],
   },
   {
     name: 'Scene',
     description: 'Modelo para cenas de vídeo',
     fields: [
-      { name: 'title', type: 'string', length: 255, description: 'Título da cena' },
+      {
+        name: 'title',
+        type: 'string',
+        length: 255,
+        description: 'Título da cena',
+      },
       { name: 'duration', type: 'float', description: 'Duração da cena' },
       { name: 'order', type: 'integer', description: 'Ordem da cena' },
-      { name: 'video_id', type: 'foreign_key', reference_table: 'videos', reference_model: 'Video', description: 'Vídeo relacionado' }
-    ]
+      {
+        name: 'video_id',
+        type: 'foreign_key',
+        reference_table: 'videos',
+        reference_model: 'Video',
+        description: 'Vídeo relacionado',
+      },
+    ],
   },
   {
     name: 'Asset',
     description: 'Modelo para assets (imagens, áudios, etc.)',
     fields: [
-      { name: 'name', type: 'string', length: 255, description: 'Nome do asset' },
-      { name: 'type', type: 'string', length: 50, description: 'Tipo do asset' },
-      { name: 'file_path', type: 'string', length: 500, description: 'Caminho do arquivo' },
+      {
+        name: 'name',
+        type: 'string',
+        length: 255,
+        description: 'Nome do asset',
+      },
+      {
+        name: 'type',
+        type: 'string',
+        length: 50,
+        description: 'Tipo do asset',
+      },
+      {
+        name: 'file_path',
+        type: 'string',
+        length: 500,
+        description: 'Caminho do arquivo',
+      },
       { name: 'size', type: 'integer', description: 'Tamanho em bytes' },
-      { name: 'scene_id', type: 'foreign_key', reference_table: 'scenes', reference_model: 'Scene', description: 'Cena relacionada' }
-    ]
+      {
+        name: 'scene_id',
+        type: 'foreign_key',
+        reference_table: 'scenes',
+        reference_model: 'Scene',
+        description: 'Cena relacionada',
+      },
+    ],
   },
   {
     name: 'User',
     description: 'Modelo para usuários',
     fields: [
-      { name: 'username', type: 'string', length: 100, description: 'Nome de usuário' },
-      { name: 'email', type: 'string', length: 255, description: 'Email do usuário' },
-      { name: 'password_hash', type: 'string', length: 255, description: 'Hash da senha' },
-      { name: 'is_active', type: 'boolean', default: true, description: 'Usuário ativo' },
-      { name: 'last_login', type: 'datetime', description: 'Último login' }
-    ]
-  }
+      {
+        name: 'username',
+        type: 'string',
+        length: 100,
+        description: 'Nome de usuário',
+      },
+      {
+        name: 'email',
+        type: 'string',
+        length: 255,
+        description: 'Email do usuário',
+      },
+      {
+        name: 'password_hash',
+        type: 'string',
+        length: 255,
+        description: 'Hash da senha',
+      },
+      {
+        name: 'is_active',
+        type: 'boolean',
+        default: true,
+        description: 'Usuário ativo',
+      },
+      { name: 'last_login', type: 'datetime', description: 'Último login' },
+    ],
+  },
 ];
 
 /**
@@ -471,33 +576,33 @@ const MODEL_CONFIGS = [
  */
 const main = async () => {
   console.log('🚀 Iniciando geração de modelos de banco...');
-  
+
   try {
     // Criar diretório de saída
     fs.mkdirSync(CONFIG.outputDir, { recursive: true });
-    
+
     // Gerar cada modelo
     for (const config of MODEL_CONFIGS) {
       console.log(`📦 Gerando modelo: ${config.name}`);
       await generateModel(config);
     }
-    
+
     // Gerar arquivo de índice
-    const indexContent = MODEL_CONFIGS.map(config => 
-      `from .${config.name.toLowerCase()}.model import ${config.name}Model`
+    const indexContent = MODEL_CONFIGS.map(
+      config =>
+        `from .${config.name.toLowerCase()}.model import ${config.name}Model`
     ).join('\n');
-    
+
     await createTsFile({
       directory: CONFIG.outputDir,
       fileName: 'index',
       content: indexContent,
       extension: 'py',
-      generatedBy: 'scripts/codegen/generateDatabase.js'
+      generatedBy: 'scripts/codegen/generateDatabase.js',
     });
-    
+
     console.log('✅ Geração de modelos concluída com sucesso!');
     console.log(`📁 Modelos gerados em: ${CONFIG.outputDir}`);
-    
   } catch (error) {
     console.error('❌ Erro durante a geração:', error);
     process.exit(1);
@@ -512,5 +617,5 @@ if (require.main === module) {
 module.exports = {
   generateModel,
   createTsFile,
-  CONFIG
-}; 
+  CONFIG,
+};

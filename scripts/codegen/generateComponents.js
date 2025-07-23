@@ -3,7 +3,7 @@
 /**
  * Sistema de Geração de Código para Componentes React
  * TecnoCursos AI - Code Generation System
- * 
+ *
  * Baseado nas melhores práticas de code generation:
  * - Geração determinística de código
  * - Templates reutilizáveis
@@ -22,19 +22,19 @@ const CONFIG = {
   componentsDir: path.resolve(__dirname, '../../src/components'),
   templatesDir: path.resolve(__dirname, './templates'),
   outputDir: path.resolve(__dirname, '../../src/components/generated'),
-  prettierConfig: path.resolve(__dirname, '../../.prettierrc')
+  prettierConfig: path.resolve(__dirname, '../../.prettierrc'),
 };
 
 /**
  * Utilitário para criar arquivos TypeScript/React
  */
-const createTsFile = async (params) => {
+const createTsFile = async params => {
   const {
     directory,
     fileName,
     content,
     extension = 'tsx',
-    generatedBy
+    generatedBy,
   } = params;
 
   // Criar diretório se não existir
@@ -48,7 +48,12 @@ const createTsFile = async (params) => {
       `// Este arquivo foi gerado automaticamente por ${generatedBy}\n// Não edite manualmente - use o sistema de geração\n\n${content}`,
       {
         ...config,
-        parser: extension === 'tsx' ? 'typescript' : extension === 'css' ? 'css' : 'typescript'
+        parser:
+          extension === 'tsx'
+            ? 'typescript'
+            : extension === 'css'
+              ? 'css'
+              : 'typescript',
       }
     );
   } catch (error) {
@@ -58,7 +63,7 @@ const createTsFile = async (params) => {
 
   const filePath = `${directory}/${fileName}.${extension}`;
   fs.writeFileSync(filePath, formattedContent);
-  
+
   console.log(`✅ Arquivo gerado: ${filePath}`);
   return filePath;
 };
@@ -67,13 +72,15 @@ const createTsFile = async (params) => {
  * Template para componentes React
  */
 const generateReactComponent = (componentName, props = [], imports = []) => {
-  const propsInterface = props.length > 0 
-    ? `interface ${componentName}Props {\n  ${props.map(p => `${p.name}: ${p.type}`).join('\n  ')}\n}`
-    : '';
+  const propsInterface =
+    props.length > 0
+      ? `interface ${componentName}Props {\n  ${props.map(p => `${p.name}: ${p.type}`).join('\n  ')}\n}`
+      : '';
 
-  const propsDestructuring = props.length > 0 
-    ? `{ ${props.map(p => p.name).join(', ') } }: ${componentName}Props`
-    : '';
+  const propsDestructuring =
+    props.length > 0
+      ? `{ ${props.map(p => p.name).join(', ')} }: ${componentName}Props`
+      : '';
 
   return `import React from 'react';
 import './${componentName}.css';
@@ -101,7 +108,7 @@ export default ${componentName};`;
 /**
  * Template para arquivos CSS
  */
-const generateCSS = (componentName) => {
+const generateCSS = componentName => {
   return `.${componentName.toLowerCase()}-container {
   padding: 16px;
   border: 1px solid #e5e7eb;
@@ -120,7 +127,7 @@ const generateCSS = (componentName) => {
 /**
  * Template para testes unitários
  */
-const generateTest = (componentName) => {
+const generateTest = componentName => {
   return `import React from 'react';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
@@ -143,23 +150,18 @@ describe('${componentName} Component', () => {
 /**
  * Gerador de componentes baseado em configuração
  */
-const generateComponent = async (config) => {
-  const {
-    name,
-    props = [],
-    imports = [],
-    description = ''
-  } = config;
+const generateComponent = async config => {
+  const { name, props = [], imports = [], description = '' } = config;
 
   const componentDir = path.join(CONFIG.outputDir, name);
-  
+
   // Gerar componente principal
   await createTsFile({
     directory: componentDir,
     fileName: name,
     content: generateReactComponent(name, props, imports),
     extension: 'tsx',
-    generatedBy: 'scripts/codegen/generateComponents.js'
+    generatedBy: 'scripts/codegen/generateComponents.js',
   });
 
   // Gerar CSS
@@ -168,7 +170,7 @@ const generateComponent = async (config) => {
     fileName: name,
     content: generateCSS(name),
     extension: 'css',
-    generatedBy: 'scripts/codegen/generateComponents.js'
+    generatedBy: 'scripts/codegen/generateComponents.js',
   });
 
   // Gerar teste
@@ -177,7 +179,7 @@ const generateComponent = async (config) => {
     fileName: `${name}.test`,
     content: generateTest(name),
     extension: 'tsx',
-    generatedBy: 'scripts/codegen/generateComponents.js'
+    generatedBy: 'scripts/codegen/generateComponents.js',
   });
 
   // Gerar README
@@ -214,7 +216,7 @@ npm test -- --testPathPattern=${name}.test.tsx
     fileName: 'README',
     content: readmeContent,
     extension: 'md',
-    generatedBy: 'scripts/codegen/generateComponents.js'
+    generatedBy: 'scripts/codegen/generateComponents.js',
   });
 };
 
@@ -226,29 +228,57 @@ const COMPONENT_CONFIGS = [
     name: 'DataTable',
     description: 'Componente de tabela de dados com paginação e ordenação',
     props: [
-      { name: 'data', type: 'any[]', description: 'Dados para exibir na tabela' },
-      { name: 'columns', type: 'Column[]', description: 'Configuração das colunas' },
-      { name: 'onRowClick', type: '(row: any) => void', description: 'Callback para clique na linha' },
-      { name: 'loading', type: 'boolean', description: 'Estado de carregamento' }
+      {
+        name: 'data',
+        type: 'any[]',
+        description: 'Dados para exibir na tabela',
+      },
+      {
+        name: 'columns',
+        type: 'Column[]',
+        description: 'Configuração das colunas',
+      },
+      {
+        name: 'onRowClick',
+        type: '(row: any) => void',
+        description: 'Callback para clique na linha',
+      },
+      {
+        name: 'loading',
+        type: 'boolean',
+        description: 'Estado de carregamento',
+      },
     ],
     imports: [
-      'import { useState, useMemo } from \'react\';',
-      'import { ChevronUpIcon, ChevronDownIcon } from \'@heroicons/react/24/outline\';'
-    ]
+      "import { useState, useMemo } from 'react';",
+      "import { ChevronUpIcon, ChevronDownIcon } from '@heroicons/react/24/outline';",
+    ],
   },
   {
     name: 'Modal',
     description: 'Componente de modal reutilizável',
     props: [
-      { name: 'isOpen', type: 'boolean', description: 'Estado de abertura do modal' },
-      { name: 'onClose', type: '() => void', description: 'Callback para fechar o modal' },
+      {
+        name: 'isOpen',
+        type: 'boolean',
+        description: 'Estado de abertura do modal',
+      },
+      {
+        name: 'onClose',
+        type: '() => void',
+        description: 'Callback para fechar o modal',
+      },
       { name: 'title', type: 'string', description: 'Título do modal' },
-      { name: 'children', type: 'React.ReactNode', description: 'Conteúdo do modal' }
+      {
+        name: 'children',
+        type: 'React.ReactNode',
+        description: 'Conteúdo do modal',
+      },
     ],
     imports: [
-      'import { useEffect } from \'react\';',
-      'import { XMarkIcon } from \'@heroicons/react/24/outline\';'
-    ]
+      "import { useEffect } from 'react';",
+      "import { XMarkIcon } from '@heroicons/react/24/outline';",
+    ],
   },
   {
     name: 'FormField',
@@ -256,28 +286,52 @@ const COMPONENT_CONFIGS = [
     props: [
       { name: 'label', type: 'string', description: 'Rótulo do campo' },
       { name: 'value', type: 'string', description: 'Valor do campo' },
-      { name: 'onChange', type: '(value: string) => void', description: 'Callback de mudança' },
+      {
+        name: 'onChange',
+        type: '(value: string) => void',
+        description: 'Callback de mudança',
+      },
       { name: 'error', type: 'string', description: 'Mensagem de erro' },
-      { name: 'type', type: '\'text\' | \'email\' | \'password\'', description: 'Tipo do campo' }
+      {
+        name: 'type',
+        type: "'text' | 'email' | 'password'",
+        description: 'Tipo do campo',
+      },
     ],
     imports: [
-      'import { useState } from \'react\';',
-      'import { EyeIcon, EyeSlashIcon } from \'@heroicons/react/24/outline\';'
-    ]
+      "import { useState } from 'react';",
+      "import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';",
+    ],
   },
   {
     name: 'Notification',
     description: 'Sistema de notificações',
     props: [
-      { name: 'message', type: 'string', description: 'Mensagem da notificação' },
-      { name: 'type', type: '\'success\' | \'error\' | \'warning\' | \'info\'', description: 'Tipo da notificação' },
-      { name: 'onClose', type: '() => void', description: 'Callback para fechar' },
-      { name: 'autoClose', type: 'boolean', description: 'Fechar automaticamente' }
+      {
+        name: 'message',
+        type: 'string',
+        description: 'Mensagem da notificação',
+      },
+      {
+        name: 'type',
+        type: "'success' | 'error' | 'warning' | 'info'",
+        description: 'Tipo da notificação',
+      },
+      {
+        name: 'onClose',
+        type: '() => void',
+        description: 'Callback para fechar',
+      },
+      {
+        name: 'autoClose',
+        type: 'boolean',
+        description: 'Fechar automaticamente',
+      },
     ],
     imports: [
-      'import { useEffect } from \'react\';',
-      'import { XMarkIcon, CheckCircleIcon, ExclamationTriangleIcon, InformationCircleIcon } from \'@heroicons/react/24/outline\';'
-    ]
+      "import { useEffect } from 'react';",
+      "import { XMarkIcon, CheckCircleIcon, ExclamationTriangleIcon, InformationCircleIcon } from '@heroicons/react/24/outline';",
+    ],
   },
   {
     name: 'Pagination',
@@ -285,13 +339,21 @@ const COMPONENT_CONFIGS = [
     props: [
       { name: 'currentPage', type: 'number', description: 'Página atual' },
       { name: 'totalPages', type: 'number', description: 'Total de páginas' },
-      { name: 'onPageChange', type: '(page: number) => void', description: 'Callback de mudança de página' },
-      { name: 'showPageNumbers', type: 'boolean', description: 'Mostrar números das páginas' }
+      {
+        name: 'onPageChange',
+        type: '(page: number) => void',
+        description: 'Callback de mudança de página',
+      },
+      {
+        name: 'showPageNumbers',
+        type: 'boolean',
+        description: 'Mostrar números das páginas',
+      },
     ],
     imports: [
-      'import { ChevronLeftIcon, ChevronRightIcon } from \'@heroicons/react/24/outline\';'
-    ]
-  }
+      "import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';",
+    ],
+  },
 ];
 
 /**
@@ -299,33 +361,33 @@ const COMPONENT_CONFIGS = [
  */
 const main = async () => {
   console.log('🚀 Iniciando geração de componentes...');
-  
+
   try {
     // Criar diretório de saída
     fs.mkdirSync(CONFIG.outputDir, { recursive: true });
-    
+
     // Gerar cada componente
     for (const config of COMPONENT_CONFIGS) {
       console.log(`📦 Gerando componente: ${config.name}`);
       await generateComponent(config);
     }
-    
+
     // Gerar arquivo de índice
-    const indexContent = COMPONENT_CONFIGS.map(config => 
-      `export { default as ${config.name} } from './${config.name}/${config.name}';`
+    const indexContent = COMPONENT_CONFIGS.map(
+      config =>
+        `export { default as ${config.name} } from './${config.name}/${config.name}';`
     ).join('\n');
-    
+
     await createTsFile({
       directory: CONFIG.outputDir,
       fileName: 'index',
       content: indexContent,
       extension: 'ts',
-      generatedBy: 'scripts/codegen/generateComponents.js'
+      generatedBy: 'scripts/codegen/generateComponents.js',
     });
-    
+
     console.log('✅ Geração concluída com sucesso!');
     console.log(`📁 Componentes gerados em: ${CONFIG.outputDir}`);
-    
   } catch (error) {
     console.error('❌ Erro durante a geração:', error);
     process.exit(1);
@@ -340,5 +402,5 @@ if (require.main === module) {
 module.exports = {
   generateComponent,
   createTsFile,
-  CONFIG
-}; 
+  CONFIG,
+};

@@ -1,0 +1,77 @@
+@import url('../../styles/variables.css');
+
+.scene-preview {
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-sm);
+  width: 100%;
+  max-width: 480px;
+  background-color: var(--surface);
+  transition: box-shadow 200ms ease;
+}
+
+.scene-preview:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.scene-preview:focus {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+.scene-preview.loading {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+.scene-preview.error {
+  border: 2px solid var(--error);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--error) 20%, transparent);
+}
+
+.scene-preview.success {
+  border: 2px solid var(--success);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--success) 20%, transparent);
+}
+
+.scene-preview.warning {
+  border: 2px solid var(--warning);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--warning) 20%, transparent);
+}
+
+.scene-preview.info {
+  border: 2px solid var(--info);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--info) 20%, transparent);
+}
+
+.scene-preview.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.scene-preview.interactive {
+  cursor: pointer;
+}
+
+.scene-preview.draggable {
+  cursor: move;
+}
+
+.scene-preview.resizable {
+  cursor: nwse-resize;
+}
+
+.scene-preview.rotatable {
+  cursor: grab;
+}
+
+.scene-preview.rotatable:active {
+  cursor: grabbing;
+}
+
+/* Responsividade */
+@media (width <= 768px) {
+  .scene-preview {
+    max-width: 100%;
+  }
+}

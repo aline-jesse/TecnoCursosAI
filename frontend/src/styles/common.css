@@ -1,0 +1,241 @@
+/* Base styles for common components */
+@import url('./variables.css');
+
+/* Component container */
+.component-container {
+  position: relative;
+  width: 100%;
+  margin-bottom: var(--spacing-3);
+}
+
+/* Component header */
+.component-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--spacing-2);
+}
+
+.component-title {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--text-primary);
+  margin: 0;
+}
+
+/* Component content */
+.component-content {
+  position: relative;
+  width: 100%;
+}
+
+/* Component footer */
+.component-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-top: var(--spacing-2);
+}
+
+/* Component states */
+.component-disabled {
+  opacity: 0.6;
+  pointer-events: none;
+  user-select: none;
+}
+
+.component-loading {
+  position: relative;
+  min-height: 100px;
+}
+
+.component-loading::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 24px;
+  height: 24px;
+  margin: -12px 0 0 -12px;
+  border: 2px solid var(--border-color);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+.component-error {
+  border: 1px solid var(--error);
+  border-radius: var(--border-radius);
+  padding: var(--spacing-2);
+  color: var(--error);
+  font-size: var(--font-size-sm);
+  margin-top: var(--spacing-2);
+}
+
+/* Component animations */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Component transitions */
+.component-fade-enter {
+  opacity: 0;
+}
+
+.component-fade-enter-active {
+  opacity: 1;
+  transition: opacity 200ms ease-in;
+}
+
+.component-fade-exit {
+  opacity: 1;
+}
+
+.component-fade-exit-active {
+  opacity: 0;
+  transition: opacity 200ms ease-out;
+}
+
+/* Component focus styles */
+.component-focus-ring {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--primary-light);
+  border-radius: var(--border-radius);
+}
+
+/* Component hover styles */
+.component-hover {
+  transition: all 200ms ease;
+}
+
+.component-hover:hover {
+  background-color: var(--surface-hover);
+}
+
+/* Component active styles */
+.component-active {
+  background-color: var(--surface-active);
+}
+
+/* Component sizes */
+.component-sm {
+  font-size: var(--font-size-sm);
+  padding: var(--spacing-1) var(--spacing-2);
+}
+
+.component-md {
+  font-size: var(--font-size-base);
+  padding: var(--spacing-2) var(--spacing-3);
+}
+
+.component-lg {
+  font-size: var(--font-size-lg);
+  padding: var(--spacing-3) var(--spacing-4);
+}
+
+/* Component variants */
+.component-outlined {
+  border: 1px solid var(--border-color);
+  background-color: transparent;
+}
+
+.component-filled {
+  background-color: var(--surface);
+  border: none;
+}
+
+.component-text {
+  background-color: transparent;
+  border: none;
+}
+
+/* Component colors */
+.component-primary {
+  color: var(--primary);
+}
+
+.component-secondary {
+  color: var(--secondary);
+}
+
+.component-success {
+  color: var(--success);
+}
+
+.component-warning {
+  color: var(--warning);
+}
+
+.component-error {
+  color: var(--error);
+}
+
+.component-info {
+  color: var(--info);
+}
+
+/* Component utilities */
+.component-no-wrap {
+  white-space: nowrap;
+}
+
+.component-ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.component-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.component-space-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.component-gap-1 {
+  gap: var(--spacing-1);
+}
+
+.component-gap-2 {
+  gap: var(--spacing-2);
+}
+
+.component-gap-3 {
+  gap: var(--spacing-3);
+}
+
+/* Component accessibility */
+.component-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Component responsive */
+@media (width <= 768px) {
+  .component-responsive {
+    flex-direction: column;
+  }
+
+  .component-responsive > * {
+    width: 100%;
+    margin-bottom: var(--spacing-2);
+  }
+
+  .component-responsive > *:last-child {
+    margin-bottom: 0;
+  }
+}

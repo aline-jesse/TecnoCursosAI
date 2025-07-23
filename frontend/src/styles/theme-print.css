@@ -1,0 +1,100 @@
+@media print {
+  * {
+    background: transparent !important;
+    color: #000000 !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+    filter: none !important;
+    -ms-filter: none !important;
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+    line-height: 1.4;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-size: 12pt;
+  }
+
+  @page {
+    margin: 2cm;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    page-break-after: avoid;
+    orphans: 3;
+    widows: 3;
+  }
+
+  p,
+  h2,
+  h3 {
+    orphans: 3;
+    widows: 3;
+  }
+
+  img {
+    max-width: 100% !important;
+    page-break-inside: avoid;
+  }
+
+  a,
+  a:visited {
+    text-decoration: underline;
+  }
+
+  a[href]:after {
+    content: ' (' attr(href) ')';
+  }
+
+  abbr[title]:after {
+    content: ' (' attr(title) ')';
+  }
+
+  a[href^='#']:after,
+  a[href^='javascript:']:after {
+    content: '';
+  }
+
+  pre,
+  blockquote {
+    border: 1px solid #999999;
+    page-break-inside: avoid;
+  }
+
+  thead {
+    display: table-header-group;
+  }
+
+  tr,
+  img {
+    page-break-inside: avoid;
+  }
+
+  .no-print,
+  nav,
+  footer,
+  video,
+  audio,
+  object,
+  embed {
+    display: none !important;
+  }
+
+  [data-theme='print'] {
+    --background-color: #ffffff;
+    --surface-color: #ffffff;
+    --text-color: #000000;
+    --text-color-secondary: #666666;
+    --border-color: #999999;
+    --shadow-sm: none;
+    --shadow-md: none;
+    --shadow-lg: none;
+    --shadow-xl: none;
+  }
+}

@@ -1,0 +1,215 @@
+@import url('../../../styles/variables.css');
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: var(--surface);
+  border-radius: var(--border-radius);
+  overflow: hidden;
+}
+
+.data-table-header {
+  background-color: var(--surface-hover);
+}
+
+.data-table-header th {
+  padding: var(--spacing-3);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--text-primary);
+  text-align: left;
+  white-space: nowrap;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.data-table-header th.sortable {
+  cursor: pointer;
+  transition: background-color 200ms ease;
+}
+
+.data-table-header th.sortable:hover {
+  background-color: var(--surface-active);
+}
+
+.data-table-header th.sorted {
+  background-color: var(--primary-light);
+  color: var(--primary);
+}
+
+.data-table-header th.sorted::after {
+  content: '';
+  display: inline-block;
+  width: 0;
+  height: 0;
+  margin-left: var(--spacing-2);
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+}
+
+.data-table-header th.sorted.asc::after {
+  border-bottom: 4px solid currentcolor;
+}
+
+.data-table-header th.sorted.desc::after {
+  border-top: 4px solid currentcolor;
+}
+
+.data-table-body tr {
+  transition: background-color 200ms ease;
+}
+
+.data-table-body tr:hover {
+  background-color: var(--surface-hover);
+}
+
+.data-table-body td {
+  padding: var(--spacing-3);
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.data-table-body tr:last-child td {
+  border-bottom: none;
+}
+
+/* Table sizes */
+.data-table-sm th,
+.data-table-sm td {
+  padding: var(--spacing-2);
+  font-size: var(--font-size-xs);
+}
+
+.data-table-lg th,
+.data-table-lg td {
+  padding: var(--spacing-4);
+  font-size: var(--font-size-base);
+}
+
+/* Table variants */
+.data-table-striped tbody tr:nth-child(even) {
+  background-color: var(--surface-hover);
+}
+
+.data-table-bordered th,
+.data-table-bordered td {
+  border: 1px solid var(--border-color);
+}
+
+/* Table states */
+.data-table-loading {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.data-table-empty {
+  text-align: center;
+  padding: var(--spacing-6);
+  color: var(--text-tertiary);
+}
+
+/* Table selection */
+.data-table-selectable tbody tr {
+  cursor: pointer;
+}
+
+.data-table-selected {
+  background-color: var(--primary-light) !important;
+}
+
+/* Table with checkbox */
+.data-table-checkbox {
+  width: 1%;
+  padding-right: 0 !important;
+}
+
+/* Table with actions */
+.data-table-actions {
+  width: 1%;
+  white-space: nowrap;
+  text-align: right !important;
+}
+
+.data-table-action-button {
+  padding: var(--spacing-1) var(--spacing-2);
+  font-size: var(--font-size-sm);
+  color: var(--primary);
+  background-color: transparent;
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: all 200ms ease;
+}
+
+.data-table-action-button:hover {
+  background-color: var(--primary-light);
+}
+
+.data-table-action-button:active {
+  transform: scale(0.95);
+}
+
+/* Table pagination */
+.data-table-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-3);
+  background-color: var(--surface-hover);
+  border-top: 1px solid var(--border-color);
+}
+
+.data-table-pagination-info {
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+}
+
+.data-table-pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+
+.data-table-pagination-button {
+  padding: var(--spacing-1) var(--spacing-2);
+  font-size: var(--font-size-sm);
+  color: var(--text-primary);
+  background-color: transparent;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: all 200ms ease;
+}
+
+.data-table-pagination-button:hover {
+  background-color: var(--surface-active);
+}
+
+.data-table-pagination-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.data-table-pagination-button.active {
+  background-color: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+
+/* Responsive */
+@media (width <= 768px) {
+  .data-table {
+    display: block;
+    overflow-x: auto;
+  }
+
+  .data-table-pagination {
+    flex-direction: column;
+    gap: var(--spacing-2);
+  }
+
+  .data-table-pagination-controls {
+    width: 100%;
+    justify-content: center;
+  }
+}

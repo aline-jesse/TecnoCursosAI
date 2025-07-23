@@ -1,0 +1,192 @@
+.editor-canvas-container {
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgb(0 0 0 / 0.1);
+  border-radius: 8px;
+  background-color: #fff;
+  touch-action: none;
+  user-select: none;
+}
+
+.editor-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  image-rendering: crisp-edges;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+.editor-canvas-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  opacity: 1;
+  transition: opacity 0.2s ease-in-out;
+}
+
+.editor-canvas-layer-main {
+  z-index: 0;
+}
+
+.editor-canvas-layer-buffer {
+  z-index: 1;
+}
+
+.editor-canvas-layer-overlay {
+  z-index: 2;
+}
+
+.editor-canvas-layer-grid {
+  z-index: 3;
+  opacity: 0.1;
+}
+
+.editor-canvas-layer-selection {
+  z-index: 4;
+  pointer-events: none;
+}
+
+/* Estados do cursor */
+.editor-canvas-container[data-tool='select'] {
+  cursor: default;
+}
+
+.editor-canvas-container[data-tool='move'] {
+  cursor: move;
+}
+
+.editor-canvas-container[data-tool='text'] {
+  cursor: text;
+}
+
+.editor-canvas-container[data-tool='draw'] {
+  cursor: crosshair;
+}
+
+.editor-canvas-container[data-tool='shape'] {
+  cursor: crosshair;
+}
+
+.editor-canvas-container[data-tool='zoom'] {
+  cursor: zoom-in;
+}
+
+.editor-canvas-container[data-tool='pan'] {
+  cursor: grab;
+}
+
+.editor-canvas-container[data-tool='pan'].dragging {
+  cursor: grabbing;
+}
+
+/* Alças de redimensionamento */
+.editor-canvas-resize-handle {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background-color: #fff;
+  border: 2px solid #0095ff;
+  border-radius: 50%;
+  pointer-events: all;
+  cursor: nwse-resize;
+  transform: translate(-50%, -50%);
+}
+
+.editor-canvas-resize-handle.top-left {
+  cursor: nw-resize;
+}
+
+.editor-canvas-resize-handle.top-right {
+  cursor: ne-resize;
+}
+
+.editor-canvas-resize-handle.bottom-left {
+  cursor: sw-resize;
+}
+
+.editor-canvas-resize-handle.bottom-right {
+  cursor: se-resize;
+}
+
+/* Alça de rotação */
+.editor-canvas-rotate-handle {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background-color: #fff;
+  border: 2px solid #0095ff;
+  border-radius: 50%;
+  pointer-events: all;
+  cursor: crosshair;
+  transform: translate(-50%, -50%);
+  top: -30px;
+  left: 50%;
+}
+
+/* Guias de alinhamento */
+.editor-canvas-guide {
+  position: absolute;
+  background-color: #0095ff;
+  pointer-events: none;
+  opacity: 0.5;
+  transition: opacity 0.2s ease-in-out;
+}
+
+.editor-canvas-guide.horizontal {
+  height: 1px;
+  width: 100%;
+}
+
+.editor-canvas-guide.vertical {
+  width: 1px;
+  height: 100%;
+}
+
+/* Animações */
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  50% {
+    transform: scale(1.2);
+    opacity: 0.5;
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.editor-canvas-container[data-status='saving'] {
+  animation: pulse 1s infinite;
+}
+
+/* Otimizações de performance */
+.editor-canvas-container * {
+  backface-visibility: hidden;
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+/* Media queries para dispositivos de alta densidade */
+@media (resolution >= 2dppx) {
+  .editor-canvas-container {
+    image-rendering: crisp-edges;
+  }
+}
+
+/* Suporte a toque */
+@media (hover: none) and (pointer: coarse) {
+  .editor-canvas-resize-handle,
+  .editor-canvas-rotate-handle {
+    width: 20px;
+    height: 20px;
+  }
+}

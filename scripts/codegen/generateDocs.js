@@ -3,7 +3,7 @@
 /**
  * Gerador de Código para Documentação Automática
  * TecnoCursos AI - Documentation Code Generation System
- * 
+ *
  * Baseado nas melhores práticas de code generation:
  * - Documentação automática de APIs
  * - Exemplos de uso
@@ -21,37 +21,48 @@ const prettier = require('prettier');
 const CONFIG = {
   docsDir: path.resolve(__dirname, '../../docs'),
   outputDir: path.resolve(__dirname, '../../docs/generated'),
-  prettierConfig: path.resolve(__dirname, '../../.prettierrc')
+  prettierConfig: path.resolve(__dirname, '../../.prettierrc'),
 };
 
 /**
  * Template para documentação de API OpenAPI
  */
 const generateOpenAPIDoc = (apiName, endpoints = []) => {
-  const paths = endpoints.map(endpoint => {
-    const path = endpoint.path;
-    const method = endpoint.method.toLowerCase();
-    const summary = endpoint.summary || `${endpoint.method} ${endpoint.name}`;
-    const description = endpoint.description || `Operação ${endpoint.method} para ${endpoint.name}`;
-    
-    return `  ${path}:
+  const paths = endpoints
+    .map(endpoint => {
+      const { path } = endpoint;
+      const method = endpoint.method.toLowerCase();
+      const summary = endpoint.summary || `${endpoint.method} ${endpoint.name}`;
+      const description =
+        endpoint.description ||
+        `Operação ${endpoint.method} para ${endpoint.name}`;
+
+      return `  ${path}:
     ${method}:
       tags:
         - ${apiName}
       summary: ${summary}
       description: ${description}
       parameters:
-${endpoint.parameters ? endpoint.parameters.map(param => `        - name: ${param.name}
+${
+  endpoint.parameters
+    ? endpoint.parameters
+        .map(
+          param => `        - name: ${param.name}
           in: ${param.in}
           required: ${param.required || false}
           schema:
             type: ${param.type}
-          description: ${param.description || ''}`).join('\n') : `        - name: id
+          description: ${param.description || ''}`
+        )
+        .join('\n')
+    : `        - name: id
           in: path
           required: true
           schema:
             type: integer
-          description: ID do ${apiName.toLowerCase()}`}
+          description: ID do ${apiName.toLowerCase()}`
+}
       responses:
         ${endpoint.expectedStatus || 200}:
           description: Sucesso
@@ -65,7 +76,8 @@ ${endpoint.parameters ? endpoint.parameters.map(param => `        - name: ${para
           description: Não encontrado
         ${endpoint.serverErrorStatus || 500}:
           description: Erro interno do servidor`;
-  }).join('\n\n');
+    })
+    .join('\n\n');
 
   return `openapi: 3.0.0
 info:
@@ -146,11 +158,15 @@ components:
  * Template para documentação de componente React
  */
 const generateReactDoc = (componentName, props = []) => {
-  const propsTable = props.map(prop => {
-    return `| ${prop.name} | ${prop.type} | ${prop.required ? 'Sim' : 'Não'} | ${prop.default || '-'} | ${prop.description || ''} |`;
-  }).join('\n');
+  const propsTable = props
+    .map(prop => {
+      return `| ${prop.name} | ${prop.type} | ${prop.required ? 'Sim' : 'Não'} | ${prop.default || '-'} | ${prop.description || ''} |`;
+    })
+    .join('\n');
 
-  const examples = props.length > 0 ? `
+  const examples =
+    props.length > 0
+      ? `
 ## Exemplos de Uso
 
 ### Uso Básico
@@ -165,7 +181,8 @@ import ${componentName} from './${componentName}';
 <${componentName}
 ${props.map(prop => `  ${prop.name}={${prop.example || prop.default || 'value'}}`).join('\n')}
 />
-\`\`\`` : '';
+\`\`\``
+      : '';
 
   return `# ${componentName}
 
@@ -222,9 +239,11 @@ npm test -- --testPathPattern=${componentName}
  * Template para documentação de modelo de banco
  */
 const generateDatabaseDoc = (modelName, fields = []) => {
-  const fieldsTable = fields.map(field => {
-    return `| ${field.name} | ${field.type} | ${field.nullable !== false ? 'Sim' : 'Não'} | ${field.default || '-'} | ${field.description || ''} |`;
-  }).join('\n');
+  const fieldsTable = fields
+    .map(field => {
+      return `| ${field.name} | ${field.type} | ${field.nullable !== false ? 'Sim' : 'Não'} | ${field.default || '-'} | ${field.description || ''} |`;
+    })
+    .join('\n');
 
   const relationships = fields
     .filter(field => field.type === 'foreign_key')
@@ -288,20 +307,30 @@ alembic upgrade head
 
 ## Índices
 
-${fields.filter(field => field.index).map(field => `- \`ix_${modelName.toLowerCase()}s_${field.name}\` em \`${field.name}\``).join('\n') || 'Nenhum índice personalizado definido.'}`;
+${
+  fields
+    .filter(field => field.index)
+    .map(
+      field =>
+        `- \`ix_${modelName.toLowerCase()}s_${field.name}\` em \`${field.name}\``
+    )
+    .join('\n') || 'Nenhum índice personalizado definido.'
+}`;
 };
 
 /**
  * Template para documentação de arquitetura
  */
 const generateArchitectureDoc = (systemName, components = []) => {
-  const componentsList = components.map(comp => {
-    return `### ${comp.name}
+  const componentsList = components
+    .map(comp => {
+      return `### ${comp.name}
 ${comp.description}
 
 **Tecnologias:** ${comp.technologies.join(', ')}
 **Responsabilidades:** ${comp.responsibilities.join(', ')}`;
-  }).join('\n\n');
+    })
+    .join('\n\n');
 
   return `# Arquitetura ${systemName}
 
@@ -313,7 +342,14 @@ Visão geral da arquitetura do sistema ${systemName}.
 graph TB
 ${components.map(comp => `    ${comp.id}[${comp.name}]`).join('\n')}
     
-${components.map(comp => comp.connections ? comp.connections.map(conn => `    ${comp.id} --> ${conn}`).join('\n') : '').filter(Boolean).join('\n')}
+${components
+  .map(comp =>
+    comp.connections
+      ? comp.connections.map(conn => `    ${comp.id} --> ${conn}`).join('\n')
+      : ''
+  )
+  .filter(Boolean)
+  .join('\n')}
 \`\`\`
 
 ## Componentes
@@ -396,7 +432,7 @@ docker-compose -f docker-compose.prod.yml up -d
 /**
  * Gerador de documentação baseado em configuração
  */
-const generateDocumentation = async (config) => {
+const generateDocumentation = async config => {
   const {
     name,
     type,
@@ -404,14 +440,14 @@ const generateDocumentation = async (config) => {
     props = [],
     endpoints = [],
     fields = [],
-    components = []
+    components = [],
   } = config;
 
   const docDir = path.join(CONFIG.outputDir, type, name);
-  
+
   let docContent = '';
   let extension = 'md';
-  
+
   switch (type) {
     case 'openapi':
       docContent = generateOpenAPIDoc(name, endpoints);
@@ -439,7 +475,7 @@ const generateDocumentation = async (config) => {
     fileName: name.toLowerCase(),
     content: docContent,
     extension,
-    generatedBy: 'scripts/codegen/generateDocs.js'
+    generatedBy: 'scripts/codegen/generateDocs.js',
   });
 
   // Gerar arquivo de configuração
@@ -458,20 +494,20 @@ const generateDocumentation = async (config) => {
     fileName: 'doc.config',
     content: configContent,
     extension: 'json',
-    generatedBy: 'scripts/codegen/generateDocs.js'
+    generatedBy: 'scripts/codegen/generateDocs.js',
   });
 };
 
 /**
  * Utilitário para criar arquivos
  */
-const createTsFile = async (params) => {
+const createTsFile = async params => {
   const {
     directory,
     fileName,
     content,
     extension = 'md',
-    generatedBy
+    generatedBy,
   } = params;
 
   // Criar diretório se não existir
@@ -486,7 +522,7 @@ const createTsFile = async (params) => {
         `# Este arquivo foi gerado automaticamente por ${generatedBy}\n# Não edite manualmente - use o sistema de geração\n\n${content}`,
         {
           ...config,
-          parser: extension === 'json' ? 'json' : 'yaml'
+          parser: extension === 'json' ? 'json' : 'yaml',
         }
       );
     } catch (error) {
@@ -496,7 +532,7 @@ const createTsFile = async (params) => {
 
   const filePath = `${directory}/${fileName}.${extension}`;
   fs.writeFileSync(filePath, formattedContent);
-  
+
   console.log(`✅ Arquivo gerado: ${filePath}`);
   return filePath;
 };
@@ -517,62 +553,120 @@ const DOC_CONFIGS = [
         summary: 'Lista todos os vídeos',
         description: 'Retorna uma lista paginada de vídeos',
         parameters: [
-          { name: 'skip', in: 'query', type: 'integer', description: 'Número de registros para pular' },
-          { name: 'limit', in: 'query', type: 'integer', description: 'Número máximo de registros' }
-        ]
+          {
+            name: 'skip',
+            in: 'query',
+            type: 'integer',
+            description: 'Número de registros para pular',
+          },
+          {
+            name: 'limit',
+            in: 'query',
+            type: 'integer',
+            description: 'Número máximo de registros',
+          },
+        ],
       },
       {
         method: 'POST',
         name: 'create_video',
         path: '/api/videos',
         summary: 'Cria um novo vídeo',
-        description: 'Cria um novo vídeo com os dados fornecidos'
+        description: 'Cria um novo vídeo com os dados fornecidos',
       },
       {
         method: 'GET',
         name: 'get_video',
         path: '/api/videos/{id}',
         summary: 'Obtém um vídeo específico',
-        description: 'Retorna os detalhes de um vídeo específico'
+        description: 'Retorna os detalhes de um vídeo específico',
       },
       {
         method: 'PUT',
         name: 'update_video',
         path: '/api/videos/{id}',
         summary: 'Atualiza um vídeo',
-        description: 'Atualiza os dados de um vídeo específico'
+        description: 'Atualiza os dados de um vídeo específico',
       },
       {
         method: 'DELETE',
         name: 'delete_video',
         path: '/api/videos/{id}',
         summary: 'Remove um vídeo',
-        description: 'Remove um vídeo específico'
-      }
-    ]
+        description: 'Remove um vídeo específico',
+      },
+    ],
   },
   {
     name: 'Toolbar',
     type: 'react',
     description: 'Documentação do componente Toolbar',
     props: [
-      { name: 'onUndo', type: 'function', required: false, description: 'Callback para desfazer ação' },
-      { name: 'onRedo', type: 'function', required: false, description: 'Callback para refazer ação' },
-      { name: 'canUndo', type: 'boolean', required: false, default: false, description: 'Estado de habilitação desfazer' },
-      { name: 'canRedo', type: 'boolean', required: false, default: false, description: 'Estado de habilitação refazer' }
-    ]
+      {
+        name: 'onUndo',
+        type: 'function',
+        required: false,
+        description: 'Callback para desfazer ação',
+      },
+      {
+        name: 'onRedo',
+        type: 'function',
+        required: false,
+        description: 'Callback para refazer ação',
+      },
+      {
+        name: 'canUndo',
+        type: 'boolean',
+        required: false,
+        default: false,
+        description: 'Estado de habilitação desfazer',
+      },
+      {
+        name: 'canRedo',
+        type: 'boolean',
+        required: false,
+        default: false,
+        description: 'Estado de habilitação refazer',
+      },
+    ],
   },
   {
     name: 'Video',
     type: 'database',
     description: 'Documentação do modelo Video',
     fields: [
-      { name: 'title', type: 'string', nullable: false, description: 'Título do vídeo' },
-      { name: 'description', type: 'text', nullable: true, description: 'Descrição do vídeo' },
-      { name: 'duration', type: 'float', nullable: true, description: 'Duração em segundos' },
-      { name: 'file_path', type: 'string', nullable: false, description: 'Caminho do arquivo' },
-      { name: 'is_active', type: 'boolean', nullable: false, default: true, description: 'Vídeo ativo' }
-    ]
+      {
+        name: 'title',
+        type: 'string',
+        nullable: false,
+        description: 'Título do vídeo',
+      },
+      {
+        name: 'description',
+        type: 'text',
+        nullable: true,
+        description: 'Descrição do vídeo',
+      },
+      {
+        name: 'duration',
+        type: 'float',
+        nullable: true,
+        description: 'Duração em segundos',
+      },
+      {
+        name: 'file_path',
+        type: 'string',
+        nullable: false,
+        description: 'Caminho do arquivo',
+      },
+      {
+        name: 'is_active',
+        type: 'boolean',
+        nullable: false,
+        default: true,
+        description: 'Vídeo ativo',
+      },
+    ],
   },
   {
     name: 'TecnoCursosAI',
@@ -584,31 +678,47 @@ const DOC_CONFIGS = [
         name: 'Frontend React',
         description: 'Interface do usuário construída com React',
         technologies: ['React', 'TypeScript', 'Tailwind CSS'],
-        responsibilities: ['Renderização de componentes', 'Gerenciamento de estado', 'Interação com API']
+        responsibilities: [
+          'Renderização de componentes',
+          'Gerenciamento de estado',
+          'Interação com API',
+        ],
       },
       {
         id: 'backend',
         name: 'Backend FastAPI',
         description: 'API REST construída com FastAPI',
         technologies: ['FastAPI', 'SQLAlchemy', 'Pydantic'],
-        responsibilities: ['Processamento de requisições', 'Validação de dados', 'Lógica de negócio']
+        responsibilities: [
+          'Processamento de requisições',
+          'Validação de dados',
+          'Lógica de negócio',
+        ],
       },
       {
         id: 'database',
         name: 'Banco de Dados',
         description: 'Armazenamento persistente de dados',
         technologies: ['PostgreSQL', 'SQLAlchemy', 'Alembic'],
-        responsibilities: ['Persistência de dados', 'Relacionamentos', 'Migrações']
+        responsibilities: [
+          'Persistência de dados',
+          'Relacionamentos',
+          'Migrações',
+        ],
       },
       {
         id: 'cache',
         name: 'Cache Redis',
         description: 'Cache em memória para performance',
         technologies: ['Redis'],
-        responsibilities: ['Cache de sessões', 'Cache de dados', 'Filas de processamento']
-      }
-    ]
-  }
+        responsibilities: [
+          'Cache de sessões',
+          'Cache de dados',
+          'Filas de processamento',
+        ],
+      },
+    ],
+  },
 ];
 
 /**
@@ -616,17 +726,17 @@ const DOC_CONFIGS = [
  */
 const main = async () => {
   console.log('🚀 Iniciando geração de documentação...');
-  
+
   try {
     // Criar diretório de saída
     fs.mkdirSync(CONFIG.outputDir, { recursive: true });
-    
+
     // Gerar cada documentação
     for (const config of DOC_CONFIGS) {
       console.log(`📦 Gerando documentação: ${config.name} (${config.type})`);
       await generateDocumentation(config);
     }
-    
+
     // Gerar arquivo de índice
     const indexContent = `# Documentação Gerada
 
@@ -660,12 +770,11 @@ node scripts/codegen/generateDocs.js
       fileName: 'README',
       content: indexContent,
       extension: 'md',
-      generatedBy: 'scripts/codegen/generateDocs.js'
+      generatedBy: 'scripts/codegen/generateDocs.js',
     });
-    
+
     console.log('✅ Geração de documentação concluída com sucesso!');
     console.log(`📁 Documentação gerada em: ${CONFIG.outputDir}`);
-    
   } catch (error) {
     console.error('❌ Erro durante a geração:', error);
     process.exit(1);
@@ -680,5 +789,5 @@ if (require.main === module) {
 module.exports = {
   generateDocumentation,
   createTsFile,
-  CONFIG
-}; 
+  CONFIG,
+};

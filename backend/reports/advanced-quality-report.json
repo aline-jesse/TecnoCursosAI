@@ -1,0 +1,55 @@
+{
+  "timestamp": "2025-07-22T01:49:21.360Z",
+  "summary": {
+    "totalSteps": 4,
+    "successfulSteps": 1,
+    "failedSteps": 3,
+    "successRate": 25,
+    "tierBreakdown": {
+      "0": 1,
+      "1": 0,
+      "2": 0
+    }
+  },
+  "details": [
+    {
+      "step": "Formatação automática com Prettier",
+      "command": "npm run format",
+      "success": true,
+      "output": null,
+      "tier": 0
+    },
+    {
+      "step": "Verificação de tipos TypeScript",
+      "command": "npm run typecheck",
+      "success": false,
+      "error": "Command failed: npm run typecheck",
+      "tier": 0
+    },
+    {
+      "step": "Correção automática com ESLint",
+      "command": "npm run lint",
+      "success": false,
+      "error": "Command failed: npm run lint",
+      "tier": 1
+    },
+    {
+      "step": "Correção automática de CSS com Stylelint",
+      "command": "npm run stylelint",
+      "success": false,
+      "error": "Command failed: npm run stylelint",
+      "tier": 1
+    }
+  ],
+  "recommendations": [
+    "🔧 Execute correções manuais nos arquivos problemáticos",
+    "📚 Revise a documentação em README_AUTOMACAO.md",
+    "🎯 Foque nos erros críticos primeiro"
+  ],
+  "nextSteps": [
+    "1. Configure VS Code com extensões recomendadas",
+    "2. Implemente CI/CD com GitHub Actions",
+    "3. Configure monitoramento contínuo",
+    "4. Implemente code review automatizado"
+  ]
+}

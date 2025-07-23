@@ -1,0 +1,181 @@
+@import url('../../../styles/variables.css');
+
+.notification {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-3);
+  padding: var(--spacing-3);
+  background-color: var(--surface);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-md);
+  min-width: 300px;
+  max-width: 500px;
+  animation: notification-slide-in 300ms ease forwards;
+}
+
+.notification-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+
+.notification-content {
+  flex: 1;
+}
+
+.notification-title {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  color: var(--text-primary);
+  margin: 0 0 var(--spacing-1);
+}
+
+.notification-message {
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.notification-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: none;
+  background-color: transparent;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  transition: all 200ms ease;
+  flex-shrink: 0;
+}
+
+.notification-close:hover {
+  color: var(--text-secondary);
+}
+
+.notification-close:active {
+  transform: scale(0.95);
+}
+
+/* Notification types */
+.notification-info {
+  border-left: 4px solid var(--info);
+}
+
+.notification-info .notification-icon {
+  color: var(--info);
+}
+
+.notification-success {
+  border-left: 4px solid var(--success);
+}
+
+.notification-success .notification-icon {
+  color: var(--success);
+}
+
+.notification-warning {
+  border-left: 4px solid var(--warning);
+}
+
+.notification-warning .notification-icon {
+  color: var(--warning);
+}
+
+.notification-error {
+  border-left: 4px solid var(--error);
+}
+
+.notification-error .notification-icon {
+  color: var(--error);
+}
+
+/* Notification animations */
+@keyframes notification-slide-in {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes notification-slide-out {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+.notification-exiting {
+  animation: notification-slide-out 300ms ease forwards;
+}
+
+/* Notification progress bar */
+.notification-progress {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 2px;
+  background-color: var(--border-color);
+  overflow: hidden;
+}
+
+.notification-progress-bar {
+  height: 100%;
+  background-color: currentcolor;
+  transition: width linear;
+}
+
+/* Notification with action */
+.notification-action {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  margin-top: var(--spacing-2);
+}
+
+.notification-action-button {
+  padding: var(--spacing-1) var(--spacing-2);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--primary);
+  background-color: transparent;
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: all 200ms ease;
+}
+
+.notification-action-button:hover {
+  background-color: var(--primary-light);
+}
+
+.notification-action-button:active {
+  transform: scale(0.95);
+}
+
+/* Notification responsive */
+@media (width <= 768px) {
+  .notification {
+    min-width: auto;
+    max-width: 100%;
+    margin: 0 var(--spacing-2);
+  }
+}

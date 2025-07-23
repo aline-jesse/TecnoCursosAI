@@ -1,0 +1,200 @@
+@import url('../../../styles/variables.css');
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
+  width: 100%;
+}
+
+.form-field-label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--text-primary);
+}
+
+.form-field-required {
+  color: var(--error);
+  margin-left: var(--spacing-1);
+}
+
+.form-field-input {
+  width: 100%;
+  padding: var(--spacing-2);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-base);
+  color: var(--text-primary);
+  background-color: var(--surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  transition: all 200ms ease;
+}
+
+.form-field-input:hover {
+  border-color: var(--border-hover);
+}
+
+.form-field-input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px var(--primary-light);
+}
+
+.form-field-input::placeholder {
+  color: var(--text-tertiary);
+}
+
+/* Field sizes */
+.form-field-sm .form-field-input {
+  padding: var(--spacing-1) var(--spacing-2);
+  font-size: var(--font-size-sm);
+}
+
+.form-field-lg .form-field-input {
+  padding: var(--spacing-3) var(--spacing-4);
+  font-size: var(--font-size-lg);
+}
+
+/* Field states */
+.form-field-disabled .form-field-input {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background-color: var(--surface-disabled);
+}
+
+.form-field-error .form-field-input {
+  border-color: var(--error);
+}
+
+.form-field-error .form-field-input:focus {
+  box-shadow: 0 0 0 2px var(--error-light);
+}
+
+.form-field-success .form-field-input {
+  border-color: var(--success);
+}
+
+.form-field-success .form-field-input:focus {
+  box-shadow: 0 0 0 2px var(--success-light);
+}
+
+/* Field helper text */
+.form-field-helper {
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  margin-top: var(--spacing-1);
+}
+
+.form-field-error .form-field-helper {
+  color: var(--error);
+}
+
+.form-field-success .form-field-helper {
+  color: var(--success);
+}
+
+/* Field with icon */
+.form-field-icon-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.form-field-icon {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-secondary);
+  pointer-events: none;
+}
+
+.form-field-icon-left .form-field-icon {
+  left: var(--spacing-2);
+}
+
+.form-field-icon-right .form-field-icon {
+  right: var(--spacing-2);
+}
+
+.form-field-icon-left .form-field-input {
+  padding-left: calc(var(--spacing-2) * 2 + 1em);
+}
+
+.form-field-icon-right .form-field-input {
+  padding-right: calc(var(--spacing-2) * 2 + 1em);
+}
+
+/* Field with clear button */
+.form-field-clearable .form-field-input {
+  padding-right: calc(var(--spacing-2) * 2 + 1em);
+}
+
+.form-field-clear {
+  position: absolute;
+  right: var(--spacing-2);
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: var(--text-tertiary);
+  transition: color 200ms ease;
+}
+
+.form-field-clear:hover {
+  color: var(--text-secondary);
+}
+
+/* Field with character count */
+.form-field-count {
+  font-size: var(--font-size-sm);
+  color: var(--text-tertiary);
+  margin-top: var(--spacing-1);
+  text-align: right;
+}
+
+.form-field-count-error {
+  color: var(--error);
+}
+
+/* Field group */
+.form-field-group {
+  display: flex;
+  gap: var(--spacing-2);
+}
+
+.form-field-group > .form-field {
+  flex: 1;
+}
+
+/* Field with prefix/suffix */
+.form-field-prefix,
+.form-field-suffix {
+  display: flex;
+  align-items: center;
+  padding: 0 var(--spacing-2);
+  color: var(--text-secondary);
+  background-color: var(--surface-hover);
+  border: 1px solid var(--border-color);
+  font-size: var(--font-size-base);
+}
+
+.form-field-prefix {
+  border-right: none;
+  border-top-left-radius: var(--border-radius);
+  border-bottom-left-radius: var(--border-radius);
+}
+
+.form-field-suffix {
+  border-left: none;
+  border-top-right-radius: var(--border-radius);
+  border-bottom-right-radius: var(--border-radius);
+}
+
+.form-field-with-prefix .form-field-input {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.form-field-with-suffix .form-field-input {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}

@@ -1,0 +1,151 @@
+@import url('../../styles/variables.css');
+
+.icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1em;
+  height: 1em;
+  font-size: inherit;
+  line-height: 1;
+  flex-shrink: 0;
+  color: currentcolor;
+  transition: transform 200ms ease;
+}
+
+/* Icon sizes */
+.icon-xs {
+  font-size: var(--font-size-xs);
+}
+
+.icon-sm {
+  font-size: var(--font-size-sm);
+}
+
+.icon-md {
+  font-size: var(--font-size-base);
+}
+
+.icon-lg {
+  font-size: var(--font-size-lg);
+}
+
+.icon-xl {
+  font-size: var(--font-size-xl);
+}
+
+/* Icon colors */
+.icon-primary {
+  color: var(--primary);
+}
+
+.icon-secondary {
+  color: var(--secondary);
+}
+
+.icon-success {
+  color: var(--success);
+}
+
+.icon-warning {
+  color: var(--warning);
+}
+
+.icon-error {
+  color: var(--error);
+}
+
+.icon-info {
+  color: var(--info);
+}
+
+/* Icon states */
+.icon-disabled {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.icon-clickable {
+  cursor: pointer;
+}
+
+.icon-clickable:hover {
+  transform: scale(1.1);
+}
+
+.icon-clickable:active {
+  transform: scale(0.95);
+}
+
+/* Icon animations */
+.icon-spin {
+  animation: icon-spin 2s linear infinite;
+}
+
+.icon-pulse {
+  animation: icon-pulse 1s ease infinite;
+}
+
+@keyframes icon-spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes icon-pulse {
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.1);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Icon alignment */
+.icon-left {
+  margin-right: var(--spacing-1);
+}
+
+.icon-right {
+  margin-left: var(--spacing-1);
+}
+
+/* Icon rotation */
+.icon-rotate-90 {
+  transform: rotate(90deg);
+}
+
+.icon-rotate-180 {
+  transform: rotate(180deg);
+}
+
+.icon-rotate-270 {
+  transform: rotate(270deg);
+}
+
+.icon-flip-horizontal {
+  transform: scaleX(-1);
+}
+
+.icon-flip-vertical {
+  transform: scaleY(-1);
+}
+
+/* Icon groups */
+.icon-group {
+  display: inline-flex;
+  align-items: center;
+}
+
+.icon-group > .icon + .icon {
+  margin-left: var(--spacing-1);
+}

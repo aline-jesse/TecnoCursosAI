@@ -1,0 +1,45 @@
+// Hooks do Canvas
+export { useCanvasAlignment } from './useCanvasAlignment';
+export { useCanvasAnimation } from './useCanvasAnimation';
+export { useCanvasClipping } from './useCanvasClipping';
+export { useCanvasDragDrop } from './useCanvasDragDrop';
+export { useCanvasEvents } from './useCanvasEvents';
+export { useCanvasExport } from './useCanvasExport';
+export { useCanvasFocus } from './useCanvasFocus';
+export { useCanvasFonts } from './useCanvasFonts';
+export { useCanvasGradients } from './useCanvasGradients';
+export { useCanvasGrid } from './useCanvasGrid';
+export { useCanvasGuides } from './useCanvasGuides';
+export { useCanvasHistory } from './useCanvasHistory';
+export { useCanvasImages } from './useCanvasImages';
+export { useCanvasKeyboard } from './useCanvasKeyboard';
+export { useCanvasLayers } from './useCanvasLayers';
+export { useCanvasLines } from './useCanvasLines';
+export { useCanvasMetrics } from './useCanvasMetrics';
+export { useCanvasOptimization } from './useCanvasOptimization';
+export { useCanvasPatterns } from './useCanvasPatterns';
+export { useCanvasRenderer } from './useCanvasRenderer';
+export { useCanvasResize } from './useCanvasResize';
+export { useCanvasRotation } from './useCanvasRotation';
+export { useCanvasScroll } from './useCanvasScroll';
+export { useCanvasSelection } from './useCanvasSelection';
+export { useCanvasShadows } from './useCanvasShadows';
+export { useCanvasShapes } from './useCanvasShapes';
+export { useCanvasText } from './useCanvasText';
+export { useCanvasTouch } from './useCanvasTouch';
+export { useCanvasTransform } from './useCanvasTransform';
+export { useCanvasUndo } from './useCanvasUndo';
+export { useCanvasZoom } from './useCanvasZoom';
+
+// Hooks do Editor
+export { default as useAssets } from './useAssets';
+export { useAuth } from './useAuth';
+export { useEditor } from './useEditor';
+export { useFileUpload } from './useFileUpload';
+export { useNotification } from './useNotification';
+export { usePreviewData } from './usePreviewData';
+export { default as useProject } from './useProject';
+export { useProjects } from './useProjects';
+export { default as useSceneList } from './useSceneList';
+export { useUpload } from './useUpload';
+export { default as useVideo } from './useVideo';

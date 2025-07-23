@@ -1,0 +1,225 @@
+@import url('../../styles/variables.css');
+
+.editor-controls {
+  width: 100%;
+  max-width: 320px;
+  background: var(--surface);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+}
+
+/* Header */
+.controls-header {
+  padding: var(--spacing-4);
+  border-bottom: 1px solid var(--border-color);
+  background: var(--surface-hover);
+}
+
+.controls-header h3 {
+  margin: 0 0 var(--spacing-3) 0;
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-primary);
+}
+
+.tab-buttons {
+  display: flex;
+  gap: var(--spacing-1);
+  background: var(--surface-secondary);
+  padding: var(--spacing-1);
+  border-radius: var(--border-radius);
+}
+
+.tab-button {
+  padding: var(--spacing-2) var(--spacing-4);
+  border: none;
+  background: transparent;
+  color: var(--text-tertiary);
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  transition: all 200ms ease;
+}
+
+.tab-button.active {
+  background: var(--primary);
+  color: var(--surface);
+}
+
+/* Content */
+.controls-content {
+  padding: var(--spacing-4);
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.controls-content h4 {
+  margin: 0 0 var(--spacing-3) 0;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-primary);
+}
+
+/* Elements Tab */
+.element-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--spacing-2);
+}
+
+.element-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--spacing-3);
+  border: 2px solid color-mix(in srgb, var(--element-color) 20%, transparent);
+  border-radius: var(--border-radius-lg);
+  background: color-mix(in srgb, var(--element-color) 10%, transparent);
+  cursor: pointer;
+  transition: all 200ms ease;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  color: var(--element-color);
+}
+
+.element-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px
+    color-mix(in srgb, var(--element-color) 30%, transparent);
+}
+
+.element-icon {
+  width: var(--spacing-6);
+  height: var(--spacing-6);
+  margin-bottom: var(--spacing-1);
+}
+
+.delete-button-container {
+  margin-top: var(--spacing-4);
+}
+
+.delete-button {
+  width: 100%;
+  padding: var(--spacing-3);
+  background: var(--error);
+  color: var(--surface);
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-2);
+  transition: all 200ms ease;
+}
+
+.delete-button:hover {
+  background: var(--error-hover);
+}
+
+.delete-icon {
+  width: var(--spacing-4);
+  height: var(--spacing-4);
+}
+
+/* Layers Tab */
+.layers-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+}
+
+.layer-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-2);
+  background: var(--surface-hover);
+  border-radius: var(--border-radius);
+  border: 1px solid var(--border-color);
+}
+
+.layer-name {
+  font-size: var(--font-size-sm);
+  color: var(--text-primary);
+  font-weight: var(--font-weight-medium);
+}
+
+.layer-actions {
+  display: flex;
+  gap: var(--spacing-1);
+}
+
+.visibility-button {
+  padding: var(--spacing-1);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--text-tertiary);
+  transition: color 200ms ease;
+}
+
+.visibility-button.visible {
+  color: var(--success);
+}
+
+.visibility-icon {
+  width: var(--spacing-4);
+  height: var(--spacing-4);
+}
+
+/* Settings Tab */
+.settings-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+}
+
+.setting-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
+}
+
+.setting-group label {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  color: var(--text-tertiary);
+}
+
+.setting-group select {
+  width: 100%;
+  padding: var(--spacing-2);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  font-size: var(--font-size-sm);
+  background: var(--surface);
+}
+
+.setting-group input[type='color'] {
+  width: 100%;
+  height: var(--spacing-10);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  cursor: pointer;
+}
+
+.setting-group input[type='checkbox'] {
+  width: var(--spacing-4);
+  height: var(--spacing-4);
+  cursor: pointer;
+  margin-right: var(--spacing-2);
+}
+
+.setting-group label:has(input[type='checkbox']) {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  font-size: var(--font-size-sm);
+  color: var(--text-primary);
+  cursor: pointer;
+}

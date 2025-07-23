@@ -238,7 +238,7 @@ function executarTestes() {
     }
   });
   
-  console.log('\n' + '='.repeat(50));
+  console.log(`\n${  '='.repeat(50)}`);
   console.log('📊 RESULTADO DOS TESTES');
   console.log('='.repeat(50));
   console.log(`✅ Sucessos: ${sucessos}`);
@@ -252,7 +252,7 @@ function executarTestes() {
     console.log('\n⚠️ Alguns testes falharam. Verifique as implementações.');
   }
   
-  console.log('\n' + '='.repeat(50));
+  console.log(`\n${  '='.repeat(50)}`);
 }
 
 // ============================================================================
@@ -294,8 +294,8 @@ function simularUso() {
 // ============================================================================
 
 console.log('🎯 TecnoCursos AI - Editor de Texto Avançado');
-console.log('📅 Data: ' + new Date().toLocaleDateString('pt-BR'));
-console.log('⏰ Hora: ' + new Date().toLocaleTimeString('pt-BR'));
+console.log(`📅 Data: ${  new Date().toLocaleDateString('pt-BR')}`);
+console.log(`⏰ Hora: ${  new Date().toLocaleTimeString('pt-BR')}`);
 
 // Executar testes
 setTimeout(executarTestes, 1000);

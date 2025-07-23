@@ -6,7 +6,7 @@
 const routerTemplate = (entityName, operations = []) => {
   const entityNameLower = entityName.toLowerCase();
   const entityNamePlural = `${entityNameLower}s`;
-  
+
   const imports = [
     'from fastapi import APIRouter, HTTPException, Depends, status, Query',
     'from sqlalchemy.orm import Session',
@@ -16,13 +16,14 @@ const routerTemplate = (entityName, operations = []) => {
     'import logging',
     'from app.database import get_db',
     'from app.models.${entityNameLower} import ${entityName}Model',
-    'from app.schemas.${entityNameLower} import ${entityName}Create, ${entityName}Update, ${entityName}Response'
+    'from app.schemas.${entityNameLower} import ${entityName}Create, ${entityName}Update, ${entityName}Response',
   ];
 
-  const operationsCode = operations.map(op => {
-    switch (op.type) {
-      case 'list':
-        return `
+  const operationsCode = operations
+    .map(op => {
+      switch (op.type) {
+        case 'list':
+          return `
 @router.get("/${entityNamePlural}", response_model=List[${entityName}Response])
 async def list_${entityNamePlural}(
     skip: int = Query(0, ge=0, description="Número de registros para pular"),
@@ -61,8 +62,8 @@ async def list_${entityNamePlural}(
             detail="Erro interno do servidor"
         )`;
 
-      case 'get':
-        return `
+        case 'get':
+          return `
 @router.get("/${entityNamePlural}/{${entityNameLower}_id}", response_model=${entityName}Response)
 async def get_${entityNameLower}(
     ${entityNameLower}_id: int = Field(..., description="ID do ${entityNameLower}"),
@@ -88,8 +89,8 @@ async def get_${entityNameLower}(
             detail="Erro interno do servidor"
         )`;
 
-      case 'create':
-        return `
+        case 'create':
+          return `
 @router.post("/${entityNamePlural}", response_model=${entityName}Response, status_code=status.HTTP_201_CREATED)
 async def create_${entityNameLower}(
     ${entityNameLower}: ${entityName}Create,
@@ -127,8 +128,8 @@ async def create_${entityNameLower}(
             detail="Erro interno do servidor"
         )`;
 
-      case 'update':
-        return `
+        case 'update':
+          return `
 @router.put("/${entityNamePlural}/{${entityNameLower}_id}", response_model=${entityName}Response)
 async def update_${entityNameLower}(
     ${entityNameLower}_id: int = Field(..., description="ID do ${entityNameLower}"),
@@ -180,8 +181,8 @@ async def update_${entityNameLower}(
             detail="Erro interno do servidor"
         )`;
 
-      case 'delete':
-        return `
+        case 'delete':
+          return `
 @router.delete("/${entityNamePlural}/{${entityNameLower}_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_${entityNameLower}(
     ${entityNameLower}_id: int = Field(..., description="ID do ${entityNameLower}"),
@@ -213,10 +214,11 @@ async def delete_${entityNameLower}(
             detail="Erro interno do servidor"
         )`;
 
-      default:
-        return '';
-    }
-  }).join('\n');
+        default:
+          return '';
+      }
+    })
+    .join('\n');
 
   return `${imports.join('\n')}
 
@@ -239,27 +241,29 @@ async def ${entityNameLower}_health():
 
 const schemaTemplate = (entityName, fields = []) => {
   const entityNameLower = entityName.toLowerCase();
-  
-  const fieldsCode = fields.map(field => {
-    switch (field.type) {
-      case 'string':
-        return `    ${field.name}: str = Field(..., description="${field.description || 'Campo de texto'}")`;
-      case 'text':
-        return `    ${field.name}: Optional[str] = Field(None, description="${field.description || 'Campo de texto longo'}")`;
-      case 'integer':
-        return `    ${field.name}: int = Field(..., description="${field.description || 'Campo numérico'}")`;
-      case 'float':
-        return `    ${field.name}: float = Field(..., description="${field.description || 'Campo decimal'}")`;
-      case 'boolean':
-        return `    ${field.name}: bool = Field(${field.default || false}, description="${field.description || 'Campo booleano'}")`;
-      case 'datetime':
-        return `    ${field.name}: Optional[datetime] = Field(None, description="${field.description || 'Data e hora'}")`;
-      case 'foreign_key':
-        return `    ${field.name}_id: int = Field(..., description="${field.description || 'ID de referência'}")`;
-      default:
-        return `    ${field.name}: str = Field(..., description="${field.description || 'Campo de texto'}")`;
-    }
-  }).join('\n');
+
+  const fieldsCode = fields
+    .map(field => {
+      switch (field.type) {
+        case 'string':
+          return `    ${field.name}: str = Field(..., description="${field.description || 'Campo de texto'}")`;
+        case 'text':
+          return `    ${field.name}: Optional[str] = Field(None, description="${field.description || 'Campo de texto longo'}")`;
+        case 'integer':
+          return `    ${field.name}: int = Field(..., description="${field.description || 'Campo numérico'}")`;
+        case 'float':
+          return `    ${field.name}: float = Field(..., description="${field.description || 'Campo decimal'}")`;
+        case 'boolean':
+          return `    ${field.name}: bool = Field(${field.default || false}, description="${field.description || 'Campo booleano'}")`;
+        case 'datetime':
+          return `    ${field.name}: Optional[datetime] = Field(None, description="${field.description || 'Data e hora'}")`;
+        case 'foreign_key':
+          return `    ${field.name}_id: int = Field(..., description="${field.description || 'ID de referência'}")`;
+        default:
+          return `    ${field.name}: str = Field(..., description="${field.description || 'Campo de texto'}")`;
+      }
+    })
+    .join('\n');
 
   return `from pydantic import BaseModel, Field
 from datetime import datetime
@@ -275,14 +279,23 @@ class ${entityName}Create(${entityName}Base):
 
 class ${entityName}Update(BaseModel):
     """Modelo para atualização de ${entityName}"""
-${fields.map(field => {
-  const fieldType = field.type === 'string' ? 'str' : 
-                   field.type === 'integer' ? 'int' : 
-                   field.type === 'float' ? 'float' : 
-                   field.type === 'boolean' ? 'bool' : 
-                   field.type === 'datetime' ? 'datetime' : 'str';
-  return `    ${field.name}: Optional[${fieldType}] = Field(None, description="${field.description || 'Campo opcional'}")`;
-}).join('\n')}
+${fields
+  .map(field => {
+    const fieldType =
+      field.type === 'string'
+        ? 'str'
+        : field.type === 'integer'
+          ? 'int'
+          : field.type === 'float'
+            ? 'float'
+            : field.type === 'boolean'
+              ? 'bool'
+              : field.type === 'datetime'
+                ? 'datetime'
+                : 'str';
+    return `    ${field.name}: Optional[${fieldType}] = Field(None, description="${field.description || 'Campo opcional'}")`;
+  })
+  .join('\n')}
 
 class ${entityName}Response(${entityName}Base):
     """Modelo de resposta para ${entityName}"""
@@ -299,31 +312,36 @@ class ${entityName}Response(${entityName}Base):
 
 const modelTemplate = (entityName, fields = []) => {
   const entityNameLower = entityName.toLowerCase();
-  
-  const fieldsCode = fields.map(field => {
-    switch (field.type) {
-      case 'string':
-        return `    ${field.name} = Column(String(${field.length || 255}), nullable=${field.nullable !== false}, index=${field.index || false})`;
-      case 'text':
-        return `    ${field.name} = Column(Text, nullable=${field.nullable !== false})`;
-      case 'integer':
-        return `    ${field.name} = Column(Integer, nullable=${field.nullable !== false}, index=${field.index || false})`;
-      case 'float':
-        return `    ${field.name} = Column(Float, nullable=${field.nullable !== false})`;
-      case 'boolean':
-        return `    ${field.name} = Column(Boolean, default=${field.default || false}, nullable=${field.nullable !== false})`;
-      case 'datetime':
-        return `    ${field.name} = Column(DateTime, default=datetime.utcnow, nullable=${field.nullable !== false})`;
-      case 'foreign_key':
-        return `    ${field.name}_id = Column(Integer, ForeignKey('${field.reference_table}.id'), nullable=${field.nullable !== false})`;
-      default:
-        return `    ${field.name} = Column(String(255), nullable=${field.nullable !== false})`;
-    }
-  }).join('\n');
+
+  const fieldsCode = fields
+    .map(field => {
+      switch (field.type) {
+        case 'string':
+          return `    ${field.name} = Column(String(${field.length || 255}), nullable=${field.nullable !== false}, index=${field.index || false})`;
+        case 'text':
+          return `    ${field.name} = Column(Text, nullable=${field.nullable !== false})`;
+        case 'integer':
+          return `    ${field.name} = Column(Integer, nullable=${field.nullable !== false}, index=${field.index || false})`;
+        case 'float':
+          return `    ${field.name} = Column(Float, nullable=${field.nullable !== false})`;
+        case 'boolean':
+          return `    ${field.name} = Column(Boolean, default=${field.default || false}, nullable=${field.nullable !== false})`;
+        case 'datetime':
+          return `    ${field.name} = Column(DateTime, default=datetime.utcnow, nullable=${field.nullable !== false})`;
+        case 'foreign_key':
+          return `    ${field.name}_id = Column(Integer, ForeignKey('${field.reference_table}.id'), nullable=${field.nullable !== false})`;
+        default:
+          return `    ${field.name} = Column(String(255), nullable=${field.nullable !== false})`;
+      }
+    })
+    .join('\n');
 
   const relationships = fields
     .filter(field => field.type === 'foreign_key')
-    .map(field => `    ${field.name} = relationship("${field.reference_model}", back_populates="${entityNameLower}s")`)
+    .map(
+      field =>
+        `    ${field.name} = relationship("${field.reference_model}", back_populates="${entityNameLower}s")`
+    )
     .join('\n');
 
   return `from sqlalchemy import Column, Integer, String, Boolean, DateTime, Text, ForeignKey, Float, Index
@@ -368,4 +386,4 @@ module.exports = {
   routerTemplate,
   schemaTemplate,
   modelTemplate,
-}; 
+};

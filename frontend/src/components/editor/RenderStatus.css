@@ -1,0 +1,171 @@
+@import url('../../styles/variables.css');
+
+.render-status {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-2) var(--spacing-3);
+  background-color: var(--surface);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-sm);
+}
+
+.render-status-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+
+.render-status-content {
+  flex: 1;
+}
+
+.render-status-title {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.render-status-message {
+  font-size: var(--font-size-xs);
+  color: var(--text-secondary);
+  margin: var(--spacing-1) 0 0;
+}
+
+/* Status types */
+.render-status-idle {
+  background-color: var(--surface-hover);
+}
+
+.render-status-idle .render-status-icon {
+  color: var(--text-tertiary);
+}
+
+.render-status-rendering {
+  background-color: var(--primary-light);
+}
+
+.render-status-rendering .render-status-icon {
+  color: var(--primary);
+  animation: spin 1s linear infinite;
+}
+
+.render-status-success {
+  background-color: var(--success-light);
+}
+
+.render-status-success .render-status-icon {
+  color: var(--success);
+}
+
+.render-status-error {
+  background-color: var(--error-light);
+}
+
+.render-status-error .render-status-icon {
+  color: var(--error);
+}
+
+/* Progress bar */
+.render-status-progress {
+  position: relative;
+  height: 4px;
+  background-color: var(--surface-hover);
+  border-radius: 2px;
+  margin-top: var(--spacing-2);
+  overflow: hidden;
+}
+
+.render-status-progress-bar {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  background-color: currentcolor;
+  transition: width 200ms ease;
+}
+
+.render-status-rendering .render-status-progress-bar {
+  color: var(--primary);
+}
+
+.render-status-success .render-status-progress-bar {
+  color: var(--success);
+}
+
+.render-status-error .render-status-progress-bar {
+  color: var(--error);
+}
+
+/* Animations */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Cancel button */
+.render-status-cancel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: none;
+  background-color: transparent;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  transition: all 200ms ease;
+  flex-shrink: 0;
+}
+
+.render-status-cancel:hover {
+  color: var(--text-secondary);
+}
+
+.render-status-cancel:active {
+  transform: scale(0.95);
+}
+
+/* Details panel */
+.render-status-details {
+  margin-top: var(--spacing-2);
+  padding: var(--spacing-2);
+  background-color: var(--surface);
+  border-radius: var(--border-radius);
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-xs);
+  color: var(--text-secondary);
+  white-space: pre-wrap;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+/* Responsive */
+@media (width <= 768px) {
+  .render-status {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: var(--spacing-2);
+  }
+
+  .render-status-icon {
+    margin-bottom: var(--spacing-1);
+  }
+
+  .render-status-cancel {
+    position: absolute;
+    top: var(--spacing-2);
+    right: var(--spacing-2);
+  }
+}

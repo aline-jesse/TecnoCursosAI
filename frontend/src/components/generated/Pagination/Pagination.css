@@ -1,0 +1,149 @@
+@import url('../../../styles/variables.css');
+
+.pagination {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-1);
+}
+
+.pagination-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  height: 32px;
+  padding: 0 var(--spacing-2);
+  font-size: var(--font-size-sm);
+  color: var(--text-primary);
+  background-color: var(--surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: all 200ms ease;
+}
+
+.pagination-button:hover {
+  background-color: var(--surface-hover);
+  border-color: var(--border-hover);
+}
+
+.pagination-button:active {
+  transform: scale(0.95);
+}
+
+.pagination-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.pagination-button-active {
+  color: white;
+  background-color: var(--primary);
+  border-color: var(--primary);
+}
+
+.pagination-button-active:hover {
+  background-color: var(--primary-dark);
+  border-color: var(--primary-dark);
+}
+
+/* Pagination sizes */
+.pagination-sm .pagination-button {
+  min-width: 28px;
+  height: 28px;
+  font-size: var(--font-size-xs);
+}
+
+.pagination-lg .pagination-button {
+  min-width: 40px;
+  height: 40px;
+  font-size: var(--font-size-base);
+}
+
+/* Pagination variants */
+.pagination-rounded .pagination-button {
+  border-radius: 50%;
+}
+
+.pagination-text .pagination-button {
+  border: none;
+  background-color: transparent;
+}
+
+.pagination-text .pagination-button:hover {
+  background-color: var(--surface-hover);
+}
+
+.pagination-text .pagination-button-active {
+  color: var(--primary);
+  background-color: var(--primary-light);
+}
+
+/* Pagination with ellipsis */
+.pagination-ellipsis {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  height: 32px;
+  color: var(--text-tertiary);
+  user-select: none;
+}
+
+/* Pagination with icons */
+.pagination-icon {
+  font-size: 1.2em;
+}
+
+/* Pagination with info */
+.pagination-info {
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  margin: 0 var(--spacing-2);
+}
+
+/* Pagination with goto */
+.pagination-goto {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  margin-left: var(--spacing-4);
+}
+
+.pagination-goto-label {
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+}
+
+.pagination-goto-input {
+  width: 60px;
+  padding: var(--spacing-1) var(--spacing-2);
+  font-size: var(--font-size-sm);
+  color: var(--text-primary);
+  background-color: var(--surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  text-align: center;
+}
+
+.pagination-goto-input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px var(--primary-light);
+}
+
+/* Responsive */
+@media (width <= 768px) {
+  .pagination {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .pagination-info,
+  .pagination-goto {
+    width: 100%;
+    justify-content: center;
+    margin: var(--spacing-2) 0 0;
+  }
+}

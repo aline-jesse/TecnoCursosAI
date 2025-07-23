@@ -1,0 +1,76 @@
+# Dados Iniciais
+
+## Estrutura de Cenas Iniciais
+
+1. Cenas iniciais devem ter todos os campos obrigatórios:
+
+```typescript
+export const initialScenes: Scene[] = [
+  {
+    id: 'scene-1',
+    name: 'Cena Inicial',
+    background: {
+      type: 'color',
+      value: '#ffffff',
+    },
+    duration: 10,
+    elements: [],
+    thumbnail: '',
+  },
+];
+```
+
+## Estrutura de Assets Iniciais
+
+1. Assets iniciais devem ter todos os campos obrigatórios:
+
+```typescript
+export const initialAssets: Asset[] = [
+  {
+    id: 'asset-1',
+    name: 'Asset Exemplo',
+    type: 'image',
+    src: '',
+    url: '',
+    thumbnail: '',
+  },
+];
+```
+
+## Templates de Cena
+
+1. Templates devem seguir a estrutura base de Scene:
+
+```typescript
+export const sceneTemplates: Scene[] = [
+  {
+    id: 'template-1',
+    name: 'Template Básico',
+    background: {
+      type: 'color',
+      value: '#ffffff',
+    },
+    duration: 10,
+    elements: [],
+    thumbnail: '',
+  },
+];
+```
+
+## Validação de Dados
+
+1. Todos os IDs devem ser únicos e seguir o padrão:
+
+- Cenas: `scene-${number}`
+- Assets: `asset-${number}`
+- Templates: `template-${number}`
+
+2. Duração mínima de cena: 1 segundo
+3. Duração máxima de cena: 300 segundos (5 minutos)
+4. Nomes não podem estar vazios
+5. URLs e thumbnails podem estar vazios inicialmente
+   description:
+   globs:
+   alwaysApply: false
+
+---

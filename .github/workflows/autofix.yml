@@ -1,0 +1,171 @@
+name: AutoFix - Correções Automáticas de Código
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  schedule:
+    # Executar diariamente às 2h da manhã
+    - cron: '0 2 * * *'
+
+jobs:
+  autofix:
+    name: AutoFix - Correções Automáticas
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run AutoFix Ultimate
+        run: npm run auto-fix-ultimate
+        env:
+          CI: true
+
+      - name: Check for changes
+        id: changes
+        run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "changes=true" >> $GITHUB_OUTPUT
+          else
+            echo "changes=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Commit and push changes
+        if: steps.changes.outputs.changes == 'true'
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add .
+          git commit -m "🤖 AutoFix: Correções automáticas de código
+
+          - Formatação automática com Prettier
+          - Correções ESLint aplicadas
+          - Verificação de tipos TypeScript
+          - Correções CSS com Stylelint
+
+          Executado automaticamente pelo GitHub Actions"
+          git push
+
+      - name: Create Pull Request
+        if: steps.changes.outputs.changes == 'true' && github.event_name == 'schedule'
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          title: "🤖 AutoFix: Correções automáticas de código"
+          body: |
+            ## AutoFix - Correções Automáticas
+
+            Este PR contém correções automáticas aplicadas pelo sistema de automação:
+
+            ### ✅ Correções Aplicadas
+            - Formatação automática com Prettier
+            - Correções ESLint aplicadas
+            - Verificação de tipos TypeScript
+            - Correções CSS com Stylelint
+
+            ### 📊 Relatórios
+            - Relatório de qualidade: `reports/advanced-quality-report.json`
+            - Métricas de sucesso disponíveis no workflow
+
+            ### 🔧 Como Revisar
+            1. Verifique as mudanças de formatação
+            2. Confirme que as correções não quebraram funcionalidades
+            3. Execute testes locais se necessário
+
+            ---
+            *Executado automaticamente pelo GitHub Actions*
+          branch: autofix/code-improvements
+          delete-branch: true
+          labels: |
+            autofix
+            automated
+            code-quality
+
+  quality-report:
+    name: Relatório de Qualidade
+    runs-on: ubuntu-latest
+    needs: autofix
+    if: always()
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate Quality Report
+        run: |
+          npm run lint -- --format=json > quality-report.json || true
+          npm run typecheck > typecheck-report.txt 2>&1 || true
+
+      - name: Upload Quality Report
+        uses: actions/upload-artifact@v3
+        with:
+          name: quality-report
+          path: |
+            quality-report.json
+            typecheck-report.txt
+            reports/
+          retention-days: 30
+
+      - name: Comment on PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+
+            let qualityReport = {};
+            try {
+              qualityReport = JSON.parse(fs.readFileSync('quality-report.json', 'utf8'));
+            } catch (e) {
+              console.log('No quality report found');
+            }
+
+            const totalIssues = qualityReport.length || 0;
+            const errors = qualityReport.filter(issue => issue.severity === 2).length || 0;
+            const warnings = qualityReport.filter(issue => issue.severity === 1).length || 0;
+
+            const comment = `## 📊 Relatório de Qualidade
+
+            ### Estatísticas
+            - **Total de problemas**: ${totalIssues}
+            - **Erros**: ${errors}
+            - **Warnings**: ${warnings}
+
+            ### Status
+            ${errors > 0 ? '❌ **Atenção**: Existem erros que precisam ser corrigidos' : '✅ **Sucesso**: Nenhum erro encontrado'}
+
+            ### Próximos Passos
+            ${errors > 0 ? '1. Revise os erros listados acima\n2. Aplique as correções necessárias\n3. Execute o AutoFix novamente' : '1. Continue com o desenvolvimento\n2. Mantenha a qualidade do código'}
+
+            ---
+            *Relatório gerado automaticamente pelo AutoFix*`;
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });

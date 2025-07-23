@@ -1,0 +1,13 @@
+#!/usr/bin/env sh
+
+declare HAS_SRC_CHANGED=$(git diff --cached --name-only --diff-filter=ACDM | grep 'src/')
+declare HAS_TEST_CHANGED=$(git diff --cached --name-only --diff-filter=ACM | grep 'test/')
+
+if [[ $HAS_SRC_CHANGED || $HAS_TEST_CHANGED ]]
+then
+	npm run typecheck
+	npx lint-staged
+	npm run test:lint-staged
+else
+    echo "\n✅  No changed files -- skipping lint-staged\n"
+fi

@@ -1,0 +1,82 @@
+[data-theme='custom'] {
+  /* Cores personalizáveis */
+  --primary-color: var(--custom-primary-color, #007bff);
+  --primary-color-light: var(
+    --custom-primary-color-light,
+    rgba(0, 123, 255, 0.1)
+  );
+  --secondary-color: var(--custom-secondary-color, #6c757d);
+  --success-color: var(--custom-success-color, #28a745);
+  --warning-color: var(--custom-warning-color, #ffc107);
+  --error-color: var(--custom-error-color, #dc3545);
+  --error-color-light: var(--custom-error-color-light, rgba(220, 53, 69, 0.1));
+  --info-color: var(--custom-info-color, #17a2b8);
+
+  /* Cores de fundo */
+  --background-color: var(--custom-background-color, #ffffff);
+  --surface-color: var(--custom-surface-color, #f8f9fa);
+  --surface-color-hover: var(--custom-surface-color-hover, #e9ecef);
+  --surface-color-active: var(--custom-surface-color-active, #dee2e6);
+
+  /* Cores de texto */
+  --text-color: var(--custom-text-color, #212529);
+  --text-color-secondary: var(--custom-text-color-secondary, #6c757d);
+  --text-color-disabled: var(--custom-text-color-disabled, #adb5bd);
+
+  /* Cores de borda */
+  --border-color: var(--custom-border-color, #dee2e6);
+  --border-color-hover: var(--custom-border-color-hover, #ced4da);
+  --border-color-focus: var(--custom-border-color-focus, #80bdff);
+
+  /* Sombras */
+  --shadow-sm: var(--custom-shadow-sm, 0 1px 2px rgba(0, 0, 0, 0.05));
+  --shadow-md: var(--custom-shadow-md, 0 4px 6px rgba(0, 0, 0, 0.1));
+  --shadow-lg: var(--custom-shadow-lg, 0 10px 15px rgba(0, 0, 0, 0.1));
+  --shadow-xl: var(--custom-shadow-xl, 0 20px 25px rgba(0, 0, 0, 0.1));
+
+  /* Tipografia */
+  --font-family: var(
+    --custom-font-family,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    'Helvetica Neue',
+    Arial,
+    sans-serif
+  );
+  --font-size-xs: var(--custom-font-size-xs, 12px);
+  --font-size-sm: var(--custom-font-size-sm, 14px);
+  --font-size-md: var(--custom-font-size-md, 16px);
+  --font-size-lg: var(--custom-font-size-lg, 18px);
+  --font-size-xl: var(--custom-font-size-xl, 24px);
+  --font-size-xxl: var(--custom-font-size-xxl, 32px);
+
+  /* Espaçamento */
+  --spacing-xxs: var(--custom-spacing-xxs, 2px);
+  --spacing-xs: var(--custom-spacing-xs, 4px);
+  --spacing-sm: var(--custom-spacing-sm, 8px);
+  --spacing-md: var(--custom-spacing-md, 16px);
+  --spacing-lg: var(--custom-spacing-lg, 24px);
+  --spacing-xl: var(--custom-spacing-xl, 32px);
+  --spacing-xxl: var(--custom-spacing-xxl, 48px);
+
+  /* Raio da borda */
+  --border-radius-sm: var(--custom-border-radius-sm, 4px);
+  --border-radius-md: var(--custom-border-radius-md, 8px);
+  --border-radius-lg: var(--custom-border-radius-lg, 16px);
+  --border-radius-xl: var(--custom-border-radius-xl, 24px);
+  --border-radius-circle: var(--custom-border-radius-circle, 50%);
+
+  /* Transições */
+  --transition-duration-fast: var(--custom-transition-duration-fast, 0.15s);
+  --transition-duration-normal: var(--custom-transition-duration-normal, 0.3s);
+  --transition-duration-slow: var(--custom-transition-duration-slow, 0.5s);
+  --transition-timing: var(--custom-transition-timing, ease-in-out);
+
+  /* Animações */
+  --animation-duration-fast: var(--custom-animation-duration-fast, 0.15s);
+  --animation-duration-normal: var(--custom-animation-duration-normal, 0.3s);
+  --animation-duration-slow: var(--custom-animation-duration-slow, 0.5s);
+  --animation-timing: var(--custom-animation-timing, ease-in-out);
+}
