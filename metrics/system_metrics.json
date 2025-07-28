@@ -1,0 +1,3481 @@
+{
+  "history": [
+    {
+      "timestamp": "2025-07-24T23:21:22.094432",
+      "cpu": {
+        "percent": 22.8,
+        "count": 20,
+        "frequency": {
+          "current": 2401.0,
+          "min": 0.0,
+          "max": 2401.0
+        }
+      },
+      "memory": {
+        "total_gb": 15.844860076904297,
+        "available_gb": 6.122932434082031,
+        "used_gb": 9.721927642822266,
+        "percent": 61.4
+      },
+      "disk": {
+        "total_gb": 476.15480041503906,
+        "used_gb": 435.9316291809082,
+        "free_gb": 40.22317123413086,
+        "percent": 91.55250116158223
+      },
+      "network": {
+        "bytes_sent": 19178207,
+        "bytes_recv": 356513583,
+        "packets_sent": 135571,
+        "packets_recv": 290656
+      },
+      "python_processes": [
+        {
+          "pid": 13820,
+          "name": "python.exe",
+          "cpu_percent": 0.0,
+          "memory_percent": 0.12603418451549064
+        }
+      ],
+      "ports": [
+        {
+          "port": 8000,
+          "status": "available"
+        },
+        {
+          "port": 8001,
+          "status": "available"
+        },
+        {
+          "port": 8002,
+          "status": "available"
+        },
+        {
+          "port": 8003,
+          "status": "available"
+        }
+      ],
+      "uptime_seconds": 734.0006196498871
+    },
+    {
+      "timestamp": "2025-07-24T23:21:53.828832",
+      "cpu": {
+        "percent": 24.6,
+        "count": 20,
+        "frequency": {
+          "current": 2401.0,
+          "min": 0.0,
+          "max": 2401.0
+        }
+      },
+      "memory": {
+        "total_gb": 15.844860076904297,
+        "available_gb": 5.994831085205078,
+        "used_gb": 9.850028991699219,
+        "percent": 62.2
+      },
+      "disk": {
+        "total_gb": 476.15480041503906,
+        "used_gb": 436.11479568481445,
+        "free_gb": 40.04000473022461,
+        "percent": 91.59096900938017
+      },
+      "network": {
+        "bytes_sent": 19297727,
+        "bytes_recv": 356655785,
+        "packets_sent": 136026,
+        "packets_recv": 291147
+      },
+      "python_processes": [
+        {
+          "pid": 13820,
+          "name": "python.exe",
+          "cpu_percent": 2.3,
+          "memory_percent": 0.13364197865243335
+        }
+      ],
+      "ports": [
+        {
+          "port": 8000,
+          "status": "available"
+        },
+        {
+          "port": 8001,
+          "status": "available"
+        },
+        {
+          "port": 8002,
+          "status": "available"
+        },
+        {
+          "port": 8003,
+          "status": "available"
+        }
+      ],
+      "uptime_seconds": 765.7349996566772
+    },
+    {
+      "timestamp": "2025-07-24T23:22:25.357934",
+      "cpu": {
+        "percent": 6.7,
+        "count": 20,
+        "frequency": {
+          "current": 2401.0,
+          "min": 0.0,
+          "max": 2401.0
+        }
+      },
+      "memory": {
+        "total_gb": 15.844860076904297,
+        "available_gb": 6.105125427246094,
+        "used_gb": 9.739734649658203,
+        "percent": 61.5
+      },
+      "disk": {
+        "total_gb": 476.15480041503906,
+        "used_gb": 436.1184272766113,
+        "free_gb": 40.036373138427734,
+        "percent": 91.5917317007977
+      },
+      "network": {
+        "bytes_sent": 19581496,
+        "bytes_recv": 358017099,
+        "packets_sent": 137256,
+        "packets_recv": 292737
+      },
+      "python_processes": [
+        {
+          "pid": 13820,
+          "name": "python.exe",
+          "cpu_percent": 1.8,
+          "memory_percent": 0.13063256641471868
+        }
+      ],
+      "ports": [
+        {
+          "port": 8000,
+          "status": "available"
+        },
+        {
+          "port": 8001,
+          "status": "available"
+        },
+        {
+          "port": 8002,
+          "status": "available"
+        },
+        {
+          "port": 8003,
+          "status": "available"
+        }
+      ],
+      "uptime_seconds": 797.2640879154205
+    },
+    {
+      "timestamp": "2025-07-24T23:22:57.083833",
+      "cpu": {
+        "percent": 20.9,
+        "count": 20,
+        "frequency": {
+          "current": 2401.0,
+          "min": 0.0,
+          "max": 2401.0
+        }
+      },
+      "memory": {
+        "total_gb": 15.844860076904297,
+        "available_gb": 5.4720001220703125,
+        "used_gb": 10.372859954833984,
+        "percent": 65.5
+      },
+      "disk": {
+        "total_gb": 476.15480041503906,
+        "used_gb": 436.1340026855469,
+        "free_gb": 40.02079772949219,
+        "percent": 91.5950027817407
+      },
+      "network": {
+        "bytes_sent": 19652408,
+        "bytes_recv": 358134424,
+        "packets_sent": 137643,
+        "packets_recv": 293143
+      },
+      "python_processes": [
+        {
+          "pid": 13820,
+          "name": "python.exe",
+          "cpu_percent": 2.0,
+          "memory_percent": 0.1308010935000307
+        }
+      ],
+      "ports": [
+        {
+          "port": 8000,
+          "status": "available"
+        },
+        {
+          "port": 8001,
+          "status": "available"
+        },
+        {
+          "port": 8002,
+          "status": "available"
+        },
+        {
+          "port": 8003,
+          "status": "available"
+        }
+      ],
+      "uptime_seconds": 828.9899876117706
+    },
+    {
+      "timestamp": "2025-07-24T23:23:28.727782",
+      "cpu": {
+        "percent": 5.5,
+        "count": 20,
+        "frequency": {
+          "current": 2401.0,
+          "min": 0.0,
+          "max": 2401.0
+        }
+      },
+      "memory": {
+        "total_gb": 15.844860076904297,
+        "available_gb": 4.8526153564453125,
+        "used_gb": 10.992244720458984,
+        "percent": 69.4
+      },
+      "disk": {
+        "total_gb": 476.15480041503906,
+        "used_gb": 436.37656021118164,
+        "free_gb": 39.77824020385742,
+        "percent": 91.64594367857158
+      },
+      "network": {
+        "bytes_sent": 26851004,
+        "bytes_recv": 547383310,
+        "packets_sent": 246772,
+        "packets_recv": 420486
+      },
+      "python_processes": [
+        {
+          "pid": 13820,
+          "name": "python.exe",
+          "cpu_percent": 2.0,
+          "memory_percent": 0.13486981884542093
+        }
+      ],
+      "ports": [
+        {
+          "port": 8000,
+          "status": "available"
+        },
+        {
+          "port": 8001,
+          "status": "available"
+        },
+        {
+          "port": 8002,
+          "status": "available"
+        },
+        {
+          "port": 8003,
+          "status": "available"
+        }
+      ],
+      "uptime_seconds": 860.6339404582977
+    },
+    {
+      "timestamp": "2025-07-24T23:24:00.337762",
+      "cpu": {
+        "percent": 6.3,
+        "count": 20,
+        "frequency": {
+          "current": 2401.0,
+          "min": 0.0,
+          "max": 2401.0
+        }
+      },
+      "memory": {
+        "total_gb": 15.844860076904297,
+        "available_gb": 4.954193115234375,
+        "used_gb": 10.890666961669922,
+        "percent": 68.7
+      },
+      "disk": {
+        "total_gb": 476.15480041503906,
+        "used_gb": 436.3930130004883,
+        "free_gb": 39.76178741455078,
+        "percent": 91.64939902319739
+      },
+      "network": {
+        "bytes_sent": 26898987,
+        "bytes_recv": 547415680,
+        "packets_sent": 246992,
+        "packets_recv": 420687
+      },
+      "python_processes": [
+        {
+          "pid": 13820,
+          "name": "python.exe",
+          "cpu_percent": 1.9,
+          "memory_percent": 0.1315955783307874
+        }
+      ],
+      "ports": [
+        {
+          "port": 8000,
+          "status": "available"
+        },
+        {
+          "port": 8001,
+          "status": "available"
+        },
+        {
+          "port": 8002,
+          "status": "available"
+        },
+        {
+          "port": 8003,
+          "status": "available"
+        }
+      ],
+      "uptime_seconds": 892.2439360618591
+    },
+    {
+      "timestamp": "2025-07-24T23:24:31.847854",
+      "cpu": {
+        "percent": 4.4,
+        "count": 20,
+        "frequency": {
+          "current": 2401.0,
+          "min": 0.0,
+          "max": 2401.0
+        }
+      },
+      "memory": {
+        "total_gb": 15.844860076904297,
+        "available_gb": 5.795314788818359,
+        "used_gb": 10.049545288085938,
+        "percent": 63.4
+      },
+      "disk": {
+        "total_gb": 476.15480041503906,
+        "used_gb": 436.3281364440918,
+        "free_gb": 39.826663970947266,
+        "percent": 91.63577392557369
+      },
+      "network": {
+        "bytes_sent": 26940426,
+        "bytes_recv": 547464135,
+        "packets_sent": 247223,
+        "packets_recv": 420938
+      },
+      "python_processes": [
+        {
+          "pid": 13820,
+          "name": "python.exe",
+          "cpu_percent": 1.5,
+          "memory_percent": 0.1348216682496175
+        }
+      ],
+      "ports": [
+        {
+          "port": 8000,
+          "status": "available"
+        },
+        {
+          "port": 8001,
+          "status": "available"
+        },
+        {
+          "port": 8002,
+          "status": "available"
+        },
+        {
+          "port": 8003,
+          "status": "available"
+        }
+      ],
+      "uptime_seconds": 923.7539858818054
+    },
+    {
+      "timestamp": "2025-07-24T23:25:03.549514",
+      "cpu": {
+        "percent": 23.4,
+        "count": 20,
+        "frequency": {
+          "current": 2401.0,
+          "min": 0.0,
+          "max": 2401.0
+        }
+      },
+      "memory": {
+        "total_gb": 15.844860076904297,
+        "available_gb": 5.650043487548828,
+        "used_gb": 10.194816589355469,
+        "percent": 64.3
+      },
+      "disk": {
+        "total_gb": 476.15480041503906,
+        "used_gb": 436.3287925720215,
+        "free_gb": 39.82600784301758,
+        "percent": 91.63591172276256
+      },
+      "network": {
+        "bytes_sent": 27206767,
+        "bytes_recv": 548753733,
+        "packets_sent": 248285,
+        "packets_recv": 422315
+      },
+      "python_processes": [
+        {
+          "pid": 13820,
+          "name": "python.exe",
+          "cpu_percent": 1.9,
+          "memory_percent": 0.13494204473912608
+        }
+      ],
+      "ports": [
+        {
+          "port": 8000,
+          "status": "available"
+        },
+        {
+          "port": 8001,
+          "status": "available"
+        },
+        {
+          "port": 8002,
+          "status": "available"
+        },
+        {
+          "port": 8003,
+          "status": "available"
+        }
+      ],
+      "uptime_seconds": 955.4556570053101
+    },
+    {
+      "timestamp": "2025-07-24T23:25:35.307758",
+      "cpu": {
+        "percent": 17.1,
+        "count": 20,
+        "frequency": {
+          "current": 2401.0,
+          "min": 0.0,
+          "max": 2401.0
+        }
+      },
+      "memory": {
+        "total_gb": 15.844860076904297,
+        "available_gb": 5.519920349121094,
+        "used_gb": 10.324939727783203,
+        "percent": 65.2
+      },
+      "disk": {
+        "total_gb": 476.15480041503906,
+        "used_gb": 436.33922576904297,
+        "free_gb": 39.815574645996094,
+        "percent": 91.63810285829504
+      },
+      "network": {
+        "bytes_sent": 28157178,
+        "bytes_recv": 550856811,
+        "packets_sent": 250046,
+        "packets_recv": 424408
+      },
+      "python_processes": [
+        {
+          "pid": 13820,
+          "name": "python.exe",
+          "cpu_percent": 2.4,
+          "memory_percent": 0.13496612003702782
+        }
+      ],
+      "ports": [
+        {
+          "port": 8000,
+          "status": "available"
+        },
+        {
+          "port": 8001,
+          "status": "available"
+        },
+        {
+          "port": 8002,
+          "status": "available"
+        },
+        {
+          "port": 8003,
+          "status": "available"
+        }
+      ],
+      "uptime_seconds": 987.2139146327972
+    },
+    {
+      "timestamp": "2025-07-24T23:26:06.899594",
+      "cpu": {
+        "percent": 11.1,
+        "count": 20,
+        "frequency": {
+          "current": 2401.0,
+          "min": 0.0,
+          "max": 2401.0
+        }
+      },
+      "memory": {
+        "total_gb": 15.844860076904297,
+        "available_gb": 5.570743560791016,
+        "used_gb": 10.274116516113281,
+        "percent": 64.8
+      },
+      "disk": {
+        "total_gb": 476.15480041503906,
+        "used_gb": 437.10648345947266,
+        "free_gb": 39.048316955566406,
+        "percent": 91.79923904546797
+      },
+      "network": {
+        "bytes_sent": 39513434,
+        "bytes_recv": 930715151,
+        "packets_sent": 378859,
+        "packets_recv": 681053
+      },
+      "python_processes": [
+        {
+          "pid": 13820,
+          "name": "python.exe",
+          "cpu_percent": 2.0,
+          "memory_percent": 0.13503834593073294
+        }
+      ],
+      "ports": [
+        {
+          "port": 8000,
+          "status": "available"
+        },
+        {
+          "port": 8001,
+          "status": "available"
+        },
+        {
+          "port": 8002,
+          "status": "available"
+        },
+        {
+          "port": 8003,
+          "status": "available"
+        }
+      ],
+      "uptime_seconds": 1018.8057341575623
+    },
+    {
+      "timestamp": "2025-07-24T23:26:38.430882",
+      "cpu": {
+        "percent": 4.4,
+        "count": 20,
+        "frequency": {
+          "current": 2401.0,
+          "min": 0.0,
+          "max": 2401.0
+        }
+      },
+      "memory": {
+        "total_gb": 15.844860076904297,
+        "available_gb": 5.567806243896484,
+        "used_gb": 10.277053833007812,
+        "percent": 64.9
+      },
+      "disk": {
+        "total_gb": 476.15480041503906,
+        "used_gb": 437.1075248718262,
+        "free_gb": 39.04727554321289,
+        "percent": 91.799457758448
+      },
+      "network": {
+        "bytes_sent": 39615385,
+        "bytes_recv": 930813666,
+        "packets_sent": 379260,
+        "packets_recv": 681479
+      },
+      "python_processes": [
+        {
+          "pid": 13820,
+          "name": "python.exe",
+          "cpu_percent": 1.7,
+          "memory_percent": 0.1354957765908656
+        }
+      ],
+      "ports": [
+        {
+          "port": 8000,
+          "status": "available"
+        },
+        {
+          "port": 8001,
+          "status": "available"
+        },
+        {
+          "port": 8002,
+          "status": "available"
+        },
+        {
+          "port": 8003,
+          "status": "available"
+        }
+      ],
+      "uptime_seconds": 1050.3370168209076
+    },
+    {
+      "timestamp": "2025-07-24T23:27:10.134790",
+      "cpu": {
+        "percent": 29.0,
+        "count": 20,
+        "frequency": {
+          "current": 2401.0,
+          "min": 0.0,
+          "max": 2401.0
+        }
+      },
+      "memory": {
+        "total_gb": 15.844860076904297,
+        "available_gb": 5.4840087890625,
+        "used_gb": 10.360851287841797,
+        "percent": 65.4
+      },
+      "disk": {
+        "total_gb": 476.15480041503906,
+        "used_gb": 437.10617446899414,
+        "free_gb": 39.04862594604492,
+        "percent": 91.79917415260577
+      },
+      "network": {
+        "bytes_sent": 39742562,
+        "bytes_recv": 930945584,
+        "packets_sent": 379795,
+        "packets_recv": 681951
+      },
+      "python_processes": [
+        {
+          "pid": 13820,
+          "name": "python.exe",
+          "cpu_percent": 1.9,
+          "memory_percent": 0.1356402283782759
+        }
+      ],
+      "ports": [
+        {
+          "port": 8000,
+          "status": "available"
+        },
+        {
+          "port": 8001,
+          "status": "available"
+        },
+        {
+          "port": 8002,
+          "status": "available"
+        },
+        {
+          "port": 8003,
+          "status": "available"
+        }
+      ],
+      "uptime_seconds": 1082.0409488677979
+    },
+    {
+      "timestamp": "2025-07-24T23:27:41.750641",
+      "cpu": {
+        "percent": 10.3,
+        "count": 20,
+        "frequency": {
+          "current": 2401.0,
+          "min": 0.0,
+          "max": 2401.0
+        }
+      },
+      "memory": {
+        "total_gb": 15.844860076904297,
+        "available_gb": 5.4346466064453125,
+        "used_gb": 10.410213470458984,
+        "percent": 65.7
+      },
+      "disk": {
+        "total_gb": 476.15480041503906,
+        "used_gb": 437.23591232299805,
+        "free_gb": 38.918888092041016,
+        "percent": 91.8264211432674
+      },
+      "network": {
+        "bytes_sent": 43076610,
+        "bytes_recv": 1063435929,
+        "packets_sent": 426764,
+        "packets_recv": 770961
+      },
+      "python_processes": [
+        {
+          "pid": 13820,
+          "name": "python.exe",
+          "cpu_percent": 1.9,
+          "memory_percent": 0.13588098135729307
+        }
+      ],
+      "ports": [
+        {
+          "port": 8000,
+          "status": "available"
+        },
+        {
+          "port": 8001,
+          "status": "available"
+        },
+        {
+          "port": 8002,
+          "status": "available"
+        },
+        {
+          "port": 8003,
+          "status": "available"
+        }
+      ],
+      "uptime_seconds": 1113.6567885875702
+    },
+    {
+      "timestamp": "2025-07-24T23:28:13.452916",
+      "cpu": {
+        "percent": 13.0,
+        "count": 20,
+        "frequency": {
+          "current": 2401.0,
+          "min": 0.0,
+          "max": 2401.0
+        }
+      },
+      "memory": {
+        "total_gb": 15.844860076904297,
+        "available_gb": 5.45245361328125,
+        "used_gb": 10.392406463623047,
+        "percent": 65.6
+      },
+      "disk": {
+        "total_gb": 476.15480041503906,
+        "used_gb": 437.21009826660156,
+        "free_gb": 38.9447021484375,
+        "percent": 91.82099978526071
+      },
+      "network": {
+        "bytes_sent": 43170780,
+        "bytes_recv": 1063497094,
+        "packets_sent": 427090,
+        "packets_recv": 771288
+      },
+      "python_processes": [
+        {
+          "pid": 13820,
+          "name": "python.exe",
+          "cpu_percent": 1.9,
+          "memory_percent": 0.1357606048677845
+        }
+      ],
+      "ports": [
+        {
+          "port": 8000,
+          "status": "available"
+        },
+        {
+          "port": 8001,
+          "status": "available"
+        },
+        {
+          "port": 8002,
+          "status": "available"
+        },
+        {
+          "port": 8003,
+          "status": "available"
+        }
+      ],
+      "uptime_seconds": 1145.3590610027313
+    },
+    {
+      "timestamp": "2025-07-24T23:28:44.975581",
+      "cpu": {
+        "percent": 5.3,
+        "count": 20,
+        "frequency": {
+          "current": 2401.0,
+          "min": 0.0,
+          "max": 2401.0
+        }
+      },
+      "memory": {
+        "total_gb": 15.844860076904297,
+        "available_gb": 5.495857238769531,
+        "used_gb": 10.349002838134766,
+        "percent": 65.3
+      },
+      "disk": {
+        "total_gb": 476.15480041503906,
+        "used_gb": 437.2211151123047,
+        "free_gb": 38.933685302734375,
+        "percent": 91.82331349619956
+      },
+      "network": {
+        "bytes_sent": 43211443,
+        "bytes_recv": 1063535718,
+        "packets_sent": 427308,
+        "packets_recv": 771519
+      },
+      "python_processes": [
+        {
+          "pid": 13820,
+          "name": "python.exe",
+          "cpu_percent": 1.6,
+          "memory_percent": 0.13585690605939135
+        }
+      ],
+      "ports": [
+        {
+          "port": 8000,
+          "status": "available"
+        },
+        {
+          "port": 8001,
+          "status": "available"
+        },
+        {
+          "port": 8002,
+          "status": "available"
+        },
+        {
+          "port": 8003,
+          "status": "available"
+        }
+      ],
+      "uptime_seconds": 1176.8817205429077
+    },
+    {
+      "timestamp": "2025-07-24T23:29:16.572161",
+      "cpu": {
+        "percent": 12.8,
+        "count": 20,
+        "frequency": {
+          "current": 2401.0,
+          "min": 0.0,
+          "max": 2401.0
+        }
+      },
+      "memory": {
+        "total_gb": 15.844860076904297,
+        "available_gb": 5.387718200683594,
+        "used_gb": 10.457141876220703,
+        "percent": 66.0
+      },
+      "disk": {
+        "total_gb": 476.15480041503906,
+        "used_gb": 437.20051193237305,
+        "free_gb": 38.954288482666016,
+        "percent": 91.81898650423946
+      },
+      "network": {
+        "bytes_sent": 43307044,
+        "bytes_recv": 1063614230,
+        "packets_sent": 427743,
+        "packets_recv": 771920
+      },
+      "python_processes": [
+        {
+          "pid": 13820,
+          "name": "python.exe",
+          "cpu_percent": 1.7,
+          "memory_percent": 0.13583283076148964
+        }
+      ],
+      "ports": [
+        {
+          "port": 8000,
+          "status": "available"
+        },
+        {
+          "port": 8001,
+          "status": "available"
+        },
+        {
+          "port": 8002,
+          "status": "available"
+        },
+        {
+          "port": 8003,
+          "status": "available"
+        }
+      ],
+      "uptime_seconds": 1208.4783008098602
+    },
+    {
+      "timestamp": "2025-07-24T23:29:48.098506",
+      "cpu": {
+        "percent": 6.0,
+        "count": 20,
+        "frequency": {
+          "current": 2401.0,
+          "min": 0.0,
+          "max": 2401.0
+        }
+      },
+      "memory": {
+        "total_gb": 15.844860076904297,
+        "available_gb": 5.449855804443359,
+        "used_gb": 10.395004272460938,
+        "percent": 65.6
+      },
+      "disk": {
+        "total_gb": 476.15480041503906,
+        "used_gb": 437.28650283813477,
+        "free_gb": 38.8682975769043,
+        "percent": 91.83704594744717
+      },
+      "network": {
+        "bytes_sent": 43341431,
+        "bytes_recv": 1063643237,
+        "packets_sent": 427922,
+        "packets_recv": 772117
+      },
+      "python_processes": [
+        {
+          "pid": 13820,
+          "name": "python.exe",
+          "cpu_percent": 1.6,
+          "memory_percent": 0.1359291319530965
+        }
+      ],
+      "ports": [
+        {
+          "port": 8000,
+          "status": "available"
+        },
+        {
+          "port": 8001,
+          "status": "available"
+        },
+        {
+          "port": 8002,
+          "status": "available"
+        },
+        {
+          "port": 8003,
+          "status": "available"
+        }
+      ],
+      "uptime_seconds": 1240.0046815872192
+    },
+    {
+      "timestamp": "2025-07-24T23:30:19.625225",
+      "cpu": {
+        "percent": 7.6,
+        "count": 20,
+        "frequency": {
+          "current": 2401.0,
+          "min": 0.0,
+          "max": 2401.0
+        }
+      },
+      "memory": {
+        "total_gb": 15.844860076904297,
+        "available_gb": 5.405490875244141,
+        "used_gb": 10.439369201660156,
+        "percent": 65.9
+      },
+      "disk": {
+        "total_gb": 476.15480041503906,
+        "used_gb": 437.2031059265137,
+        "free_gb": 38.95169448852539,
+        "percent": 91.8195312838234
+      },
+      "network": {
+        "bytes_sent": 43409817,
+        "bytes_recv": 1063708329,
+        "packets_sent": 428222,
+        "packets_recv": 772444
+      },
+      "python_processes": [
+        {
+          "pid": 13820,
+          "name": "python.exe",
+          "cpu_percent": 1.5,
+          "memory_percent": 0.1359291319530965
+        }
+      ],
+      "ports": [
+        {
+          "port": 8000,
+          "status": "available"
+        },
+        {
+          "port": 8001,
+          "status": "available"
+        },
+        {
+          "port": 8002,
+          "status": "available"
+        },
+        {
+          "port": 8003,
+          "status": "available"
+        }
+      ],
+      "uptime_seconds": 1271.5313770771027
+    },
+    {
+      "timestamp": "2025-07-24T23:30:51.084284",
+      "cpu": {
+        "percent": 7.1,
+        "count": 20,
+        "frequency": {
+          "current": 2401.0,
+          "min": 0.0,
+          "max": 2401.0
+        }
+      },
+      "memory": {
+        "total_gb": 15.844860076904297,
+        "available_gb": 5.584583282470703,
+        "used_gb": 10.260276794433594,
+        "percent": 64.8
+      },
+      "disk": {
+        "total_gb": 476.15480041503906,
+        "used_gb": 437.2021903991699,
+        "free_gb": 38.95261001586914,
+        "percent": 91.81933900867612
+      },
+      "network": {
+        "bytes_sent": 43522982,
+        "bytes_recv": 1063761891,
+        "packets_sent": 428568,
+        "packets_recv": 772688
+      },
+      "python_processes": [
+        {
+          "pid": 13820,
+          "name": "python.exe",
+          "cpu_percent": 1.5,
+          "memory_percent": 0.1360495084426051
+        }
+      ],
+      "ports": [
+        {
+          "port": 8000,
+          "status": "available"
+        },
+        {
+          "port": 8001,
+          "status": "available"
+        },
+        {
+          "port": 8002,
+          "status": "available"
+        },
+        {
+          "port": 8003,
+          "status": "available"
+        }
+      ],
+      "uptime_seconds": 1302.9904437065125
+    },
+    {
+      "timestamp": "2025-07-24T23:31:22.557684",
+      "cpu": {
+        "percent": 5.8,
+        "count": 20,
+        "frequency": {
+          "current": 2401.0,
+          "min": 0.0,
+          "max": 2401.0
+        }
+      },
+      "memory": {
+        "total_gb": 15.844860076904297,
+        "available_gb": 5.542423248291016,
+        "used_gb": 10.302436828613281,
+        "percent": 65.0
+      },
+      "disk": {
+        "total_gb": 476.15480041503906,
+        "used_gb": 437.2021903991699,
+        "free_gb": 38.95261001586914,
+        "percent": 91.81933900867612
+      },
+      "network": {
+        "bytes_sent": 43640332,
+        "bytes_recv": 1063833880,
+        "packets_sent": 428952,
+        "packets_recv": 773006
+      },
+      "python_processes": [
+        {
+          "pid": 13820,
+          "name": "python.exe",
+          "cpu_percent": 1.5,
+          "memory_percent": 0.13641063791113084
+        }
+      ],
+      "ports": [
+        {
+          "port": 8000,
+          "status": "available"
+        },
+        {
+          "port": 8001,
+          "status": "available"
+        },
+        {
+          "port": 8002,
+          "status": "available"
+        },
+        {
+          "port": 8003,
+          "status": "available"
+        }
+      ],
+      "uptime_seconds": 1334.4638175964355
+    },
+    {
+      "timestamp": "2025-07-24T23:31:54.036748",
+      "cpu": {
+        "percent": 5.7,
+        "count": 20,
+        "frequency": {
+          "current": 2401.0,
+          "min": 0.0,
+          "max": 2401.0
+        }
+      },
+      "memory": {
+        "total_gb": 15.844860076904297,
+        "available_gb": 5.567649841308594,
+        "used_gb": 10.277210235595703,
+        "percent": 64.9
+      },
+      "disk": {
+        "total_gb": 476.15480041503906,
+        "used_gb": 437.20225524902344,
+        "free_gb": 38.952545166015625,
+        "percent": 91.81935262816573
+      },
+      "network": {
+        "bytes_sent": 43703314,
+        "bytes_recv": 1063884774,
+        "packets_sent": 429224,
+        "packets_recv": 773287
+      },
+      "python_processes": [
+        {
+          "pid": 13820,
+          "name": "python.exe",
+          "cpu_percent": 1.4,
+          "memory_percent": 0.1364587885069343
+        }
+      ],
+      "ports": [
+        {
+          "port": 8000,
+          "status": "available"
+        },
+        {
+          "port": 8001,
+          "status": "available"
+        },
+        {
+          "port": 8002,
+          "status": "available"
+        },
+        {
+          "port": 8003,
+          "status": "available"
+        }
+      ],
+      "uptime_seconds": 1365.942881822586
+    },
+    {
+      "timestamp": "2025-07-24T23:32:25.485800",
+      "cpu": {
+        "percent": 8.0,
+        "count": 20,
+        "frequency": {
+          "current": 2401.0,
+          "min": 0.0,
+          "max": 2401.0
+        }
+      },
+      "memory": {
+        "total_gb": 15.844860076904297,
+        "available_gb": 5.583351135253906,
+        "used_gb": 10.26150894165039,
+        "percent": 64.8
+      },
+      "disk": {
+        "total_gb": 476.15480041503906,
+        "used_gb": 437.20252227783203,
+        "free_gb": 38.95227813720703,
+        "percent": 91.81940870841701
+      },
+      "network": {
+        "bytes_sent": 43813171,
+        "bytes_recv": 1063988821,
+        "packets_sent": 429628,
+        "packets_recv": 773701
+      },
+      "python_processes": [
+        {
+          "pid": 13820,
+          "name": "python.exe",
+          "cpu_percent": 1.4,
+          "memory_percent": 0.13638656261322912
+        }
+      ],
+      "ports": [
+        {
+          "port": 8000,
+          "status": "available"
+        },
+        {
+          "port": 8001,
+          "status": "available"
+        },
+        {
+          "port": 8002,
+          "status": "available"
+        },
+        {
+          "port": 8003,
+          "status": "available"
+        }
+      ],
+      "uptime_seconds": 1397.3919367790222
+    },
+    {
+      "timestamp": "2025-07-24T23:32:56.977624",
+      "cpu": {
+        "percent": 6.2,
+        "count": 20,
+        "frequency": {
+          "current": 2401.0,
+          "min": 0.0,
+          "max": 2401.0
+        }
+      },
+      "memory": {
+        "total_gb": 15.844860076904297,
+        "available_gb": 5.674015045166016,
+        "used_gb": 10.170845031738281,
+        "percent": 64.2
+      },
+      "disk": {
+        "total_gb": 476.15480041503906,
+        "used_gb": 437.2025909423828,
+        "free_gb": 38.95220947265625,
+        "percent": 91.81942312905306
+      },
+      "network": {
+        "bytes_sent": 43873364,
+        "bytes_recv": 1064033618,
+        "packets_sent": 429964,
+        "packets_recv": 774009
+      },
+      "python_processes": [
+        {
+          "pid": 13820,
+          "name": "python.exe",
+          "cpu_percent": 1.5,
+          "memory_percent": 0.1363624873153274
+        }
+      ],
+      "ports": [
+        {
+          "port": 8000,
+          "status": "available"
+        },
+        {
+          "port": 8001,
+          "status": "available"
+        },
+        {
+          "port": 8002,
+          "status": "available"
+        },
+        {
+          "port": 8003,
+          "status": "available"
+        }
+      ],
+      "uptime_seconds": 1428.883794784546
+    },
+    {
+      "timestamp": "2025-07-24T23:33:28.433027",
+      "cpu": {
+        "percent": 5.0,
+        "count": 20,
+        "frequency": {
+          "current": 2401.0,
+          "min": 0.0,
+          "max": 2401.0
+        }
+      },
+      "memory": {
+        "total_gb": 15.844860076904297,
+        "available_gb": 5.660072326660156,
+        "used_gb": 10.18478775024414,
+        "percent": 64.3
+      },
+      "disk": {
+        "total_gb": 476.15480041503906,
+        "used_gb": 437.2038383483887,
+        "free_gb": 38.95096206665039,
+        "percent": 91.81968510394121
+      },
+      "network": {
+        "bytes_sent": 43966564,
+        "bytes_recv": 1064123535,
+        "packets_sent": 430323,
+        "packets_recv": 774376
+      },
+      "python_processes": [
+        {
+          "pid": 13820,
+          "name": "python.exe",
+          "cpu_percent": 1.4,
+          "memory_percent": 0.1334493762692196
+        }
+      ],
+      "ports": [
+        {
+          "port": 8000,
+          "status": "available"
+        },
+        {
+          "port": 8001,
+          "status": "available"
+        },
+        {
+          "port": 8002,
+          "status": "available"
+        },
+        {
+          "port": 8003,
+          "status": "available"
+        }
+      ],
+      "uptime_seconds": 1460.3391819000244
+    },
+    {
+      "timestamp": "2025-07-24T23:33:59.861822",
+      "cpu": {
+        "percent": 5.8,
+        "count": 20,
+        "frequency": {
+          "current": 2401.0,
+          "min": 0.0,
+          "max": 2401.0
+        }
+      },
+      "memory": {
+        "total_gb": 15.844860076904297,
+        "available_gb": 5.666088104248047,
+        "used_gb": 10.17877197265625,
+        "percent": 64.2
+      },
+      "disk": {
+        "total_gb": 476.15480041503906,
+        "used_gb": 437.20388412475586,
+        "free_gb": 38.9509162902832,
+        "percent": 91.81969471769858
+      },
+      "network": {
+        "bytes_sent": 44002611,
+        "bytes_recv": 1064155056,
+        "packets_sent": 430516,
+        "packets_recv": 774584
+      },
+      "python_processes": [
+        {
+          "pid": 13820,
+          "name": "python.exe",
+          "cpu_percent": 1.3,
+          "memory_percent": 0.1364587885069343
+        }
+      ],
+      "ports": [
+        {
+          "port": 8000,
+          "status": "available"
+        },
+        {
+          "port": 8001,
+          "status": "available"
+        },
+        {
+          "port": 8002,
+          "status": "available"
+        },
+        {
+          "port": 8003,
+          "status": "available"
+        }
+      ],
+      "uptime_seconds": 1491.7679572105408
+    },
+    {
+      "timestamp": "2025-07-24T23:34:31.310978",
+      "cpu": {
+        "percent": 5.2,
+        "count": 20,
+        "frequency": {
+          "current": 2401.0,
+          "min": 0.0,
+          "max": 2401.0
+        }
+      },
+      "memory": {
+        "total_gb": 15.844860076904297,
+        "available_gb": 5.671588897705078,
+        "used_gb": 10.173271179199219,
+        "percent": 64.2
+      },
+      "disk": {
+        "total_gb": 476.15480041503906,
+        "used_gb": 437.2039451599121,
+        "free_gb": 38.95085525512695,
+        "percent": 91.81970753604173
+      },
+      "network": {
+        "bytes_sent": 44098816,
+        "bytes_recv": 1064218245,
+        "packets_sent": 430788,
+        "packets_recv": 774860
+      },
+      "python_processes": [
+        {
+          "pid": 13820,
+          "name": "python.exe",
+          "cpu_percent": 1.4,
+          "memory_percent": 0.13638656261322912
+        }
+      ],
+      "ports": [
+        {
+          "port": 8000,
+          "status": "available"
+        },
+        {
+          "port": 8001,
+          "status": "available"
+        },
+        {
+          "port": 8002,
+          "status": "available"
+        },
+        {
+          "port": 8003,
+          "status": "available"
+        }
+      ],
+      "uptime_seconds": 1523.2171294689178
+    },
+    {
+      "timestamp": "2025-07-24T23:35:02.749527",
+      "cpu": {
+        "percent": 6.0,
+        "count": 20,
+        "frequency": {
+          "current": 2401.0,
+          "min": 0.0,
+          "max": 2401.0
+        }
+      },
+      "memory": {
+        "total_gb": 15.844860076904297,
+        "available_gb": 5.679573059082031,
+        "used_gb": 10.165287017822266,
+        "percent": 64.2
+      },
+      "disk": {
+        "total_gb": 476.15480041503906,
+        "used_gb": 437.2039451599121,
+        "free_gb": 38.95085525512695,
+        "percent": 91.81970753604173
+      },
+      "network": {
+        "bytes_sent": 44144013,
+        "bytes_recv": 1064247036,
+        "packets_sent": 431035,
+        "packets_recv": 775060
+      },
+      "python_processes": [
+        {
+          "pid": 13820,
+          "name": "python.exe",
+          "cpu_percent": 1.4,
+          "memory_percent": 0.13641063791113084
+        }
+      ],
+      "ports": [
+        {
+          "port": 8000,
+          "status": "available"
+        },
+        {
+          "port": 8001,
+          "status": "available"
+        },
+        {
+          "port": 8002,
+          "status": "available"
+        },
+        {
+          "port": 8003,
+          "status": "available"
+        }
+      ],
+      "uptime_seconds": 1554.655663728714
+    },
+    {
+      "timestamp": "2025-07-24T23:35:34.183991",
+      "cpu": {
+        "percent": 4.9,
+        "count": 20,
+        "frequency": {
+          "current": 2401.0,
+          "min": 0.0,
+          "max": 2401.0
+        }
+      },
+      "memory": {
+        "total_gb": 15.844860076904297,
+        "available_gb": 5.677585601806641,
+        "used_gb": 10.167274475097656,
+        "percent": 64.2
+      },
+      "disk": {
+        "total_gb": 476.15480041503906,
+        "used_gb": 437.2040100097656,
+        "free_gb": 38.95079040527344,
+        "percent": 91.81972115553133
+      },
+      "network": {
+        "bytes_sent": 44199334,
+        "bytes_recv": 1064294542,
+        "packets_sent": 431273,
+        "packets_recv": 775299
+      },
+      "python_processes": [
+        {
+          "pid": 13820,
+          "name": "python.exe",
+          "cpu_percent": 1.4,
+          "memory_percent": 0.1366273155922463
+        }
+      ],
+      "ports": [
+        {
+          "port": 8000,
+          "status": "available"
+        },
+        {
+          "port": 8001,
+          "status": "available"
+        },
+        {
+          "port": 8002,
+          "status": "available"
+        },
+        {
+          "port": 8003,
+          "status": "available"
+        }
+      ],
+      "uptime_seconds": 1586.0901219844818
+    },
+    {
+      "timestamp": "2025-07-24T23:36:05.615383",
+      "cpu": {
+        "percent": 7.0,
+        "count": 20,
+        "frequency": {
+          "current": 2401.0,
+          "min": 0.0,
+          "max": 2401.0
+        }
+      },
+      "memory": {
+        "total_gb": 15.844860076904297,
+        "available_gb": 5.688934326171875,
+        "used_gb": 10.155925750732422,
+        "percent": 64.1
+      },
+      "disk": {
+        "total_gb": 476.15480041503906,
+        "used_gb": 437.2040100097656,
+        "free_gb": 38.95079040527344,
+        "percent": 91.81972115553133
+      },
+      "network": {
+        "bytes_sent": 44238415,
+        "bytes_recv": 1064324640,
+        "packets_sent": 431479,
+        "packets_recv": 775502
+      },
+      "python_processes": [
+        {
+          "pid": 13820,
+          "name": "python.exe",
+          "cpu_percent": 1.3,
+          "memory_percent": 0.1366273155922463
+        }
+      ],
+      "ports": [
+        {
+          "port": 8000,
+          "status": "available"
+        },
+        {
+          "port": 8001,
+          "status": "available"
+        },
+        {
+          "port": 8002,
+          "status": "available"
+        },
+        {
+          "port": 8003,
+          "status": "available"
+        }
+      ],
+      "uptime_seconds": 1617.5215156078339
+    },
+    {
+      "timestamp": "2025-07-24T23:36:37.064174",
+      "cpu": {
+        "percent": 6.2,
+        "count": 20,
+        "frequency": {
+          "current": 2401.0,
+          "min": 0.0,
+          "max": 2401.0
+        }
+      },
+      "memory": {
+        "total_gb": 15.844860076904297,
+        "available_gb": 5.665275573730469,
+        "used_gb": 10.179584503173828,
+        "percent": 64.2
+      },
+      "disk": {
+        "total_gb": 476.15480041503906,
+        "used_gb": 437.2040710449219,
+        "free_gb": 38.95072937011719,
+        "percent": 91.81973397387449
+      },
+      "network": {
+        "bytes_sent": 44349748,
+        "bytes_recv": 1064426942,
+        "packets_sent": 431886,
+        "packets_recv": 775914
+      },
+      "python_processes": [
+        {
+          "pid": 13820,
+          "name": "python.exe",
+          "cpu_percent": 1.2,
+          "memory_percent": 0.1366273155922463
+        }
+      ],
+      "ports": [
+        {
+          "port": 8000,
+          "status": "available"
+        },
+        {
+          "port": 8001,
+          "status": "available"
+        },
+        {
+          "port": 8002,
+          "status": "available"
+        },
+        {
+          "port": 8003,
+          "status": "available"
+        }
+      ],
+      "uptime_seconds": 1648.970314502716
+    },
+    {
+      "timestamp": "2025-07-24T23:37:08.544331",
+      "cpu": {
+        "percent": 23.7,
+        "count": 20,
+        "frequency": {
+          "current": 2401.0,
+          "min": 0.0,
+          "max": 2401.0
+        }
+      },
+      "memory": {
+        "total_gb": 15.844860076904297,
+        "available_gb": 5.64453125,
+        "used_gb": 10.200328826904297,
+        "percent": 64.4
+      },
+      "disk": {
+        "total_gb": 476.15480041503906,
+        "used_gb": 437.204158782959,
+        "free_gb": 38.95064163208008,
+        "percent": 91.81975240024278
+      },
+      "network": {
+        "bytes_sent": 44457284,
+        "bytes_recv": 1064530349,
+        "packets_sent": 432314,
+        "packets_recv": 776317
+      },
+      "python_processes": [
+        {
+          "pid": 13820,
+          "name": "python.exe",
+          "cpu_percent": 1.5,
+          "memory_percent": 0.13657916499644288
+        }
+      ],
+      "ports": [
+        {
+          "port": 8000,
+          "status": "available"
+        },
+        {
+          "port": 8001,
+          "status": "available"
+        },
+        {
+          "port": 8002,
+          "status": "available"
+        },
+        {
+          "port": 8003,
+          "status": "available"
+        }
+      ],
+      "uptime_seconds": 1680.4504742622375
+    },
+    {
+      "timestamp": "2025-07-24T23:37:39.968103",
+      "cpu": {
+        "percent": 4.9,
+        "count": 20,
+        "frequency": {
+          "current": 2401.0,
+          "min": 0.0,
+          "max": 2401.0
+        }
+      },
+      "memory": {
+        "total_gb": 15.844860076904297,
+        "available_gb": 5.685688018798828,
+        "used_gb": 10.159172058105469,
+        "percent": 64.1
+      },
+      "disk": {
+        "total_gb": 476.15480041503906,
+        "used_gb": 437.2040672302246,
+        "free_gb": 38.95073318481445,
+        "percent": 91.81973317272804
+      },
+      "network": {
+        "bytes_sent": 44536134,
+        "bytes_recv": 1064594156,
+        "packets_sent": 432667,
+        "packets_recv": 776667
+      },
+      "python_processes": [
+        {
+          "pid": 13820,
+          "name": "python.exe",
+          "cpu_percent": 1.3,
+          "memory_percent": 0.13381050573774536
+        }
+      ],
+      "ports": [
+        {
+          "port": 8000,
+          "status": "available"
+        },
+        {
+          "port": 8001,
+          "status": "available"
+        },
+        {
+          "port": 8002,
+          "status": "available"
+        },
+        {
+          "port": 8003,
+          "status": "available"
+        }
+      ],
+      "uptime_seconds": 1711.8742654323578
+    },
+    {
+      "timestamp": "2025-07-24T23:38:11.391407",
+      "cpu": {
+        "percent": 5.7,
+        "count": 20,
+        "frequency": {
+          "current": 2401.0,
+          "min": 0.0,
+          "max": 2401.0
+        }
+      },
+      "memory": {
+        "total_gb": 15.844860076904297,
+        "available_gb": 5.690776824951172,
+        "used_gb": 10.154083251953125,
+        "percent": 64.1
+      },
+      "disk": {
+        "total_gb": 476.15480041503906,
+        "used_gb": 437.2041893005371,
+        "free_gb": 38.95061111450195,
+        "percent": 91.81975880941434
+      },
+      "network": {
+        "bytes_sent": 44699847,
+        "bytes_recv": 1064644939,
+        "packets_sent": 433075,
+        "packets_recv": 776954
+      },
+      "python_processes": [
+        {
+          "pid": 13820,
+          "name": "python.exe",
+          "cpu_percent": 1.3,
+          "memory_percent": 0.13667546618804974
+        }
+      ],
+      "ports": [
+        {
+          "port": 8000,
+          "status": "available"
+        },
+        {
+          "port": 8001,
+          "status": "available"
+        },
+        {
+          "port": 8002,
+          "status": "available"
+        },
+        {
+          "port": 8003,
+          "status": "available"
+        }
+      ],
+      "uptime_seconds": 1743.2975409030914
+    },
+    {
+      "timestamp": "2025-07-24T23:38:42.845585",
+      "cpu": {
+        "percent": 5.0,
+        "count": 20,
+        "frequency": {
+          "current": 2401.0,
+          "min": 0.0,
+          "max": 2401.0
+        }
+      },
+      "memory": {
+        "total_gb": 15.844860076904297,
+        "available_gb": 5.6947479248046875,
+        "used_gb": 10.15011215209961,
+        "percent": 64.1
+      },
+      "disk": {
+        "total_gb": 476.15480041503906,
+        "used_gb": 437.20416259765625,
+        "free_gb": 38.95063781738281,
+        "percent": 91.8197532013892
+      },
+      "network": {
+        "bytes_sent": 44761534,
+        "bytes_recv": 1064708548,
+        "packets_sent": 433331,
+        "packets_recv": 777226
+      },
+      "python_processes": [
+        {
+          "pid": 13820,
+          "name": "python.exe",
+          "cpu_percent": 1.4,
+          "memory_percent": 0.13667546618804974
+        }
+      ],
+      "ports": [
+        {
+          "port": 8000,
+          "status": "available"
+        },
+        {
+          "port": 8001,
+          "status": "available"
+        },
+        {
+          "port": 8002,
+          "status": "available"
+        },
+        {
+          "port": 8003,
+          "status": "available"
+        }
+      ],
+      "uptime_seconds": 1774.7517266273499
+    },
+    {
+      "timestamp": "2025-07-24T23:39:14.262563",
+      "cpu": {
+        "percent": 6.2,
+        "count": 20,
+        "frequency": {
+          "current": 2401.0,
+          "min": 0.0,
+          "max": 2401.0
+        }
+      },
+      "memory": {
+        "total_gb": 15.844860076904297,
+        "available_gb": 5.696460723876953,
+        "used_gb": 10.148399353027344,
+        "percent": 64.0
+      },
+      "disk": {
+        "total_gb": 476.15480041503906,
+        "used_gb": 437.2042236328125,
+        "free_gb": 38.95057678222656,
+        "percent": 91.81976601973236
+      },
+      "network": {
+        "bytes_sent": 44818269,
+        "bytes_recv": 1064760290,
+        "packets_sent": 433560,
+        "packets_recv": 777425
+      },
+      "python_processes": [
+        {
+          "pid": 13820,
+          "name": "python.exe",
+          "cpu_percent": 1.3,
+          "memory_percent": 0.13381050573774536
+        }
+      ],
+      "ports": [
+        {
+          "port": 8000,
+          "status": "available"
+        },
+        {
+          "port": 8001,
+          "status": "available"
+        },
+        {
+          "port": 8002,
+          "status": "available"
+        },
+        {
+          "port": 8003,
+          "status": "available"
+        }
+      ],
+      "uptime_seconds": 1806.168693304062
+    },
+    {
+      "timestamp": "2025-07-24T23:39:45.691377",
+      "cpu": {
+        "percent": 5.3,
+        "count": 20,
+        "frequency": {
+          "current": 2401.0,
+          "min": 0.0,
+          "max": 2401.0
+        }
+      },
+      "memory": {
+        "total_gb": 15.844860076904297,
+        "available_gb": 5.722007751464844,
+        "used_gb": 10.122852325439453,
+        "percent": 63.9
+      },
+      "disk": {
+        "total_gb": 476.15480041503906,
+        "used_gb": 437.2042236328125,
+        "free_gb": 38.95057678222656,
+        "percent": 91.81976601973236
+      },
+      "network": {
+        "bytes_sent": 44862435,
+        "bytes_recv": 1064799743,
+        "packets_sent": 433800,
+        "packets_recv": 777641
+      },
+      "python_processes": [
+        {
+          "pid": 13820,
+          "name": "python.exe",
+          "cpu_percent": 1.3,
+          "memory_percent": 0.13681991797546006
+        }
+      ],
+      "ports": [
+        {
+          "port": 8000,
+          "status": "available"
+        },
+        {
+          "port": 8001,
+          "status": "available"
+        },
+        {
+          "port": 8002,
+          "status": "available"
+        },
+        {
+          "port": 8003,
+          "status": "available"
+        }
+      ],
+      "uptime_seconds": 1837.5975186824799
+    },
+    {
+      "timestamp": "2025-07-24T23:40:17.127278",
+      "cpu": {
+        "percent": 6.1,
+        "count": 20,
+        "frequency": {
+          "current": 2401.0,
+          "min": 0.0,
+          "max": 2401.0
+        }
+      },
+      "memory": {
+        "total_gb": 15.844860076904297,
+        "available_gb": 5.7174530029296875,
+        "used_gb": 10.12740707397461,
+        "percent": 63.9
+      },
+      "disk": {
+        "total_gb": 476.15480041503906,
+        "used_gb": 437.2042922973633,
+        "free_gb": 38.95050811767578,
+        "percent": 91.81978044036842
+      },
+      "network": {
+        "bytes_sent": 44918069,
+        "bytes_recv": 1064848045,
+        "packets_sent": 434059,
+        "packets_recv": 777900
+      },
+      "python_processes": [
+        {
+          "pid": 13820,
+          "name": "python.exe",
+          "cpu_percent": 1.3,
+          "memory_percent": 0.1368921438691652
+        }
+      ],
+      "ports": [
+        {
+          "port": 8000,
+          "status": "available"
+        },
+        {
+          "port": 8001,
+          "status": "available"
+        },
+        {
+          "port": 8002,
+          "status": "available"
+        },
+        {
+          "port": 8003,
+          "status": "available"
+        }
+      ],
+      "uptime_seconds": 1869.0334105491638
+    },
+    {
+      "timestamp": "2025-07-24T23:40:48.702722",
+      "cpu": {
+        "percent": 8.7,
+        "count": 20,
+        "frequency": {
+          "current": 2401.0,
+          "min": 0.0,
+          "max": 2401.0
+        }
+      },
+      "memory": {
+        "total_gb": 15.844860076904297,
+        "available_gb": 5.696952819824219,
+        "used_gb": 10.147907257080078,
+        "percent": 64.0
+      },
+      "disk": {
+        "total_gb": 476.15480041503906,
+        "used_gb": 437.1922836303711,
+        "free_gb": 38.96251678466797,
+        "percent": 91.81725843135334
+      },
+      "network": {
+        "bytes_sent": 44964113,
+        "bytes_recv": 1064888205,
+        "packets_sent": 434285,
+        "packets_recv": 778119
+      },
+      "python_processes": [
+        {
+          "pid": 13820,
+          "name": "python.exe",
+          "cpu_percent": 1.7,
+          "memory_percent": 0.13691621916706692
+        }
+      ],
+      "ports": [
+        {
+          "port": 8000,
+          "status": "available"
+        },
+        {
+          "port": 8001,
+          "status": "available"
+        },
+        {
+          "port": 8002,
+          "status": "available"
+        },
+        {
+          "port": 8003,
+          "status": "available"
+        }
+      ],
+      "uptime_seconds": 1900.6088681221008
+    },
+    {
+      "timestamp": "2025-07-24T23:41:20.225841",
+      "cpu": {
+        "percent": 14.9,
+        "count": 20,
+        "frequency": {
+          "current": 2401.0,
+          "min": 0.0,
+          "max": 2401.0
+        }
+      },
+      "memory": {
+        "total_gb": 15.844860076904297,
+        "available_gb": 5.6895599365234375,
+        "used_gb": 10.15530014038086,
+        "percent": 64.1
+      },
+      "disk": {
+        "total_gb": 476.15480041503906,
+        "used_gb": 437.1917953491211,
+        "free_gb": 38.96300506591797,
+        "percent": 91.81715588460813
+      },
+      "network": {
+        "bytes_sent": 45081557,
+        "bytes_recv": 1064965549,
+        "packets_sent": 434671,
+        "packets_recv": 778474
+      },
+      "python_processes": [
+        {
+          "pid": 13820,
+          "name": "python.exe",
+          "cpu_percent": 1.6,
+          "memory_percent": 0.13691621916706692
+        }
+      ],
+      "ports": [
+        {
+          "port": 8000,
+          "status": "available"
+        },
+        {
+          "port": 8001,
+          "status": "available"
+        },
+        {
+          "port": 8002,
+          "status": "available"
+        },
+        {
+          "port": 8003,
+          "status": "available"
+        }
+      ],
+      "uptime_seconds": 1932.1319766044617
+    },
+    {
+      "timestamp": "2025-07-24T23:41:51.761118",
+      "cpu": {
+        "percent": 10.1,
+        "count": 20,
+        "frequency": {
+          "current": 2401.0,
+          "min": 0.0,
+          "max": 2401.0
+        }
+      },
+      "memory": {
+        "total_gb": 15.844860076904297,
+        "available_gb": 5.76300048828125,
+        "used_gb": 10.081859588623047,
+        "percent": 63.6
+      },
+      "disk": {
+        "total_gb": 476.15480041503906,
+        "used_gb": 437.1859359741211,
+        "free_gb": 38.96886444091797,
+        "percent": 91.81592532366557
+      },
+      "network": {
+        "bytes_sent": 45276249,
+        "bytes_recv": 1065095829,
+        "packets_sent": 435268,
+        "packets_recv": 779048
+      },
+      "python_processes": [
+        {
+          "pid": 13820,
+          "name": "python.exe",
+          "cpu_percent": 1.4,
+          "memory_percent": 0.1368680685712635
+        }
+      ],
+      "ports": [
+        {
+          "port": 8000,
+          "status": "available"
+        },
+        {
+          "port": 8001,
+          "status": "available"
+        },
+        {
+          "port": 8002,
+          "status": "available"
+        },
+        {
+          "port": 8003,
+          "status": "available"
+        }
+      ],
+      "uptime_seconds": 1963.6672599315643
+    },
+    {
+      "timestamp": "2025-07-24T23:42:23.299500",
+      "cpu": {
+        "percent": 14.3,
+        "count": 20,
+        "frequency": {
+          "current": 2401.0,
+          "min": 0.0,
+          "max": 2401.0
+        }
+      },
+      "memory": {
+        "total_gb": 15.844860076904297,
+        "available_gb": 5.657863616943359,
+        "used_gb": 10.186996459960938,
+        "percent": 64.3
+      },
+      "disk": {
+        "total_gb": 476.15480041503906,
+        "used_gb": 437.18967056274414,
+        "free_gb": 38.96512985229492,
+        "percent": 91.81670964603715
+      },
+      "network": {
+        "bytes_sent": 45769837,
+        "bytes_recv": 1066539268,
+        "packets_sent": 437281,
+        "packets_recv": 781389
+      },
+      "python_processes": [
+        {
+          "pid": 13820,
+          "name": "python.exe",
+          "cpu_percent": 1.6,
+          "memory_percent": 0.13696436976287035
+        }
+      ],
+      "ports": [
+        {
+          "port": 8000,
+          "status": "available"
+        },
+        {
+          "port": 8001,
+          "status": "available"
+        },
+        {
+          "port": 8002,
+          "status": "available"
+        },
+        {
+          "port": 8003,
+          "status": "available"
+        }
+      ],
+      "uptime_seconds": 1995.2056303024292
+    },
+    {
+      "timestamp": "2025-07-24T23:42:54.898026",
+      "cpu": {
+        "percent": 12.9,
+        "count": 20,
+        "frequency": {
+          "current": 2401.0,
+          "min": 0.0,
+          "max": 2401.0
+        }
+      },
+      "memory": {
+        "total_gb": 15.844860076904297,
+        "available_gb": 5.495662689208984,
+        "used_gb": 10.349197387695312,
+        "percent": 65.3
+      },
+      "disk": {
+        "total_gb": 476.15480041503906,
+        "used_gb": 437.19208908081055,
+        "free_gb": 38.962711334228516,
+        "percent": 91.81721757288453
+      },
+      "network": {
+        "bytes_sent": 45873886,
+        "bytes_recv": 1066614944,
+        "packets_sent": 437657,
+        "packets_recv": 781742
+      },
+      "python_processes": [
+        {
+          "pid": 13820,
+          "name": "python.exe",
+          "cpu_percent": 1.8,
+          "memory_percent": 0.1370365956565755
+        }
+      ],
+      "ports": [
+        {
+          "port": 8000,
+          "status": "available"
+        },
+        {
+          "port": 8001,
+          "status": "available"
+        },
+        {
+          "port": 8002,
+          "status": "available"
+        },
+        {
+          "port": 8003,
+          "status": "available"
+        }
+      ],
+      "uptime_seconds": 2026.8041877746582
+    },
+    {
+      "timestamp": "2025-07-24T23:43:26.442806",
+      "cpu": {
+        "percent": 14.4,
+        "count": 20,
+        "frequency": {
+          "current": 2401.0,
+          "min": 0.0,
+          "max": 2401.0
+        }
+      },
+      "memory": {
+        "total_gb": 15.844860076904297,
+        "available_gb": 5.465065002441406,
+        "used_gb": 10.37979507446289,
+        "percent": 65.5
+      },
+      "disk": {
+        "total_gb": 476.15480041503906,
+        "used_gb": 437.1966323852539,
+        "free_gb": 38.958168029785156,
+        "percent": 91.8181717383029
+      },
+      "network": {
+        "bytes_sent": 46080028,
+        "bytes_recv": 1066696912,
+        "packets_sent": 438147,
+        "packets_recv": 782163
+      },
+      "python_processes": [
+        {
+          "pid": 13820,
+          "name": "python.exe",
+          "cpu_percent": 1.6,
+          "memory_percent": 0.13407533401466426
+        }
+      ],
+      "ports": [
+        {
+          "port": 8000,
+          "status": "available"
+        },
+        {
+          "port": 8001,
+          "status": "available"
+        },
+        {
+          "port": 8002,
+          "status": "available"
+        },
+        {
+          "port": 8003,
+          "status": "available"
+        }
+      ],
+      "uptime_seconds": 2058.348953962326
+    },
+    {
+      "timestamp": "2025-07-24T23:43:58.143402",
+      "cpu": {
+        "percent": 17.0,
+        "count": 20,
+        "frequency": {
+          "current": 2401.0,
+          "min": 0.0,
+          "max": 2401.0
+        }
+      },
+      "memory": {
+        "total_gb": 15.844860076904297,
+        "available_gb": 5.470970153808594,
+        "used_gb": 10.373889923095703,
+        "percent": 65.5
+      },
+      "disk": {
+        "total_gb": 476.15480041503906,
+        "used_gb": 437.19672775268555,
+        "free_gb": 38.958072662353516,
+        "percent": 91.81819176696406
+      },
+      "network": {
+        "bytes_sent": 46173142,
+        "bytes_recv": 1066745447,
+        "packets_sent": 438453,
+        "packets_recv": 782439
+      },
+      "python_processes": [
+        {
+          "pid": 13820,
+          "name": "python.exe",
+          "cpu_percent": 2.1,
+          "memory_percent": 0.13710882155028065
+        }
+      ],
+      "ports": [
+        {
+          "port": 8000,
+          "status": "available"
+        },
+        {
+          "port": 8001,
+          "status": "available"
+        },
+        {
+          "port": 8002,
+          "status": "available"
+        },
+        {
+          "port": 8003,
+          "status": "available"
+        }
+      ],
+      "uptime_seconds": 2090.049557685852
+    },
+    {
+      "timestamp": "2025-07-24T23:44:29.690906",
+      "cpu": {
+        "percent": 14.0,
+        "count": 20,
+        "frequency": {
+          "current": 2401.0,
+          "min": 0.0,
+          "max": 2401.0
+        }
+      },
+      "memory": {
+        "total_gb": 15.844860076904297,
+        "available_gb": 5.461017608642578,
+        "used_gb": 10.383842468261719,
+        "percent": 65.5
+      },
+      "disk": {
+        "total_gb": 476.15480041503906,
+        "used_gb": 437.1969451904297,
+        "free_gb": 38.957855224609375,
+        "percent": 91.81823743231153
+      },
+      "network": {
+        "bytes_sent": 46279502,
+        "bytes_recv": 1066819046,
+        "packets_sent": 438811,
+        "packets_recv": 782800
+      },
+      "python_processes": [
+        {
+          "pid": 13820,
+          "name": "python.exe",
+          "cpu_percent": 1.7,
+          "memory_percent": 0.13706067095447722
+        }
+      ],
+      "ports": [
+        {
+          "port": 8000,
+          "status": "available"
+        },
+        {
+          "port": 8001,
+          "status": "available"
+        },
+        {
+          "port": 8002,
+          "status": "available"
+        },
+        {
+          "port": 8003,
+          "status": "available"
+        }
+      ],
+      "uptime_seconds": 2121.5970437526703
+    },
+    {
+      "timestamp": "2025-07-24T23:45:01.268729",
+      "cpu": {
+        "percent": 13.1,
+        "count": 20,
+        "frequency": {
+          "current": 2401.0,
+          "min": 0.0,
+          "max": 2401.0
+        }
+      },
+      "memory": {
+        "total_gb": 15.844860076904297,
+        "available_gb": 5.451972961425781,
+        "used_gb": 10.392887115478516,
+        "percent": 65.6
+      },
+      "disk": {
+        "total_gb": 476.15480041503906,
+        "used_gb": 437.1895637512207,
+        "free_gb": 38.96523666381836,
+        "percent": 91.81668721393665
+      },
+      "network": {
+        "bytes_sent": 46412810,
+        "bytes_recv": 1066926602,
+        "packets_sent": 439291,
+        "packets_recv": 783236
+      },
+      "python_processes": [
+        {
+          "pid": 13820,
+          "name": "python.exe",
+          "cpu_percent": 1.7,
+          "memory_percent": 0.13407533401466426
+        }
+      ],
+      "ports": [
+        {
+          "port": 8000,
+          "status": "available"
+        },
+        {
+          "port": 8001,
+          "status": "available"
+        },
+        {
+          "port": 8002,
+          "status": "available"
+        },
+        {
+          "port": 8003,
+          "status": "available"
+        }
+      ],
+      "uptime_seconds": 2153.174863100052
+    },
+    {
+      "timestamp": "2025-07-24T23:45:32.822950",
+      "cpu": {
+        "percent": 12.2,
+        "count": 20,
+        "frequency": {
+          "current": 2401.0,
+          "min": 0.0,
+          "max": 2401.0
+        }
+      },
+      "memory": {
+        "total_gb": 15.844860076904297,
+        "available_gb": 5.453769683837891,
+        "used_gb": 10.391090393066406,
+        "percent": 65.6
+      },
+      "disk": {
+        "total_gb": 476.15480041503906,
+        "used_gb": 437.18974685668945,
+        "free_gb": 38.96505355834961,
+        "percent": 91.81672566896609
+      },
+      "network": {
+        "bytes_sent": 46565988,
+        "bytes_recv": 1066998449,
+        "packets_sent": 439779,
+        "packets_recv": 783583
+      },
+      "python_processes": [
+        {
+          "pid": 13820,
+          "name": "python.exe",
+          "cpu_percent": 1.6,
+          "memory_percent": 0.13417163520627115
+        }
+      ],
+      "ports": [
+        {
+          "port": 8000,
+          "status": "available"
+        },
+        {
+          "port": 8001,
+          "status": "available"
+        },
+        {
+          "port": 8002,
+          "status": "available"
+        },
+        {
+          "port": 8003,
+          "status": "available"
+        }
+      ],
+      "uptime_seconds": 2184.7290875911713
+    },
+    {
+      "timestamp": "2025-07-24T23:46:04.378886",
+      "cpu": {
+        "percent": 14.4,
+        "count": 20,
+        "frequency": {
+          "current": 2401.0,
+          "min": 0.0,
+          "max": 2401.0
+        }
+      },
+      "memory": {
+        "total_gb": 15.844860076904297,
+        "available_gb": 5.470020294189453,
+        "used_gb": 10.374839782714844,
+        "percent": 65.5
+      },
+      "disk": {
+        "total_gb": 476.15480041503906,
+        "used_gb": 437.18974685668945,
+        "free_gb": 38.96505355834961,
+        "percent": 91.81672566896609
+      },
+      "network": {
+        "bytes_sent": 46642148,
+        "bytes_recv": 1067032114,
+        "packets_sent": 440043,
+        "packets_recv": 783825
+      },
+      "python_processes": [
+        {
+          "pid": 13820,
+          "name": "python.exe",
+          "cpu_percent": 1.7,
+          "memory_percent": 0.13708474625237893
+        }
+      ],
+      "ports": [
+        {
+          "port": 8000,
+          "status": "available"
+        },
+        {
+          "port": 8001,
+          "status": "available"
+        },
+        {
+          "port": 8002,
+          "status": "available"
+        },
+        {
+          "port": 8003,
+          "status": "available"
+        }
+      ],
+      "uptime_seconds": 2216.2850193977356
+    },
+    {
+      "timestamp": "2025-07-24T23:46:35.992488",
+      "cpu": {
+        "percent": 13.6,
+        "count": 20,
+        "frequency": {
+          "current": 2401.0,
+          "min": 0.0,
+          "max": 2401.0
+        }
+      },
+      "memory": {
+        "total_gb": 15.844860076904297,
+        "available_gb": 5.437038421630859,
+        "used_gb": 10.407821655273438,
+        "percent": 65.7
+      },
+      "disk": {
+        "total_gb": 476.15480041503906,
+        "used_gb": 437.18978118896484,
+        "free_gb": 38.96501922607422,
+        "percent": 91.81673287928412
+      },
+      "network": {
+        "bytes_sent": 46841731,
+        "bytes_recv": 1067170349,
+        "packets_sent": 440636,
+        "packets_recv": 784418
+      },
+      "python_processes": [
+        {
+          "pid": 13820,
+          "name": "python.exe",
+          "cpu_percent": 1.8,
+          "memory_percent": 0.13708474625237893
+        }
+      ],
+      "ports": [
+        {
+          "port": 8000,
+          "status": "available"
+        },
+        {
+          "port": 8001,
+          "status": "available"
+        },
+        {
+          "port": 8002,
+          "status": "available"
+        },
+        {
+          "port": 8003,
+          "status": "available"
+        }
+      ],
+      "uptime_seconds": 2247.8986191749573
+    },
+    {
+      "timestamp": "2025-07-24T23:47:07.609844",
+      "cpu": {
+        "percent": 13.6,
+        "count": 20,
+        "frequency": {
+          "current": 2401.0,
+          "min": 0.0,
+          "max": 2401.0
+        }
+      },
+      "memory": {
+        "total_gb": 15.844860076904297,
+        "available_gb": 5.4499359130859375,
+        "used_gb": 10.39492416381836,
+        "percent": 65.6
+      },
+      "disk": {
+        "total_gb": 476.15480041503906,
+        "used_gb": 437.1900863647461,
+        "free_gb": 38.96471405029297,
+        "percent": 91.81679697099987
+      },
+      "network": {
+        "bytes_sent": 46959980,
+        "bytes_recv": 1067243701,
+        "packets_sent": 441020,
+        "packets_recv": 784758
+      },
+      "python_processes": [
+        {
+          "pid": 13820,
+          "name": "python.exe",
+          "cpu_percent": 1.8,
+          "memory_percent": 0.13725327333769097
+        }
+      ],
+      "ports": [
+        {
+          "port": 8000,
+          "status": "available"
+        },
+        {
+          "port": 8001,
+          "status": "available"
+        },
+        {
+          "port": 8002,
+          "status": "available"
+        },
+        {
+          "port": 8003,
+          "status": "available"
+        }
+      ],
+      "uptime_seconds": 2279.516000032425
+    },
+    {
+      "timestamp": "2025-07-24T23:47:39.182028",
+      "cpu": {
+        "percent": 14.3,
+        "count": 20,
+        "frequency": {
+          "current": 2401.0,
+          "min": 0.0,
+          "max": 2401.0
+        }
+      },
+      "memory": {
+        "total_gb": 15.844860076904297,
+        "available_gb": 5.447811126708984,
+        "used_gb": 10.397048950195312,
+        "percent": 65.6
+      },
+      "disk": {
+        "total_gb": 476.15480041503906,
+        "used_gb": 437.19018936157227,
+        "free_gb": 38.9646110534668,
+        "percent": 91.81681860195394
+      },
+      "network": {
+        "bytes_sent": 47127351,
+        "bytes_recv": 1067385738,
+        "packets_sent": 441566,
+        "packets_recv": 785303
+      },
+      "python_processes": [
+        {
+          "pid": 13820,
+          "name": "python.exe",
+          "cpu_percent": 1.8,
+          "memory_percent": 0.13722919803978925
+        }
+      ],
+      "ports": [
+        {
+          "port": 8000,
+          "status": "available"
+        },
+        {
+          "port": 8001,
+          "status": "available"
+        },
+        {
+          "port": 8002,
+          "status": "available"
+        },
+        {
+          "port": 8003,
+          "status": "available"
+        }
+      ],
+      "uptime_seconds": 2311.0881700515747
+    },
+    {
+      "timestamp": "2025-07-24T23:48:10.760727",
+      "cpu": {
+        "percent": 16.3,
+        "count": 20,
+        "frequency": {
+          "current": 2401.0,
+          "min": 0.0,
+          "max": 2401.0
+        }
+      },
+      "memory": {
+        "total_gb": 15.844860076904297,
+        "available_gb": 5.403873443603516,
+        "used_gb": 10.440986633300781,
+        "percent": 65.9
+      },
+      "disk": {
+        "total_gb": 476.15480041503906,
+        "used_gb": 437.1900825500488,
+        "free_gb": 38.964717864990234,
+        "percent": 91.81679616985343
+      },
+      "network": {
+        "bytes_sent": 47231977,
+        "bytes_recv": 1067484241,
+        "packets_sent": 441961,
+        "packets_recv": 785706
+      },
+      "python_processes": [
+        {
+          "pid": 13820,
+          "name": "python.exe",
+          "cpu_percent": 1.6,
+          "memory_percent": 0.1371810474439858
+        }
+      ],
+      "ports": [
+        {
+          "port": 8000,
+          "status": "available"
+        },
+        {
+          "port": 8001,
+          "status": "available"
+        },
+        {
+          "port": 8002,
+          "status": "available"
+        },
+        {
+          "port": 8003,
+          "status": "available"
+        }
+      ],
+      "uptime_seconds": 2342.6668586730957
+    },
+    {
+      "timestamp": "2025-07-24T23:48:42.335067",
+      "cpu": {
+        "percent": 13.6,
+        "count": 20,
+        "frequency": {
+          "current": 2401.0,
+          "min": 0.0,
+          "max": 2401.0
+        }
+      },
+      "memory": {
+        "total_gb": 15.844860076904297,
+        "available_gb": 5.439952850341797,
+        "used_gb": 10.4049072265625,
+        "percent": 65.7
+      },
+      "disk": {
+        "total_gb": 476.15480041503906,
+        "used_gb": 437.1897659301758,
+        "free_gb": 38.96503448486328,
+        "percent": 91.81672967469832
+      },
+      "network": {
+        "bytes_sent": 47313761,
+        "bytes_recv": 1067523349,
+        "packets_sent": 442205,
+        "packets_recv": 785948
+      },
+      "python_processes": [
+        {
+          "pid": 13820,
+          "name": "python.exe",
+          "cpu_percent": 1.7,
+          "memory_percent": 0.134267936397878
+        }
+      ],
+      "ports": [
+        {
+          "port": 8000,
+          "status": "available"
+        },
+        {
+          "port": 8001,
+          "status": "available"
+        },
+        {
+          "port": 8002,
+          "status": "available"
+        },
+        {
+          "port": 8003,
+          "status": "available"
+        }
+      ],
+      "uptime_seconds": 2374.241211414337
+    },
+    {
+      "timestamp": "2025-07-24T23:49:13.899527",
+      "cpu": {
+        "percent": 13.4,
+        "count": 20,
+        "frequency": {
+          "current": 2401.0,
+          "min": 0.0,
+          "max": 2401.0
+        }
+      },
+      "memory": {
+        "total_gb": 15.844860076904297,
+        "available_gb": 5.410701751708984,
+        "used_gb": 10.434158325195312,
+        "percent": 65.9
+      },
+      "disk": {
+        "total_gb": 476.15480041503906,
+        "used_gb": 437.18999099731445,
+        "free_gb": 38.96480941772461,
+        "percent": 91.8167769423387
+      },
+      "network": {
+        "bytes_sent": 47539399,
+        "bytes_recv": 1067675468,
+        "packets_sent": 442892,
+        "packets_recv": 786588
+      },
+      "python_processes": [
+        {
+          "pid": 13820,
+          "name": "python.exe",
+          "cpu_percent": 1.7,
+          "memory_percent": 0.1373014239334944
+        }
+      ],
+      "ports": [
+        {
+          "port": 8000,
+          "status": "available"
+        },
+        {
+          "port": 8001,
+          "status": "available"
+        },
+        {
+          "port": 8002,
+          "status": "available"
+        },
+        {
+          "port": 8003,
+          "status": "available"
+        }
+      ],
+      "uptime_seconds": 2405.8056960105896
+    },
+    {
+      "timestamp": "2025-07-24T23:49:45.468077",
+      "cpu": {
+        "percent": 12.4,
+        "count": 20,
+        "frequency": {
+          "current": 2401.0,
+          "min": 0.0,
+          "max": 2401.0
+        }
+      },
+      "memory": {
+        "total_gb": 15.844860076904297,
+        "available_gb": 5.419940948486328,
+        "used_gb": 10.424919128417969,
+        "percent": 65.8
+      },
+      "disk": {
+        "total_gb": 476.15480041503906,
+        "used_gb": 437.19009017944336,
+        "free_gb": 38.9647102355957,
+        "percent": 91.81679777214632
+      },
+      "network": {
+        "bytes_sent": 47625420,
+        "bytes_recv": 1067719617,
+        "packets_sent": 443162,
+        "packets_recv": 786851
+      },
+      "python_processes": [
+        {
+          "pid": 13820,
+          "name": "python.exe",
+          "cpu_percent": 1.8,
+          "memory_percent": 0.13727734863559268
+        }
+      ],
+      "ports": [
+        {
+          "port": 8000,
+          "status": "available"
+        },
+        {
+          "port": 8001,
+          "status": "available"
+        },
+        {
+          "port": 8002,
+          "status": "available"
+        },
+        {
+          "port": 8003,
+          "status": "available"
+        }
+      ],
+      "uptime_seconds": 2437.3742146492004
+    },
+    {
+      "timestamp": "2025-07-24T23:50:17.016892",
+      "cpu": {
+        "percent": 12.6,
+        "count": 20,
+        "frequency": {
+          "current": 2401.0,
+          "min": 0.0,
+          "max": 2401.0
+        }
+      },
+      "memory": {
+        "total_gb": 15.844860076904297,
+        "available_gb": 5.432765960693359,
+        "used_gb": 10.412094116210938,
+        "percent": 65.7
+      },
+      "disk": {
+        "total_gb": 476.15480041503906,
+        "used_gb": 437.1900825500488,
+        "free_gb": 38.964717864990234,
+        "percent": 91.81679616985343
+      },
+      "network": {
+        "bytes_sent": 47733371,
+        "bytes_recv": 1067785150,
+        "packets_sent": 443545,
+        "packets_recv": 787204
+      },
+      "python_processes": [
+        {
+          "pid": 13820,
+          "name": "python.exe",
+          "cpu_percent": 1.7,
+          "memory_percent": 0.13727734863559268
+        }
+      ],
+      "ports": [
+        {
+          "port": 8000,
+          "status": "available"
+        },
+        {
+          "port": 8001,
+          "status": "available"
+        },
+        {
+          "port": 8002,
+          "status": "available"
+        },
+        {
+          "port": 8003,
+          "status": "available"
+        }
+      ],
+      "uptime_seconds": 2468.9230239391327
+    },
+    {
+      "timestamp": "2025-07-24T23:50:48.561100",
+      "cpu": {
+        "percent": 14.9,
+        "count": 20,
+        "frequency": {
+          "current": 2401.0,
+          "min": 0.0,
+          "max": 2401.0
+        }
+      },
+      "memory": {
+        "total_gb": 15.844860076904297,
+        "available_gb": 5.435085296630859,
+        "used_gb": 10.409774780273438,
+        "percent": 65.7
+      },
+      "disk": {
+        "total_gb": 476.15480041503906,
+        "used_gb": 437.1910591125488,
+        "free_gb": 38.963741302490234,
+        "percent": 91.81700126334385
+      },
+      "network": {
+        "bytes_sent": 47800622,
+        "bytes_recv": 1067826005,
+        "packets_sent": 443790,
+        "packets_recv": 787445
+      },
+      "python_processes": [
+        {
+          "pid": 13820,
+          "name": "python.exe",
+          "cpu_percent": 1.6,
+          "memory_percent": 0.13737364982719955
+        }
+      ],
+      "ports": [
+        {
+          "port": 8000,
+          "status": "available"
+        },
+        {
+          "port": 8001,
+          "status": "available"
+        },
+        {
+          "port": 8002,
+          "status": "available"
+        },
+        {
+          "port": 8003,
+          "status": "available"
+        }
+      ],
+      "uptime_seconds": 2500.467242717743
+    },
+    {
+      "timestamp": "2025-07-24T23:51:20.106797",
+      "cpu": {
+        "percent": 11.5,
+        "count": 20,
+        "frequency": {
+          "current": 2401.0,
+          "min": 0.0,
+          "max": 2401.0
+        }
+      },
+      "memory": {
+        "total_gb": 15.844860076904297,
+        "available_gb": 5.433506011962891,
+        "used_gb": 10.411354064941406,
+        "percent": 65.7
+      },
+      "disk": {
+        "total_gb": 476.15480041503906,
+        "used_gb": 437.1916694641113,
+        "free_gb": 38.963130950927734,
+        "percent": 91.81712944677537
+      },
+      "network": {
+        "bytes_sent": 47903073,
+        "bytes_recv": 1067877124,
+        "packets_sent": 444152,
+        "packets_recv": 787742
+      },
+      "python_processes": [
+        {
+          "pid": 13820,
+          "name": "python.exe",
+          "cpu_percent": 1.7,
+          "memory_percent": 0.13734957452929783
+        }
+      ],
+      "ports": [
+        {
+          "port": 8000,
+          "status": "available"
+        },
+        {
+          "port": 8001,
+          "status": "available"
+        },
+        {
+          "port": 8002,
+          "status": "available"
+        },
+        {
+          "port": 8003,
+          "status": "available"
+        }
+      ],
+      "uptime_seconds": 2532.0129330158234
+    },
+    {
+      "timestamp": "2025-07-24T23:51:51.689404",
+      "cpu": {
+        "percent": 12.7,
+        "count": 20,
+        "frequency": {
+          "current": 2401.0,
+          "min": 0.0,
+          "max": 2401.0
+        }
+      },
+      "memory": {
+        "total_gb": 15.844860076904297,
+        "available_gb": 5.43841552734375,
+        "used_gb": 10.406444549560547,
+        "percent": 65.7
+      },
+      "disk": {
+        "total_gb": 476.15480041503906,
+        "used_gb": 437.1917304992676,
+        "free_gb": 38.963069915771484,
+        "percent": 91.81714226511852
+      },
+      "network": {
+        "bytes_sent": 47974644,
+        "bytes_recv": 1067904239,
+        "packets_sent": 444356,
+        "packets_recv": 787933
+      },
+      "python_processes": [
+        {
+          "pid": 13820,
+          "name": "python.exe",
+          "cpu_percent": 1.7,
+          "memory_percent": 0.1374458757209047
+        }
+      ],
+      "ports": [
+        {
+          "port": 8000,
+          "status": "available"
+        },
+        {
+          "port": 8001,
+          "status": "available"
+        },
+        {
+          "port": 8002,
+          "status": "available"
+        },
+        {
+          "port": 8003,
+          "status": "available"
+        }
+      ],
+      "uptime_seconds": 2563.595535993576
+    },
+    {
+      "timestamp": "2025-07-24T23:52:23.225541",
+      "cpu": {
+        "percent": 12.3,
+        "count": 20,
+        "frequency": {
+          "current": 2401.0,
+          "min": 0.0,
+          "max": 2401.0
+        }
+      },
+      "memory": {
+        "total_gb": 15.844860076904297,
+        "available_gb": 5.406181335449219,
+        "used_gb": 10.438678741455078,
+        "percent": 65.9
+      },
+      "disk": {
+        "total_gb": 476.15480041503906,
+        "used_gb": 437.19181060791016,
+        "free_gb": 38.962989807128906,
+        "percent": 91.81715908919391
+      },
+      "network": {
+        "bytes_sent": 48153787,
+        "bytes_recv": 1068018994,
+        "packets_sent": 444924,
+        "packets_recv": 788447
+      },
+      "python_processes": [
+        {
+          "pid": 13820,
+          "name": "python.exe",
+          "cpu_percent": 1.6,
+          "memory_percent": 0.13778292989152874
+        }
+      ],
+      "ports": [
+        {
+          "port": 8000,
+          "status": "available"
+        },
+        {
+          "port": 8001,
+          "status": "available"
+        },
+        {
+          "port": 8002,
+          "status": "available"
+        },
+        {
+          "port": 8003,
+          "status": "available"
+        }
+      ],
+      "uptime_seconds": 2595.1316895484924
+    },
+    {
+      "timestamp": "2025-07-24T23:52:54.845065",
+      "cpu": {
+        "percent": 13.5,
+        "count": 20,
+        "frequency": {
+          "current": 2401.0,
+          "min": 0.0,
+          "max": 2401.0
+        }
+      },
+      "memory": {
+        "total_gb": 15.844860076904297,
+        "available_gb": 5.4263458251953125,
+        "used_gb": 10.418514251708984,
+        "percent": 65.8
+      },
+      "disk": {
+        "total_gb": 476.15480041503906,
+        "used_gb": 437.19187927246094,
+        "free_gb": 38.962921142578125,
+        "percent": 91.81717350982996
+      },
+      "network": {
+        "bytes_sent": 48299717,
+        "bytes_recv": 1068063346,
+        "packets_sent": 445313,
+        "packets_recv": 788703
+      },
+      "python_processes": [
+        {
+          "pid": 13820,
+          "name": "python.exe",
+          "cpu_percent": 1.9,
+          "memory_percent": 0.13889039359500777
+        }
+      ],
+      "ports": [
+        {
+          "port": 8000,
+          "status": "available"
+        },
+        {
+          "port": 8001,
+          "status": "available"
+        },
+        {
+          "port": 8002,
+          "status": "available"
+        },
+        {
+          "port": 8003,
+          "status": "available"
+        }
+      ],
+      "uptime_seconds": 2626.7511994838715
+    }
+  ]
+}

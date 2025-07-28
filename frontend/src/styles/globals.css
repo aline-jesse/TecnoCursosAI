@@ -1,2 +1,17 @@
-@import "tailwindcss/preflight";
-@tailwind utilities;
+/* Estilos globais personalizados */
+
+/* Reset básico */
+* {
+  box-sizing: border-box;
+}
+
+/* Estilos para elementos de formulário */
+input, textarea, select {
+  font-family: inherit;
+}
+
+/* Estilos para botões */
+button {
+  cursor: pointer;
+  font-family: inherit;
+}

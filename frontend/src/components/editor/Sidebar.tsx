@@ -32,15 +32,15 @@ export const Sidebar: React.FC<SidebarProps> = ({
     );
   }
 
-  const handleChange = <T extends keyof EditorElement>(
-    property: T,
-    value: EditorElement[T]
+  const handleChange = (
+    property: string,
+    value: any
   ) => {
     if (readOnly) return;
     onElementUpdate({
       ...selectedElement,
       [property]: value,
-    });
+    } as EditorElement);
   };
 
   const isTextElement = (element: EditorElement): element is TextElement => {

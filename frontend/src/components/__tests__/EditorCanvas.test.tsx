@@ -365,7 +365,6 @@ describe('EditorCanvas', () => {
       ...mockStore,
       currentSceneId: 'scene-2',
       scenes: [
-        ...mockStore.scenes,
         {
           id: 'scene-2',
           name: 'New Scene',

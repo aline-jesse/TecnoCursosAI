@@ -1,5 +1,5 @@
 import React from 'react';
-import { ToolConfig, ToolType } from '../../types';
+import { ToolConfig, ToolType } from '../../types/editor';
 import { Divider } from '../common/Divider';
 import { IconButton } from '../common/IconButton';
 import { Tooltip } from '../common/Tooltip';
@@ -9,6 +9,7 @@ const TOOLS: ToolConfig[] = [
   {
     id: 'select',
     icon: 'cursor',
+    name: 'select',
     label: 'Selecionar',
     shortcut: 'V',
     group: 'selection',
@@ -16,14 +17,16 @@ const TOOLS: ToolConfig[] = [
   {
     id: 'hand',
     icon: 'hand',
+    name: 'hand',
     label: 'Mover',
     shortcut: 'H',
     group: 'selection',
   },
-  { id: 'text', icon: 'text', label: 'Texto', shortcut: 'T', group: 'shapes' },
+  { id: 'text', icon: 'text', name: 'text', label: 'Texto', shortcut: 'T', group: 'shapes' },
   {
     id: 'rectangle',
     icon: 'rectangle',
+    name: 'rectangle',
     label: 'Retângulo',
     shortcut: 'R',
     group: 'shapes',
@@ -31,20 +34,22 @@ const TOOLS: ToolConfig[] = [
   {
     id: 'circle',
     icon: 'circle',
+    name: 'circle',
     label: 'Círculo',
     shortcut: 'C',
     group: 'shapes',
   },
-  { id: 'line', icon: 'line', label: 'Linha', shortcut: 'L', group: 'shapes' },
+  { id: 'line', icon: 'line', name: 'line', label: 'Linha', shortcut: 'L', group: 'shapes' },
   {
     id: 'image',
     icon: 'image',
+    name: 'image',
     label: 'Imagem',
     shortcut: 'I',
     group: 'media',
   },
-  { id: 'video', icon: 'video', label: 'Vídeo', shortcut: 'V', group: 'media' },
-  { id: 'audio', icon: 'audio', label: 'Áudio', shortcut: 'A', group: 'media' },
+  { id: 'video', icon: 'video', name: 'video', label: 'Vídeo', shortcut: 'V', group: 'media' },
+  { id: 'audio', icon: 'audio', name: 'audio', label: 'Áudio', shortcut: 'A', group: 'media' },
 ];
 
 interface ToolbarProps {
@@ -88,7 +93,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
               position="bottom"
             >
               <IconButton
-                icon={tool.icon}
+                icon={tool.icon as any}
                 active={activeTool === tool.id}
                 onClick={() => onToolChange(tool.id)}
                 disabled={

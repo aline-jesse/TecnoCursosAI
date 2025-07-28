@@ -1,5 +1,6 @@
 // src/components/editor/EditorCanvas.tsx
-import { fabric } from 'fabric';
+// Fabric.js não tem exportação ES6 padrão
+const fabric = require('fabric').fabric;
 import {
   forwardRef,
   useCallback,

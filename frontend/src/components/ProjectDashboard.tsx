@@ -18,6 +18,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useProjects } from '../hooks/useProjects';
 import {
   DashboardProps,
+  DashboardStats,
   Project,
   ProjectFilters,
   ProjectStatistics,
@@ -37,7 +38,7 @@ interface StatItem {
 }
 
 interface DashboardStatsProps {
-  statistics: ProjectStatistics;
+  statistics: DashboardStats;
 }
 
 /**

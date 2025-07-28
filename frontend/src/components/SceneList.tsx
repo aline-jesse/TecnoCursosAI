@@ -50,7 +50,7 @@ const SceneList: React.FC = () => {
 
     // Atualizar as cenas reordenadas no store
     items.forEach((scene, index) => {
-      updateScene(scene.id, { ...scene });
+      updateScene({ ...scene });
     });
   };
 

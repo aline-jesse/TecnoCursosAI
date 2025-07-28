@@ -21,6 +21,8 @@ export const StatusBar: React.FC<StatusBarProps> = ({
       rectangle: 'Retângulo',
       circle: 'Círculo',
       line: 'Linha',
+      draw: 'Desenhar',
+      erase: 'Apagar',
       image: 'Imagem',
       video: 'Vídeo',
       audio: 'Áudio',

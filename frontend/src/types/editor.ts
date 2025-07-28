@@ -132,6 +132,35 @@ export type EditorElement =
   | AudioElement
   | ShapeElement;
 
+// Tipo para identificar tipos de elementos
+export type ElementType = EditorElement['type'];
+
+// ============================================================================
+// FERRAMENTAS DO EDITOR
+// ============================================================================
+
+export type ToolType = 
+  | 'select'
+  | 'hand' 
+  | 'text'
+  | 'rectangle'
+  | 'circle'
+  | 'line'
+  | 'draw'
+  | 'erase'
+  | 'image'
+  | 'video'
+  | 'audio';
+
+export interface ToolConfig {
+  id: ToolType;
+  icon: string;
+  name: string;
+  label: string;
+  shortcut: string;
+  group: 'selection' | 'shapes' | 'media' | 'drawing';
+}
+
 // ============================================================================
 // CENAS E FUNDO
 // ============================================================================
@@ -161,24 +190,7 @@ export interface Scene {
 
 export type AssetType = 'image' | 'character' | 'audio' | 'video';
 
-export type ToolType = 
-  | 'select' 
-  | 'hand'
-  | 'text' 
-  | 'rectangle' 
-  | 'circle' 
-  | 'line' 
-  | 'image' 
-  | 'video' 
-  | 'audio'
-  | 'draw'
-  | 'erase';
 
-export interface ToolConfig {
-  id: string;
-  name: string;
-  icon: string;
-}
 
 export interface Asset {
   id: string;

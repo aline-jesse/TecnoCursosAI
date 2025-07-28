@@ -1,0 +1,68 @@
+{
+  "timestamp": "2025-07-24T23:53:01.654568",
+  "summary": {
+    "cpu_average_percent": 13.32,
+    "memory_average_percent": 65.78,
+    "disk_average_percent": 91.82,
+    "total_metrics_collected": 61
+  },
+  "alerts": [
+    {
+      "type": "warning",
+      "message": "Disk usage high: 91.8%",
+      "timestamp": "2025-07-24T23:48:10.760811"
+    },
+    {
+      "type": "warning",
+      "message": "Disk usage high: 91.8%",
+      "timestamp": "2025-07-24T23:48:42.335165"
+    },
+    {
+      "type": "warning",
+      "message": "Disk usage high: 91.8%",
+      "timestamp": "2025-07-24T23:49:13.899664"
+    },
+    {
+      "type": "warning",
+      "message": "Disk usage high: 91.8%",
+      "timestamp": "2025-07-24T23:49:45.468181"
+    },
+    {
+      "type": "warning",
+      "message": "Disk usage high: 91.8%",
+      "timestamp": "2025-07-24T23:50:17.016974"
+    },
+    {
+      "type": "warning",
+      "message": "Disk usage high: 91.8%",
+      "timestamp": "2025-07-24T23:50:48.561195"
+    },
+    {
+      "type": "warning",
+      "message": "Disk usage high: 91.8%",
+      "timestamp": "2025-07-24T23:51:20.106884"
+    },
+    {
+      "type": "warning",
+      "message": "Disk usage high: 91.8%",
+      "timestamp": "2025-07-24T23:51:51.689486"
+    },
+    {
+      "type": "warning",
+      "message": "Disk usage high: 91.8%",
+      "timestamp": "2025-07-24T23:52:23.225640"
+    },
+    {
+      "type": "warning",
+      "message": "Disk usage high: 91.8%",
+      "timestamp": "2025-07-24T23:52:54.845151"
+    }
+  ],
+  "recommendations": [
+    {
+      "type": "storage",
+      "message": "Disk usage is high. Consider cleaning up files or expanding storage.",
+      "priority": "medium"
+    }
+  ]
+}

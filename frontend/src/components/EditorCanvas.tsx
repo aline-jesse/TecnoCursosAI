@@ -254,7 +254,7 @@ const EditorCanvas: React.FC<EditorCanvasProps> = ({
         opacity: fabricObject.opacity || 1,
       };
 
-      updateElement(updatedElement);
+      updateElement(updatedElement as EditorElement);
     },
     [currentSceneId, updateElement]
   );
