@@ -1,30 +1,30 @@
 {
-  "timestamp": "2025-07-23T12:36:14.815862",
+  "timestamp": "2025-07-29T14:25:31.593620",
   "analysis": {
     "file_structure": {
       "backend/app/main.py": {
         "exists": true,
-        "size": 28563,
+        "size": 27820,
         "description": "Servidor principal"
       },
       "server_simple_fase4.py": {
         "exists": true,
-        "size": 20519,
+        "size": 19914,
         "description": "Servidor Fase 4"
       },
       "system/monitoring_dashboard.py": {
         "exists": true,
-        "size": 26256,
+        "size": 25522,
         "description": "Dashboard de monitoramento"
       },
       "frontend/src/App.jsx": {
         "exists": true,
-        "size": 2482,
+        "size": 5150,
         "description": "Frontend React"
       },
       "docs/STATUS_FASES_PROJETO.md": {
         "exists": true,
-        "size": 2892,
+        "size": 2338,
         "description": "Status das fases"
       },
       "README.md": {
@@ -35,35 +35,31 @@
     },
     "python_compatibility": {
       "python_info": {
-        "version": "3.13.4 (tags/v3.13.4:8a526ec, Jun  3 2025, 17:46:04) [MSC v.1943 64 bit (AMD64)]",
+        "version": "3.12.3 (main, Jun 18 2025, 17:59:45) [GCC 13.3.0]",
         "version_info": [
           3,
-          13,
-          4,
+          12,
+          3,
           "final",
           0
         ],
-        "executable": "C:\\Python313\\python.exe"
+        "executable": "/usr/bin/python3"
       },
       "imports": {
         "fastapi": {
-          "available": true,
-          "version": "0.104.1",
+          "available": false,
           "description": "Framework web principal"
         },
         "sqlalchemy": {
-          "available": true,
-          "version": "2.0.41",
+          "available": false,
           "description": "ORM para banco de dados"
         },
         "pydantic": {
-          "available": true,
-          "version": "2.11.7",
+          "available": false,
           "description": "Validação de dados"
         },
         "uvicorn": {
-          "available": true,
-          "version": "0.24.0",
+          "available": false,
           "description": "Servidor ASGI"
         }
       }
@@ -72,8 +68,10 @@
       "main_server": {
         "file_exists": true,
         "port_available": true,
-        "can_import": true,
-        "errors": []
+        "can_import": false,
+        "errors": [
+          "No module named 'fastapi'"
+        ]
       },
       "fase4_server": {
         "file_exists": true,
@@ -102,8 +100,28 @@
       }
     }
   },
-  "problems": [],
-  "recommendations": [],
+  "problems": [
+    {
+      "type": "import_failures",
+      "severity": "high",
+      "modules": [
+        "fastapi",
+        "sqlalchemy",
+        "pydantic",
+        "uvicorn"
+      ],
+      "recommendation": "Instalar dependências em falta ou corrigir incompatibilidades"
+    }
+  ],
+  "recommendations": [
+    {
+      "priority": "high",
+      "category": "dependencies",
+      "title": "Corrigir dependências Python",
+      "description": "Instalar ou atualizar dependências em falta",
+      "action": "pip install --upgrade fastapi sqlalchemy pydantic uvicorn"
+    }
+  ],
   "phase_status": {
     "fase1": {
       "name": "Arquitetura e Fundamentos",
