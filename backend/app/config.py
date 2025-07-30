@@ -43,10 +43,39 @@ class Settings(BaseSettings):
     reload: bool = True
     
     # === CONFIGURAÇÕES DE SEGURANÇA ===
-    cors_origins: List[str] = ["*"]
+    # CORS configurado por ambiente para segurança
+    @property
+    def cors_origins(self) -> List[str]:
+        """Origens CORS baseadas no ambiente"""
+        cors_config = {
+            "development": [
+                "http://localhost:3000",
+                "http://localhost:3001", 
+                "http://localhost:8080",
+                "http://127.0.0.1:3000"
+            ],
+            "staging": [
+                "https://staging.tecnocursos.ai",
+                "https://staging-app.tecnocursos.ai"
+            ],
+            "production": [
+                "https://tecnocursos.ai",
+                "https://app.tecnocursos.ai",
+                "https://www.tecnocursos.ai"
+            ]
+        }
+        return cors_config.get(self.environment, ["http://localhost:3000"])
+    
     cors_allow_credentials: bool = True
-    cors_allow_methods: List[str] = ["*"]
-    cors_allow_headers: List[str] = ["*"]
+    cors_allow_methods: List[str] = ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"]
+    cors_allow_headers: List[str] = [
+        "Authorization", 
+        "Content-Type", 
+        "X-Requested-With",
+        "X-Request-ID",
+        "Accept",
+        "Origin"
+    ]
     
     # === CONFIGURAÇÕES DE ARQUIVOS ===
     upload_dir: str = "uploads"

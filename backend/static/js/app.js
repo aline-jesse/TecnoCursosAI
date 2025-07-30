@@ -90,6 +90,15 @@ class TecnoCursosAPI {
         } catch (error) {
             console.log('Request error:', error.message);
             
+            // Handle specific connection errors
+            if (error.message.includes('ERR_CONNECTION_REFUSED')) {
+                throw new Error('⚠️ Backend não está rodando! Execute: python RESOLVER_CONEXAO_AGORA.py');
+            }
+            
+            if (error.message.includes('Failed to fetch')) {
+                throw new Error('🔌 Erro de conexão. Verifique se o servidor está rodando na porta 8000');
+            }
+            
             // Handle network errors gracefully
             if (error.name === 'TypeError' && error.message.includes('fetch')) {
                 throw new Error('Erro de conexão. Verifique sua internet.');
