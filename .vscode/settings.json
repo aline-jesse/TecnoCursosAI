@@ -1,0 +1,26 @@
+{
+  // Sugestões e execuções automáticas
+  "github.copilot.inlineSuggest.enable": true,
+  "github.copilot.suggestionDelay": 0,
+  "github.copilot.advanced": {
+    "inlineSuggest.enable": true
+  },
+
+  // Configurações do Cursor (se estiver usando)
+  "cursor.autoApplyEdits": true,
+
+  // Supressão de prompts repetitivos
+  "security.workspace.trust.untrustedFiles": "open",
+
+  // Formatação automática
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll": true
+  },
+
+  // Configurações para lint automático
+  "eslint.quiet": true,
+
+  // Evita prompts de detecção de compilador
+  "typescript.tsc.autoDetect": "on"
+}

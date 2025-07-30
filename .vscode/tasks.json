@@ -1,0 +1,16 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Iniciar Backend TecnoCursosAI",
+			"type": "shell",
+			"command": "python",
+			"args": [
+				"fix_connection_error.py"
+			],
+			"group": "serve",
+			"isBackground": true,
+			"problemMatcher": []
+		}
+	]
+}
